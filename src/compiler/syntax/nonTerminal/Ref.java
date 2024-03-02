@@ -1,0 +1,37 @@
+
+  package compiler.syntax.nonTerminal;
+
+  import compiler.intermediate.Temporal;
+  import compiler.semantic.symbol.SymbolVariable;
+  import es.uned.lsi.compiler.semantic.type.TypeIF;
+
+  public class Ref extends NonTerminal {
+
+    protected SymbolVariable symbolVariableIdentificador;
+    protected Temporal temporal;
+
+    public Ref() {
+      super();
+    }
+
+    public Ref(SymbolVariable symbolVariableIdentificador) {
+      super();
+      this.symbolVariableIdentificador = symbolVariableIdentificador;
+    }
+
+    public SymbolVariable getSymbolVariableIdentificador() {
+      return symbolVariableIdentificador;
+    }
+
+    public void setSymbolVariableIdentificador(SymbolVariable symbolVariableIdentificador) {
+      this.symbolVariableIdentificador = symbolVariableIdentificador;
+    }
+
+    public TypeIF getType() {
+      if (symbolVariableIdentificador != null) {
+        return symbolVariableIdentificador.getType();
+      } else return null;
+    }
+
+  }
+  
