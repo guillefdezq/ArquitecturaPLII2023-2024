@@ -207,10 +207,20 @@ System.out.println ("El nivel del ambito es: " + scope.getLevel());
 
 //Obtenemos del ámbito creado la Tabla del Tipos
 TypeTableIF typeTable = scope.getTypeTable ();
+System.out.println("Tabla de tipos: " + typeTable.getTypes());
+
+// Experimentando
+SymbolTableIF sTable = scope.getSymbolTable();
+System.out.println("Tabla de simbolos: " + sTable.getSymbols());
+
+
 
 //Introduccion del Tipo Simple Entero o Integer y Logico o Booleano
-//TypeSimple tsEntero = new TypeSimple(scope, "ENTERO");
-//typeTable.addType("ENTERO",tsEntero);
+TypeSimple tsEntero = new TypeSimple(scope);
+tsEntero.setName("ENTERO");
+typeTable.addType("ENTERO",tsEntero);
+
+System.out.println("Tabla de tipos: " + typeTable.getTypes());
 //TypeSimple tsLogico = new TypeSimple(scope, "LOGICO");
 //typeTable.addType("LOGICO",tsLogico);
    :}
