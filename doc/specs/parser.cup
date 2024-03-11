@@ -299,7 +299,23 @@ declaracionParametros  ::= parametro | parametro COLON declaracionParametros;
 
 parametro ::= ENTERO IDENTIFICADOR | IDENTIFICADOR IDENTIFICADOR;
 
-funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
+funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS
+// No puedo colocar instrucciones aquí
+ seccionTipos listadoSentencias CLOSE_PARENTHESIS
+{:
+
+scopeManager.openScope("principal");
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println ("El nombre del nuevo ambito es: " + scope.getName());
+System.out.println ("El nivel del ambito es: " + scope.getLevel());
+SymbolTableIF tabla = scope.getSymbolTable();
+//SymbolIF fxprincipal = new SymbolProcedure(scope, "procedureprincipal", null);
+//fxprincipal.setName("FuncionPrincipal");
+//sTable.addSymbol(fxprincipal);
+
+scopeManager.closeScope();
+System.out.println("Ambito global cerrado.");
+:}
 	|  VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS;
 
 
