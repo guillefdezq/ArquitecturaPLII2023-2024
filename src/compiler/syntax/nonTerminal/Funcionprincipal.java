@@ -15,7 +15,7 @@
     }
 
     public Funcionprincipal(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

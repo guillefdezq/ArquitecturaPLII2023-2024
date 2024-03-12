@@ -15,7 +15,7 @@
     }
 
     public Seccionvariables(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

@@ -15,7 +15,7 @@
     }
 
     public Declaraciontipo(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

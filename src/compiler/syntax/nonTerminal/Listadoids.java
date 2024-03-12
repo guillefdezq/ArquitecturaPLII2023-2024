@@ -15,7 +15,7 @@
     }
 
     public Listadoids(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

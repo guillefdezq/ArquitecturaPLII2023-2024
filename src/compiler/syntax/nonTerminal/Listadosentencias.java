@@ -15,7 +15,7 @@
     }
 
     public Listadosentencias(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

@@ -15,7 +15,7 @@
     }
 
     public Sentenciaincremento(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

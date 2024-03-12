@@ -15,7 +15,7 @@
     }
 
     public Opcionesescribeent(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 
