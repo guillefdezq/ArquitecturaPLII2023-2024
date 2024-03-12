@@ -15,7 +15,7 @@
     }
 
     public Casoalt(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 
