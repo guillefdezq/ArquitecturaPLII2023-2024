@@ -3,23 +3,62 @@
 
   import compiler.intermediate.Temporal;
   import compiler.semantic.symbol.SymbolVariable;
-  import es.uned.lsi.compiler.semantic.type.TypeIF;
+import compiler.semantic.type.TypeSimple;
+import es.uned.lsi.compiler.semantic.type.TypeIF;
 
   public class Declaracionvariable extends NonTerminal {
 
-    protected SymbolVariable symbolVariableIdentificador;
-    protected Temporal temporal;
+    /* Código copiado de las diapositivas */
+	  
+	/* Copiado del cup:
+	 * 
+	 * declaracionVariable ::= ENTERO listadoIDs SEMI_COLON {: RESULT = null; :}
+                      | IDENTIFICADOR listadoIDs SEMI_COLON {: RESULT = null; :};
+	 * 
+	 */
+
+	protected TypeSimple typeSimple; // primera producción tipo de dato
+	protected Listadoids listadoIDs; // aquí se usa el no terminal creado antes	  
+	  
+	protected SymbolVariable symbolVariableIdentificador; // segunda producción identificador
+    protected Temporal temporal; // por si acaso
 
     public Declaracionvariable() {
       super();
     }
 
-    public Declaracionvariable(SymbolVariable symbolVariableIdentificador) {
-      super();
-      this.symbolVariableIdentificador = symbolVariableIdentificador;
+    public Declaracionvariable(TypeSimple typeSimple, Listadoids listadoIDs, SymbolVariable symbolVariableIdentificador) {
+      this();
+      this.typeSimple = typeSimple;
+      this.listadoIDs = listadoIDs;
+      this.symbolVariableIdentificador = symbolVariableIdentificador;      
     }
 
-    public SymbolVariable getSymbolVariableIdentificador() {
+    public TypeSimple getTypeSimple() {
+		return typeSimple;
+	}
+
+	public void setTypeSimple(TypeSimple typeSimple) {
+		this.typeSimple = typeSimple;
+	}
+
+	public Listadoids getListadoIDs() {
+		return listadoIDs;
+	}
+
+	public void setListadoIDs(Listadoids listadoIDs) {
+		this.listadoIDs = listadoIDs;
+	}
+
+	public Temporal getTemporal() {
+		return temporal;
+	}
+
+	public void setTemporal(Temporal temporal) {
+		this.temporal = temporal;
+	}
+
+	public SymbolVariable getSymbolVariableIdentificador() {
       return symbolVariableIdentificador;
     }
 
