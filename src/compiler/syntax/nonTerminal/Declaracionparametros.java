@@ -15,7 +15,7 @@
     }
 
     public Declaracionparametros(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

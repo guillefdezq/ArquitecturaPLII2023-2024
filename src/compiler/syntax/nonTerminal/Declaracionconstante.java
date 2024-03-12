@@ -15,7 +15,7 @@
     }
 
     public Declaracionconstante(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

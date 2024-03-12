@@ -15,7 +15,7 @@
     }
 
     public Secciontipos(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

@@ -15,7 +15,7 @@
     }
 
     public Id(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

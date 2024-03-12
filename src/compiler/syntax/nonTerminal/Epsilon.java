@@ -15,7 +15,7 @@
     }
 
     public Epsilon(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

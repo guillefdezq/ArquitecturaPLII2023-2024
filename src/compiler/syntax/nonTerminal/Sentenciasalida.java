@@ -15,7 +15,7 @@
     }
 
     public Sentenciasalida(SymbolVariable symbolVariableIdentificador) {
-      super();
+      this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 
