@@ -219,6 +219,13 @@ System.out.println("Tabla de simbolos: " + sTable.getSymbols());
 TypeSimple tsEntero = new TypeSimple(scope);
 tsEntero.setName("ENTERO");
 typeTable.addType("ENTERO",tsEntero);
+TypeSimple tsLogico = new TypeSimple(scope);
+tsLogico.setName("LOGICO");
+typeTable.addType("LOGICO",tsLogico);
+// Puede que este no sea necesario de implementar
+TypeSimple tsVacio = new TypeSimple(scope);
+tsVacio.setName("VACIO");
+typeTable.addType("VACIO",tsVacio);
 
 System.out.println("Tabla de tipos: " + typeTable.getTypes());
 //TypeSimple tsLogico = new TypeSimple(scope, "LOGICO");
