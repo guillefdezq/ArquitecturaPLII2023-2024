@@ -267,7 +267,36 @@ seccionConstantes ::= declaracionConstante seccionConstantes {: RESULT = null; :
                       | epsilon {: RESULT = null; :};
                       
                       
-declaracionConstante ::= CONSTANTE IDENTIFICADOR NUMERO SEMI_COLON {: RESULT = null; :};
+declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:valor SEMI_COLON {: 
+// Copiado del vídeo de Pérez
+//recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
+ScopeIF scope = scopeManager.getCurrentScope();
+SymbolTableIF tablaSimbolos = scope.getSymbolTable();
+String nombre = id.getLexema();
+//comprobamos que la constante no este ya declarada en la tabla de símbolos
+if (tablaSimbolos.containsSymbol(nombre)) {
+	semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
+} else {
+	System.out.println ("Constante " + nombre + " aun No declarada");
+	//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
+	TypeTableIF tablaTipos = scope.getTypeTable();
+	TypeIF tipo = scopeManager.searchType("ENTERO");
+	SymbolConstant simboloConstante = new SymbolConstant(scope, nombre, tipo);
+	// simboloConstante.setValor(valor.getLexema()); // Modificación, se pone abajo
+	tablaSimbolos.addSymbol(valor.getLexema(), simboloConstante);
+
+	// Mirando que tiene
+System.out.println ("El nombre del ambito es: " + scope.getName());
+System.out.println ("El nivel del ambito es: " + scope.getLevel());
+SymbolTableIF tablaSimbolosPrincipal = scope.getSymbolTable();
+System.out.println("Probando esto " + tablaSimbolosPrincipal);
+TypeTableIF tablaTiposPrincipal = scope.getTypeTable();
+System.out.println("Otra vez probando " + tablaTiposPrincipal);
+
+} //fin if
+
+RESULT = null; 
+:};
 
 seccionTipos ::= declaracionTipo seccionTipos {: RESULT = null; :}
                       | epsilon {: RESULT = null; :};
@@ -311,16 +340,20 @@ declaracionParametros  ::= parametro {: RESULT = null; :} | parametro COLON decl
 
 parametro ::= ENTERO IDENTIFICADOR {: RESULT = null; :} | IDENTIFICADOR IDENTIFICADOR {: RESULT = null; :};
 
-funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS
+funcionPrincipal ::= VACIO principal:id OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS
 // No puedo colocar instrucciones aquí
  seccionTipos listadoSentencias CLOSE_PARENTHESIS
 {:
-
-scopeManager.openScope("principal");
+String nombre = id.getLexema();
+scopeManager.openScope(nombre); // realmente no hay que pasar el valor de principal, sino p.ej. directamente poner su nombre.
 ScopeIF scope = scopeManager.getCurrentScope();
 System.out.println ("El nombre del nuevo ambito es: " + scope.getName());
 System.out.println ("El nivel del ambito es: " + scope.getLevel());
-SymbolTableIF tabla = scope.getSymbolTable();
+SymbolTableIF tablaSimbolosPrincipal = scope.getSymbolTable();
+System.out.println("Probando esto " + tablaSimbolosPrincipal);
+TypeTableIF tablaTiposPrincipal = scope.getTypeTable();
+System.out.println("Otra vez probando " + tablaTiposPrincipal);
+ 
 //SymbolIF fxprincipal = new SymbolProcedure(scope, "procedureprincipal", null);
 //fxprincipal.setName("FuncionPrincipal");
 //sTable.addSymbol(fxprincipal);
