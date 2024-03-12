@@ -249,55 +249,56 @@ epsilon ::= ;
 
 axiom ::=  seccionConstantes seccionTipos  axiom1 ;
 
-axiom1 ::= seccionVariables seccionFunciones  | seccionFunciones;
+axiom1 ::= seccionVariables seccionFunciones {: RESULT = null; :}
+ | seccionFunciones {: RESULT = null; :};
 
-seccionConstantes ::= declaracionConstante seccionConstantes
-                      | epsilon;
+seccionConstantes ::= declaracionConstante seccionConstantes {: RESULT = null; :}
+                      | epsilon {: RESULT = null; :};
                       
                       
-declaracionConstante ::= CONSTANTE IDENTIFICADOR NUMERO SEMI_COLON;
+declaracionConstante ::= CONSTANTE IDENTIFICADOR NUMERO SEMI_COLON {: RESULT = null; :};
 
-seccionTipos ::= declaracionTipo seccionTipos
-                      | epsilon;
+seccionTipos ::= declaracionTipo seccionTipos {: RESULT = null; :}
+                      | epsilon {: RESULT = null; :};
                       
-declaracionTipo ::= TIPO ENTERO IDENTIFICADOR OPEN_BRACKET tamTipo CLOSE_BRACKET SEMI_COLON;
+declaracionTipo ::= TIPO ENTERO IDENTIFICADOR OPEN_BRACKET tamTipo CLOSE_BRACKET SEMI_COLON {: RESULT = null; :};
 
-tamTipo ::= NUMERO | IDENTIFICADOR;
+tamTipo ::= NUMERO {: RESULT = null; :} | IDENTIFICADOR {: RESULT = null; :};
 
-seccionVariables ::= seccionVariables declaracionVariable | declaracionVariable;
+seccionVariables ::= seccionVariables declaracionVariable {: RESULT = null; :} | declaracionVariable {: RESULT = null; :};
 
-declaracionVariable ::= ENTERO listadoIDs SEMI_COLON
-                      | IDENTIFICADOR listadoIDs SEMI_COLON;
+declaracionVariable ::= ENTERO listadoIDs SEMI_COLON {: RESULT = null; :}
+                      | IDENTIFICADOR listadoIDs SEMI_COLON {: RESULT = null; :};
                       
-listadoIDs ::= id listadoIDs1;
+listadoIDs ::= id listadoIDs1 {: RESULT = null; :};
 
-listadoIDs1 ::= COLON listadoIDs
-                      | epsilon;
+listadoIDs1 ::= COLON listadoIDs {: RESULT = null; :}
+                      | epsilon {: RESULT = null; :};
 
-id ::= IDENTIFICADOR id1;
+id ::= IDENTIFICADOR id1 {: RESULT = null; :};
 
-id1 ::= epsilon
-        | ASSIGN NUMERO;
+id1 ::= epsilon {: RESULT = null; :}
+        | ASSIGN NUMERO {: RESULT = null; :};
 
-seccionFunciones ::= funcion seccionFunciones
-                      | funcionPrincipal;
+seccionFunciones ::= funcion seccionFunciones {: RESULT = null; :}
+                      | funcionPrincipal {: RESULT = null; :};
                       
-funcion ::= VACIO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1
-            | ENTERO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1;
+funcion ::= VACIO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: RESULT = null; :}
+            | ENTERO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: RESULT = null; :};
                      
          
-funcion1 ::= listadoSentencias CLOSE_PARENTHESIS
-                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS;
+funcion1 ::= listadoSentencias CLOSE_PARENTHESIS {: RESULT = null; :}
+                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS {: RESULT = null; :};
 
 
 
 
 
-seccionParametros ::= declaracionParametros | epsilon;
+seccionParametros ::= declaracionParametros {: RESULT = null; :} | epsilon {: RESULT = null; :};
 
-declaracionParametros  ::= parametro | parametro COLON declaracionParametros;
+declaracionParametros  ::= parametro {: RESULT = null; :} | parametro COLON declaracionParametros {: RESULT = null; :};
 
-parametro ::= ENTERO IDENTIFICADOR | IDENTIFICADOR IDENTIFICADOR;
+parametro ::= ENTERO IDENTIFICADOR {: RESULT = null; :} | IDENTIFICADOR IDENTIFICADOR {: RESULT = null; :};
 
 funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS
 // No puedo colocar instrucciones aquí
@@ -315,73 +316,75 @@ SymbolTableIF tabla = scope.getSymbolTable();
 
 scopeManager.closeScope();
 System.out.println("Ambito global cerrado.");
+
+RESULT = null;
 :}
-	|  VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS;
+	|  VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: RESULT = null; :};
 
 
 
 // EXPRESIONES
 
-expresion ::= NUMERO | IDENTIFICADOR
-	|  OPEN_KEY expresion CLOSE_KEY 
- 	|  expresion PLUS expresion
- 	|  expresion MULT expresion
- 	|  expresion AUTO_INCREMENTO
- 	|  NEGACION expresion
- 	|  expresion LOWER_THAN expresion
- 	|  expresion EQUAL expresion
- 	|  expresion AND_LOGICA expresion
- 	|  accesoVector
- 	|  llamadaFuncion;
+expresion ::= NUMERO {: RESULT = null; :} | IDENTIFICADOR {: RESULT = null; :}
+	|  OPEN_KEY expresion CLOSE_KEY  {: RESULT = null; :}
+ 	|  expresion PLUS expresion {: RESULT = null; :}
+ 	|  expresion MULT expresion {: RESULT = null; :}
+ 	|  expresion AUTO_INCREMENTO {: RESULT = null; :}
+ 	|  NEGACION expresion {: RESULT = null; :}
+ 	|  expresion LOWER_THAN expresion {: RESULT = null; :}
+ 	|  expresion EQUAL expresion {: RESULT = null; :}
+ 	|  expresion AND_LOGICA expresion {: RESULT = null; :}
+ 	|  accesoVector {: RESULT = null; :}
+ 	|  llamadaFuncion {: RESULT = null; :};
 
-accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET;
+accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET {: RESULT = null; :};
 
-llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY
-	| IDENTIFICADOR OPEN_KEY CLOSE_KEY;
-parametros ::= expresion | expresion COLON parametros;
+llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY {: RESULT = null; :}
+	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: RESULT = null; :};
+parametros ::= expresion {: RESULT = null; :} | expresion COLON parametros {: RESULT = null; :};
 
 //  SENTENCIAS
 
-bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS
- 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS;
+bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS {: RESULT = null; :}
+ 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS {: RESULT = null; :};
 
-listadoSentencias ::= listadoSentencias sentencia | sentencia;
+listadoSentencias ::= listadoSentencias sentencia {: RESULT = null; :} | sentencia {: RESULT = null; :};
 
-sentencia ::= sentenciaDevuelve
-	| sentenciaIncremento
-	| sentenciaAsignacion
-	| sentenciaAsignacionSuma
-	| sentenciaSi
-	| sentenciaAlternativas
-	| sentenciaMientras
-	| sentenciaLlamadaFuncion
-	| sentenciaSalida
-	| bloque;
+sentencia ::= sentenciaDevuelve {: RESULT = null; :}
+	| sentenciaIncremento {: RESULT = null; :}
+	| sentenciaAsignacion {: RESULT = null; :}
+	| sentenciaAsignacionSuma {: RESULT = null; :}
+	| sentenciaSi {: RESULT = null; :}
+	| sentenciaAlternativas {: RESULT = null; :}
+	| sentenciaMientras {: RESULT = null; :}
+	| sentenciaLlamadaFuncion {: RESULT = null; :}
+	| sentenciaSalida {: RESULT = null; :}
+	| bloque {: RESULT = null; :};
 
-sentenciaDevuelve ::= DEVUELVE SEMI_COLON	
-	| DEVUELVE expresion SEMI_COLON;
+sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: RESULT = null; :}	
+	| DEVUELVE expresion SEMI_COLON {: RESULT = null; :};
 
-sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON;
+sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON {: RESULT = null; :};
 
-sentenciaAsignacion ::= ref ASSIGN expresion SEMI_COLON;
-ref ::= IDENTIFICADOR | accesoVector;
+sentenciaAsignacion ::= ref ASSIGN expresion SEMI_COLON {: RESULT = null; :};
+ref ::= IDENTIFICADOR {: RESULT = null; :} | accesoVector {: RESULT = null; :};
 
-sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON;
+sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: RESULT = null; :};
 
-sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia
-	 | SI OPEN_KEY expresion CLOSE_KEY sentencia;
+sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia {: RESULT = null; :}
+	 | SI OPEN_KEY expresion CLOSE_KEY sentencia {: RESULT = null; :};
 	
-sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS;
-casosAlternativa ::= casosAlternativa casoAlt | casoAlt;
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: RESULT = null; :};
+casosAlternativa ::= casosAlternativa casoAlt {: RESULT = null; :} | casoAlt {: RESULT = null; :};
 
-casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON;
-porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON | epsilon; 
+casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: RESULT = null; :};
+porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON {: RESULT = null; :} | epsilon {: RESULT = null; :}; 
 
-sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia;
+sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia {: RESULT = null; :};
 
-sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON;
+sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: RESULT = null; :};
 
-sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON
-	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON;
-opcionesEscribe ::= epsilon | STRING;
-opcionesEscribeEnt ::= epsilon | expresion;
+sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON {: RESULT = null; :}
+	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON {: RESULT = null; :};
+opcionesEscribe ::= epsilon {: RESULT = null; :} | STRING {: RESULT = null; :};
+opcionesEscribeEnt ::= epsilon {: RESULT = null; :} | expresion {: RESULT = null; :};
