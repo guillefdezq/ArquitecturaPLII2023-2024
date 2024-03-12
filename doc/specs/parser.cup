@@ -369,12 +369,12 @@ RESULT = null;
 
 // EXPRESIONES
 
-expresion ::= NUMERO {: RESULT = null; :} | IDENTIFICADOR {: RESULT = null; :}
-	|  OPEN_KEY expresion CLOSE_KEY  {: RESULT = null; :}
- 	|  expresion PLUS expresion {: RESULT = null; :}
- 	|  expresion MULT expresion {: RESULT = null; :}
- 	|  expresion AUTO_INCREMENTO {: RESULT = null; :}
- 	|  NEGACION expresion {: RESULT = null; :}
+expresion ::= NUMERO:num {: RESULT = num; :} | IDENTIFICADOR:id {: RESULT = id; :}
+	|  OPEN_KEY expresion:expr CLOSE_KEY  {: RESULT = expr; :}
+ 	|  expresion:a PLUS expresion:b {: RESULT = null; :}
+ 	|  expresion:a MULT expresion:b {: RESULT = null; :}
+ 	|  expresion:autoincre AUTO_INCREMENTO {: RESULT = null; :}
+ 	|  NEGACION expresion:negac {: RESULT = null; :}
  	|  expresion LOWER_THAN expresion {: RESULT = null; :}
  	|  expresion EQUAL expresion {: RESULT = null; :}
  	|  expresion AND_LOGICA expresion {: RESULT = null; :}
@@ -406,7 +406,7 @@ sentencia ::= sentenciaDevuelve {: RESULT = null; :}
 	| bloque {: RESULT = null; :};
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: RESULT = null; :}	
-	| DEVUELVE expresion SEMI_COLON {: RESULT = null; :};
+	| DEVUELVE expresion:expr SEMI_COLON {: RESULT = expr; :};  // Entiendo que esto es lo que le debe devolver...?
 
 sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON {: RESULT = null; :};
 
@@ -428,7 +428,7 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia {: RESULT 
 
 sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: RESULT = null; :};
 
-sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON {: RESULT = null; :}
+sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:salida CLOSE_KEY SEMI_COLON {: System.out.println(salida); RESULT = null; :} // Entiendo que aquí tiene que ser más profesional y hacer referencia a la tabla de símbolos
 	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON {: RESULT = null; :};
-opcionesEscribe ::= epsilon {: RESULT = null; :} | STRING {: RESULT = null; :};
+opcionesEscribe ::= epsilon {: RESULT = null; :} | STRING:string {: RESULT = string; :};
 opcionesEscribeEnt ::= epsilon {: RESULT = null; :} | expresion {: RESULT = null; :};
