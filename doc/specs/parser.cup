@@ -263,28 +263,24 @@ seccionConstantes ::= declaracionConstante seccionConstantes {: RESULT = null; :
                       
                       
 declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:valor SEMI_COLON {: 
-// Copiado del vídeo de Pérez
+// Copiado del vídeo de Pérez (mod)
 //recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
 ScopeIF scope = scopeManager.getCurrentScope();
-SymbolTableIF tablaSimbolos = scope.getSymbolTable();
+TypeTableIF typeTable = scope.getTypeTable ();
+SymbolTableIF sTable = scope.getSymbolTable(); 
 String nombre = id.getLexema();
 String contenido = valor.getLexema();
 //comprobamos que la constante no este ya declarada en la tabla de símbolos
-if (tablaSimbolos.containsSymbol(nombre)) {
+if (sTable.containsSymbol(nombre)) {
 	semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
 } else {
 	//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
-	TypeTableIF tablaTipos = scope.getTypeTable();
 	TypeIF tipo = scopeManager.searchType("ENTERO");
 	SymbolConstant simboloConstante = new SymbolConstant(scope, nombre, tipo);
-	tablaSimbolos.addSymbol(contenido, simboloConstante);
+	sTable.addSymbol(contenido, simboloConstante);
 
 	// Mirando que tiene
-
-System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
-TypeTableIF typeTable = scope.getTypeTable ();
-SymbolTableIF sTable = scope.getSymbolTable(); 
-System.out.println("GLOBAL: constante nueva: " + nombre + "=" + contenido);
+System.out.println("NEW: constante: " + nombre + "@" + scope.getName() + "=" + contenido);
 System.out.println(" \\__TT: " + typeTable.getTypes());
 System.out.println("  \\_TS: " + sTable.getSymbols());
 
