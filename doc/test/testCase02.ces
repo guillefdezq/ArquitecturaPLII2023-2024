@@ -1,3 +1,5 @@
+#constante test 69;
+
 vacio principal () {
 
 escribe("imprime");

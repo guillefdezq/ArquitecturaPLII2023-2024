@@ -200,23 +200,10 @@ scopeManager.openScope("global");
 ScopeIF scope = scopeManager.getCurrentScope();
 System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
 
-//creamos en ambito global con el nombre del programa principal
-//scopeManager.openScope("global");
-//ScopeIF scope = scopeManager.getCurrentScope();
-
-//para comprobar el nombre de ambito introducido
-//System.out.println ("El nombre del nuevo ambito es: " + scope.getName());
-
-//para comprobar el nivel de ambito introducido
-//System.out.println ("El nivel del ambito es: " + scope.getLevel());
-
 //Obtenemos del ámbito creado la Tabla del Tipos
 TypeTableIF typeTable = scope.getTypeTable ();
-System.out.println("Tabla de tipos: " + typeTable.getTypes());
-
-// Experimentando
-SymbolTableIF sTable = scope.getSymbolTable();
-System.out.println("Tabla de simbolos: " + sTable.getSymbols());
+SymbolTableIF sTable = scope.getSymbolTable(); 
+System.out.println("TT: " + typeTable.getTypes() + "   TS: " + sTable.getSymbols());
 
 
 
@@ -233,8 +220,11 @@ tsVacio.setName("VACIO");
 typeTable.addType("VACIO",tsVacio);
 
 TypeArray tsVector = new TypeArray(scope);
-tsVector.setName("VECTOR");
-typeTable.addType("VECTOR",tsVector);
+tsVector.setName("VECTORexp");
+typeTable.addType("VECTORexp",tsVector);
+System.out.println("GLOBAL: creando tipos");
+System.out.println(" \\__TT: " + typeTable.getTypes());
+System.out.println("  \\_TS: " + sTable.getSymbols());
 
    :}
   axiom:ax
@@ -278,25 +268,25 @@ declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:valor SEMI_COLON {:
 ScopeIF scope = scopeManager.getCurrentScope();
 SymbolTableIF tablaSimbolos = scope.getSymbolTable();
 String nombre = id.getLexema();
+String contenido = valor.getLexema();
 //comprobamos que la constante no este ya declarada en la tabla de símbolos
 if (tablaSimbolos.containsSymbol(nombre)) {
 	semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
 } else {
-	System.out.println ("Constante " + nombre + " aun No declarada");
 	//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
 	TypeTableIF tablaTipos = scope.getTypeTable();
 	TypeIF tipo = scopeManager.searchType("ENTERO");
 	SymbolConstant simboloConstante = new SymbolConstant(scope, nombre, tipo);
-	// simboloConstante.setValor(valor.getLexema()); // Modificación, se pone abajo
-	tablaSimbolos.addSymbol(valor.getLexema(), simboloConstante);
+	tablaSimbolos.addSymbol(contenido, simboloConstante);
 
 	// Mirando que tiene
-System.out.println ("El nombre del ambito es: " + scope.getName());
-System.out.println ("El nivel del ambito es: " + scope.getLevel());
-SymbolTableIF tablaSimbolosPrincipal = scope.getSymbolTable();
-System.out.println("Probando esto " + tablaSimbolosPrincipal);
-TypeTableIF tablaTiposPrincipal = scope.getTypeTable();
-System.out.println("Otra vez probando " + tablaTiposPrincipal);
+
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+TypeTableIF typeTable = scope.getTypeTable ();
+SymbolTableIF sTable = scope.getSymbolTable(); 
+System.out.println("GLOBAL: constante nueva: " + nombre + "=" + contenido);
+System.out.println(" \\__TT: " + typeTable.getTypes());
+System.out.println("  \\_TS: " + sTable.getSymbols());
 
 } //fin if
 
@@ -328,8 +318,28 @@ id1 ::= epsilon {: RESULT = null; :}
 seccionFunciones ::= funcion seccionFunciones {: RESULT = null; :}
                       | funcionPrincipal {: RESULT = null; :};
                       
-funcion ::= VACIO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: RESULT = null; :}
-            | ENTERO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: RESULT = null; :};
+funcion ::= VACIO IDENTIFICADOR:id  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1
+{: 
+// abrir ámbitos (resumido)
+scopeManager.openScope(id.getLexema());
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+
+// cerrar ámbito (resumido)
+System.out.println("FIN: " + scope.getName());
+scopeManager.closeScope();
+RESULT = null; :}
+            | ENTERO IDENTIFICADOR:id  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1
+{: 
+// abrir ámbitos (resumido)
+scopeManager.openScope(id.getLexema());
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+
+// cerrar ámbito (resumido)
+System.out.println("FIN: " + scope.getName());
+scopeManager.closeScope();
+RESULT = null; :};		// El RESULT debe devolver lo que se encuentre en la variable return de algunas de estas opciones...
                      
          
 funcion1 ::= listadoSentencias CLOSE_PARENTHESIS {: RESULT = null; :}
