@@ -277,12 +277,17 @@ if (sTable.containsSymbol(nombre)) {
 	//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
 	TypeIF tipo = scopeManager.searchType("ENTERO");
 	SymbolConstant simboloConstante = new SymbolConstant(scope, nombre, tipo);
-	sTable.addSymbol(contenido, simboloConstante);
+	simboloConstante.setValor(contenido);
+	sTable.addSymbol(nombre, simboloConstante);
 
 	// Mirando que tiene
 System.out.println("NEW: constante: " + nombre + "@" + scope.getName() + "=" + contenido);
 System.out.println(" \\__TT: " + typeTable.getTypes());
 System.out.println("  \\_TS: " + sTable.getSymbols());
+
+// Intentando buscar - TRY FETCH
+SymbolIF fetchSymbol = sTable.getSymbol(nombre);
+System.out.println(fetchSymbol.getType());
 
 } //fin if
 
