@@ -263,6 +263,7 @@ seccionConstantes ::= declaracionConstante seccionConstantes {: RESULT = null; :
                       
                       
 declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:valor SEMI_COLON {: 
+//!!! A lo mejor esto está mal declarado
 // Copiado del vídeo de Pérez (mod)
 //recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
 ScopeIF scope = scopeManager.getCurrentScope();
@@ -297,7 +298,41 @@ RESULT = null;
 seccionTipos ::= declaracionTipo seccionTipos {: RESULT = null; :}
                       | epsilon {: RESULT = null; :};
                       
-declaracionTipo ::= TIPO ENTERO IDENTIFICADOR OPEN_BRACKET tamTipo CLOSE_BRACKET SEMI_COLON {: RESULT = null; :};
+declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo CLOSE_BRACKET SEMI_COLON {: // esto es para vectores (falta tamaño)
+//recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
+ScopeIF scope = scopeManager.getCurrentScope();
+TypeTableIF typeTable = scope.getTypeTable ();
+SymbolTableIF sTable = scope.getSymbolTable(); 
+String nombre = id.getLexema();
+//String tamano = tam.getLexema();
+//comprobamos que la constante no este ya declarada en la tabla de símbolos
+if (typeTable.containsType(nombre)) {
+	semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarada");
+} else {
+	TypeArray tsVector = new TypeArray(scope);
+	tsVector.setName(nombre);
+	// faltan métodos de tamaño
+	typeTable.addType(nombre,tsVector);
+	//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
+	//TypeIF tipo = scopeManager.searchType("ENTERO");
+	//SymbolConstant simboloConstante = new SymbolConstant(scope, nombre, tipo);
+	typeTable.addType(nombre, tsVector);
+	//simboloConstante.setValor(contenido);
+	//sTable.addSymbol(nombre, simboloConstante);
+
+	// Mirando que tiene
+System.out.println("NEW: vector: " + nombre + "@" + scope.getName() + "=" + "sin definir"); //contenido);
+System.out.println(" \\__TT: " + typeTable.getTypes());
+System.out.println("  \\_TS: " + sTable.getSymbols());
+
+// Intentando buscar - TRY FETCH
+SymbolIF fetchSymbol = sTable.getSymbol(nombre);
+System.out.println(fetchSymbol.getType());
+
+} //fin if
+
+RESULT = null; 
+:};
 
 tamTipo ::= NUMERO {: RESULT = null; :} | IDENTIFICADOR {: RESULT = null; :};
 
