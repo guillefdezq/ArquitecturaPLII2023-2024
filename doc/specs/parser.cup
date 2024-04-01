@@ -356,9 +356,7 @@ declaracionParametros  ::= parametro {: RESULT = null; :} | parametro COLON decl
 
 parametro ::= ENTERO IDENTIFICADOR {: RESULT = null; :} | IDENTIFICADOR IDENTIFICADOR {: RESULT = null; :};
 
-funcionPrincipal ::= VACIO principal:id OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS
-// No puedo colocar instrucciones aquí
- seccionTipos listadoSentencias CLOSE_PARENTHESIS
+funcionPrincipal ::= VACIO principal:id OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
 {:
 String nombre = id.getLexema();
 scopeManager.openScope(nombre); // realmente no hay que pasar el valor de principal, sino p.ej. directamente poner su nombre.
@@ -385,7 +383,16 @@ scopeManager.closeScope();
 
 RESULT = null;
 :}
-	|  VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: RESULT = null; :};
+	|  VACIO principal:id OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
+// abrir ámbitos (resumido)
+scopeManager.openScope(id.getLexema());
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+
+// cerrar ámbito (resumido)
+System.out.println("FIN: " + scope.getName());
+scopeManager.closeScope();
+RESULT = null; :};
 
 
 
@@ -411,8 +418,26 @@ parametros ::= expresion {: RESULT = null; :} | expresion COLON parametros {: RE
 
 //  SENTENCIAS
 
-bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS {: RESULT = null; :}
- 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS {: RESULT = null; :};
+bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
+// abrir ámbitos (resumido)
+scopeManager.openScope("bloque");//id.getLexema());
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+
+// cerrar ámbito (resumido)
+System.out.println("FIN: " + scope.getName());
+scopeManager.closeScope();
+RESULT = null; :}
+ 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS {: 
+// abrir ámbitos (resumido)
+scopeManager.openScope("bloque");//id.getLexema());
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+
+// cerrar ámbito (resumido)
+System.out.println("FIN: " + scope.getName());
+scopeManager.closeScope();
+RESULT = null; :};
 
 listadoSentencias ::= listadoSentencias sentencia {: RESULT = null; :} | sentencia {: RESULT = null; :};
 
@@ -440,7 +465,16 @@ sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: RESULT = nul
 sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia {: RESULT = null; :}
 	 | SI OPEN_KEY expresion CLOSE_KEY sentencia {: RESULT = null; :};
 	
-sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: RESULT = null; :};
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: 
+// abrir ámbitos (resumido)
+scopeManager.openScope("alternativas");//id.getLexema());
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+
+// cerrar ámbito (resumido)
+System.out.println("FIN: " + scope.getName());
+scopeManager.closeScope();
+RESULT = null; :};
 casosAlternativa ::= casosAlternativa casoAlt {: RESULT = null; :} | casoAlt {: RESULT = null; :};
 
 casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: RESULT = null; :};
