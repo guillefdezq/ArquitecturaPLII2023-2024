@@ -1,8 +1,9 @@
-#constante test 1337;
 
 vacio principal () {
 
-tipo entero vector2[3];
+tipo entero hola[2];
+
+entero a = 1;
 
 escribe("imprime");
 
