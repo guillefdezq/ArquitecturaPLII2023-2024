@@ -172,7 +172,7 @@ non terminal            			opcionesEscribeEnt;
 // non terminal OpcionesEscribeEnt			opcionesEscribeEnt;
 non terminal            			sentenciaDevuelve;
 // non terminal SentenciaDevuelve			sentenciaDevuelve;
-non terminal						marcador;
+non terminal						nuevobloque;
 
 // Declaracion de relaciones de precedencia
 precedence left     AND_LOGICA;
@@ -450,7 +450,7 @@ declaracionParametros  ::= parametro {: RESULT = null; :} | parametro COLON decl
 
 parametro ::= ENTERO IDENTIFICADOR {: RESULT = null; :} | IDENTIFICADOR IDENTIFICADOR {: RESULT = null; :};
 
-funcionPrincipal ::= VACIO principal:id OPEN_KEY CLOSE_KEY marcador OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
+funcionPrincipal ::= VACIO principal:id OPEN_KEY CLOSE_KEY nuevobloque OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
 {:
 ScopeIF scope = scopeManager.getCurrentScope();
 
@@ -472,16 +472,16 @@ scopeManager.closeScope();
 
 RESULT = null;
 :}
-	|  VACIO principal:id OPEN_KEY CLOSE_KEY marcador OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
+	|  VACIO principal:id OPEN_KEY CLOSE_KEY nuevobloque OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
 ScopeIF scope = scopeManager.getCurrentScope();
 // cerrar ámbito (resumido)
 System.out.println("FIN: " + scope.getName());
 scopeManager.closeScope();
 RESULT = null; :};
 
-marcador ::= {:
+nuevobloque ::= {:
 // abrir ámbitos (resumido)
-scopeManager.openScope("nuevoanonimo"+ scopeManager.getCurrentScope().getLevel());
+scopeManager.openScope("nuevoBloque"+ scopeManager.getCurrentScope().getLevel());
 ScopeIF scope = scopeManager.getCurrentScope();
 System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + ")");
 :}; 
