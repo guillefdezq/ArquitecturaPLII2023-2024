@@ -172,6 +172,7 @@ non terminal            			opcionesEscribeEnt;
 // non terminal OpcionesEscribeEnt			opcionesEscribeEnt;
 non terminal            			sentenciaDevuelve;
 // non terminal SentenciaDevuelve			sentenciaDevuelve;
+non terminal						marcador;
 
 // Declaracion de relaciones de precedencia
 precedence left     AND_LOGICA;
@@ -198,7 +199,7 @@ program ::=
 // abrir ámbitos (resumido)
 scopeManager.openScope("global");
 ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + ")");
 
 //Obtenemos del ámbito creado la Tabla del Tipos
 TypeTableIF typeTable = scope.getTypeTable ();
@@ -449,14 +450,9 @@ declaracionParametros  ::= parametro {: RESULT = null; :} | parametro COLON decl
 
 parametro ::= ENTERO IDENTIFICADOR {: RESULT = null; :} | IDENTIFICADOR IDENTIFICADOR {: RESULT = null; :};
 
-funcionPrincipal ::= VACIO principal:id OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
+funcionPrincipal ::= VACIO principal:id OPEN_KEY CLOSE_KEY marcador OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
 {:
-String nombre = id.getLexema();
-scopeManager.openScope(nombre); // realmente no hay que pasar el valor de principal, sino p.ej. directamente poner su nombre.
 ScopeIF scope = scopeManager.getCurrentScope();
-
-// abrir ámbitos (resumido)
-System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
 
 // cerrar ámbito (resumido)
 System.out.println("FIN: " + scope.getName());
@@ -476,18 +472,19 @@ scopeManager.closeScope();
 
 RESULT = null;
 :}
-	|  VACIO principal:id OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
-// abrir ámbitos (resumido)
-scopeManager.openScope(id.getLexema());
+	|  VACIO principal:id OPEN_KEY CLOSE_KEY marcador OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
 ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
-
 // cerrar ámbito (resumido)
 System.out.println("FIN: " + scope.getName());
 scopeManager.closeScope();
 RESULT = null; :};
 
-
+marcador ::= {:
+// abrir ámbitos (resumido)
+scopeManager.openScope("nuevoanonimo"+ scopeManager.getCurrentScope().getLevel());
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + ")");
+:}; 
 
 // EXPRESIONES
 
