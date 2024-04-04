@@ -366,7 +366,7 @@ System.out.println(fetchSymbol.getType());
 
 RESULT = null; 
 :}
-                      | IDENTIFICADOR:id listadoIDs SEMI_COLON {: 
+                      | IDENTIFICADOR:id listadoIDs:ids SEMI_COLON {: 
 //!!! A lo mejor esto está mal declarado
 // Copiado del vídeo de Pérez (mod)
 //recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
@@ -400,15 +400,30 @@ System.out.println(fetchSymbol.getType());
 RESULT = null; 
 :};
                       
-listadoIDs ::= id listadoIDs1 {: RESULT = null; :};
+listadoIDs ::= id:ident listadoIDs1:listadoIdents {: 
+System.out.println(ident);
+System.out.println(listadoIdents);
+Listadoids listado = new Listadoids();
+listado.add((String) ident);
+//listado.add((String) listadoIdents);
 
-listadoIDs1 ::= COLON listadoIDs {: RESULT = null; :}
+//listado.add(listadoIdents.getLexema());
+
+// ¿Cómo demonios se hacía un for loop y por qué falla?
+
+System.out.println("Resultado " + listado);
+RESULT = listado; 
+:};
+
+listadoIDs1 ::= COLON listadoIDs:listadoIdents {: RESULT = listadoIdents; :}
                       | epsilon {: RESULT = null; :};
 
-id ::= IDENTIFICADOR id1 {: RESULT = null; :};
+id ::= IDENTIFICADOR:ident id1:asign {:
+
+ RESULT = ident.getLexema(); :};
 
 id1 ::= epsilon {: RESULT = null; :}
-        | ASSIGN NUMERO {: RESULT = null; :};
+        | ASSIGN NUMERO:num {: RESULT = num.getLexema(); :};
 
 seccionFunciones ::= funcion seccionFunciones {: RESULT = null; :}
                       | funcionPrincipal {: RESULT = null; :};
