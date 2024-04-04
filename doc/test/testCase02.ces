@@ -1,9 +1,9 @@
 
 vacio principal () {
 
-tipo entero hola[2];
 
-entero a = 1;
+entero hola, buenas, tardes = 1;
+tipo entero hola[2];
 
 escribe("imprime");
 
