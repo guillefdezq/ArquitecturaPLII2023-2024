@@ -341,9 +341,11 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 ScopeIF scope = scopeManager.getCurrentScope();
 TypeTableIF typeTable = scope.getTypeTable ();
 SymbolTableIF sTable = scope.getSymbolTable(); 
-String nombre = "Por implementar listado";
+ArrayList<String> nombres = ((Listadoids) ids).getIdentificadores();
 String contenido = null;
 //comprobamos que la constante no este ya declarada en la tabla de símbolos
+
+for (String nombre : nombres) {
 if (sTable.containsSymbol(nombre)) {
 	semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
 } else {
@@ -361,6 +363,8 @@ System.out.println("  \\_TS: " + sTable.getSymbols());
 // Intentando buscar - TRY FETCH
 SymbolIF fetchSymbol = sTable.getSymbol(nombre);
 System.out.println(fetchSymbol.getType());
+
+} //fin for
 
 } //fin if
 
@@ -387,7 +391,7 @@ if (sTable.containsSymbol(nombre)) {
 	sTable.addSymbol(nombre, simboloVariable);
 
 	// Mirando que tiene
-System.out.println("NEW: entero: " + nombre + "@" + scope.getName() + "=" + contenido);
+System.out.println("NEW: identificador: " + nombre + "@" + scope.getName() + "=" + contenido);
 System.out.println(" \\__TT: " + typeTable.getTypes());
 System.out.println("  \\_TS: " + sTable.getSymbols());
 
@@ -401,22 +405,25 @@ RESULT = null;
 :};
                       
 listadoIDs ::= id:ident listadoIDs1:listadoIdents {: 
-System.out.println(ident);
-System.out.println(listadoIdents);
-Listadoids listado = new Listadoids();
-listado.add((String) ident);
-//listado.add((String) listadoIdents);
+	System.out.println(ident+" + "+listadoIdents);
+	Listadoids listado = new Listadoids();
+	listado.addElement((String) ident);
+	listado.addList((Listadoids) listadoIdents);
+	System.out.println(listado.debugOutput());
 
-//listado.add(listadoIdents.getLexema());
+	//ScopeIF ambito = scopeManager.getCurrentScope();
+/* Código no revisado
+	IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
+	cb.addQuadruples(s.getIntermediateCode());
+	cb.addQuadruples(lista.getIntermediateCode());
+	lista.setIntermediateCode(cb.create());
+*/
 
-// ¿Cómo demonios se hacía un for loop y por qué falla?
-
-System.out.println("Resultado " + listado);
-RESULT = listado; 
+	RESULT = listado; 
 :};
 
 listadoIDs1 ::= COLON listadoIDs:listadoIdents {: RESULT = listadoIdents; :}
-                      | epsilon {: RESULT = null; :};
+                      | epsilon {: RESULT = new Listadoids(); :};
 
 id ::= IDENTIFICADOR:ident id1:asign {:
 
