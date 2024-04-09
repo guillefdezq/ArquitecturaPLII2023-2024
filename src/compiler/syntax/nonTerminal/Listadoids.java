@@ -12,12 +12,50 @@ import compiler.intermediate.Temporal;
 
     protected SymbolVariable symbolVariableIdentificador;
     protected Temporal temporal;
-    protected ArrayList<String> listado = new ArrayList<String>();
+    protected ArrayList<String> identificadores = new ArrayList<String>();
 
-    public Listadoids() {
+    
+    public ArrayList<String> getIdentificadores() {
+		return identificadores;
+	}
+
+	public void setIdentificadores(ArrayList<String> identificadores) {
+		this.identificadores = identificadores;
+	}
+	
+	public void addElement(String identificador) {
+		identificadores.add(identificador);
+	}
+    
+	public void addList(Listadoids identificadores) {
+		ArrayList<String> listado = identificadores.getIdentificadores();
+		this.identificadores.addAll(listado);
+	}
+	
+    public String debugOutput() {
+    	String salida = "";
+    	for (String string : identificadores) {
+			salida = salida + " " +  string;
+		}
+    	return salida;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+	public Listadoids() {
       super();
     }
-
+    
     public Listadoids(SymbolVariable symbolVariableIdentificador) {
       this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
@@ -36,24 +74,6 @@ import compiler.intermediate.Temporal;
         return symbolVariableIdentificador.getType();
       } else return null;
     }
-
-	public ArrayList<String> getListado() {
-		return listado;
-	}
-
-	public void setListado(ArrayList<String> listado) {
-		this.listado = listado;
-	}
-	
-	public void add(String elemento) {
-		this.listado.add(elemento);
-	}
-	
-	public void add(ArrayList<String> listado) {
-		for (String elemento : listado) {
-			this.add(elemento);
-		}
-	}
 
   }
   
