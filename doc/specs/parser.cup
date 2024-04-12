@@ -475,7 +475,7 @@ System.out.println("FIN: " + scope.getName());
 scopeManager.closeScope();
 // RESULT = salida; ?
 RESULT = null; :}
-                      | seccionVariables listadoSentencias:salida  CLOSE_PARENTHESIS {: 
+                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS {: 
 ScopeIF scope = scopeManager.getCurrentScope();
 
 // cerrar ámbito (resumido)
@@ -557,11 +557,11 @@ parametros ::= expresion {: RESULT = null; :} | expresion COLON parametros {: RE
 
 //  SENTENCIAS
 
-bloque ::= OPEN_PARENTHESIS nuevobloque seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
+bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
 // abrir ámbitos (resumido)
-//scopeManager.openScope("bloque");//id.getLexema());
+scopeManager.openScope("bloque");//id.getLexema());
 ScopeIF scope = scopeManager.getCurrentScope();
-//System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
 
 // cerrar ámbito (resumido)
 System.out.println("FIN: " + scope.getName());
@@ -569,9 +569,9 @@ scopeManager.closeScope();
 RESULT = null; :}
  	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS {: 
 // abrir ámbitos (resumido)
-//scopeManager.openScope("bloque");//id.getLexema());
+scopeManager.openScope("bloque");//id.getLexema());
 ScopeIF scope = scopeManager.getCurrentScope();
-//System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
 
 // cerrar ámbito (resumido)
 System.out.println("FIN: " + scope.getName());
@@ -604,11 +604,11 @@ sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: RESULT = nul
 sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia {: RESULT = null; :}
 	 | SI OPEN_KEY expresion CLOSE_KEY sentencia {: RESULT = null; :};
 	
-sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS nuevobloque casosAlternativa porDefecto CLOSE_PARENTHESIS {: 
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: 
 // abrir ámbitos (resumido)
-//scopeManager.openScope("alternativas");//id.getLexema());
+scopeManager.openScope("alternativas");//id.getLexema());
 ScopeIF scope = scopeManager.getCurrentScope();
-//System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
 
 // cerrar ámbito (resumido)
 System.out.println("FIN: " + scope.getName());
