@@ -531,7 +531,23 @@ System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + 
 
 // EXPRESIONES
 
-expresion ::= NUMERO:num {: RESULT = num; :} | IDENTIFICADOR:id {: RESULT = id; :}  // En este a lo mejor lo que tendría que hacer es buscar el valor almacenado en el identificador
+expresion ::= NUMERO:n {:
+	ScopeIF scope = scopeManager.getCurrentScope();
+	TypeTableIF tiposTabla = scope.getTypeTable();
+	TypeIF tipo = tiposTabla.getType("ENTERO");
+	int num = Integer.parseInt(n.getLexema());
+	Expresion exp = new Expresion(tipo);
+
+	// CÓDIGO INTERMEDIO
+	IntermediateCodeBuilder cb = new IntermediateCodeBuilder(scope);
+	TemporalFactory tF = new TemporalFactory(scope);
+	TemporalIF temp = tF.create();
+	cb.addQuadruple("MV", temp, new Value(num));
+	exp.setIntermediateCode(cb.create());
+	exp.setTemporal((Temporal)temp);
+
+	RESULT = exp;
+ :} | IDENTIFICADOR:id {: RESULT = id; :}  // En este a lo mejor lo que tendría que hacer es buscar el valor almacenado en el identificador
 	|  OPEN_KEY expresion:expr CLOSE_KEY  {: RESULT = expr; :}
  	|  expresion:a PLUS expresion:b {: RESULT = null; :}
  	|  expresion:a MULT expresion:b {: RESULT = null; :}
@@ -639,11 +655,11 @@ System.out.println("CodInt: PRINT: " + salida);
 
 String texto = (String) salida;
 	
-	if(!texto.isEmpty() || texto!=null) {
+	if(texto!=null) {
 		cb.addQuadruple("string", texto);
 	} else {
 		cb.addQuadruple("empty");
-System.out.println("cadena vacia");
+		System.out.println("no existe cadena / NULL");
 	}
 	s.setIntermediateCode(cb.create());
 
@@ -651,7 +667,15 @@ RESULT = s;
 
 :} // Entiendo que aquí tiene que ser más profesional y hacer referencia a la tabla de símbolos
 	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON {:
+
+		// Copiar código de la otra alternativa
+
  RESULT = null; 
 :};
-opcionesEscribe ::= epsilon {: RESULT = new String(); :} | STRING:string {: RESULT = string.getLexema(); :};
-opcionesEscribeEnt ::= epsilon {: RESULT = null; :} | expresion:expr {: RESULT = null; :}; // poner expr en retorno
+opcionesEscribe ::= epsilon {: String cadena = null; RESULT = cadena; :} | STRING:string {: RESULT = string.getLexema(); :};
+opcionesEscribeEnt ::= epsilon {: RESULT = -1; :} | expresion:expr {: 
+
+// ¿Comprobación de tipo entero?
+
+RESULT = expr; 
+:}; // poner expr en retorno
