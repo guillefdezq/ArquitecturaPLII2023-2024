@@ -6,7 +6,7 @@ entero hola, adios = 69;
 /*entero hola, buenas, tardes = 1;*/
 /* tipo entero hola[2]; */
 
-escribe("imprime");
+escribe();
 
 devuelve;
 
