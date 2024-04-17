@@ -532,23 +532,62 @@ System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + 
 // EXPRESIONES
 
 expresion ::= NUMERO:n {:
-	ScopeIF scope = scopeManager.getCurrentScope();
-	TypeTableIF tiposTabla = scope.getTypeTable();
-	TypeIF tipo = tiposTabla.getType("ENTERO");
-	int num = Integer.parseInt(n.getLexema());
-	Expresion exp = new Expresion(tipo);
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF tiposTabla = scope.getTypeTable();
+		TypeIF tipo = tiposTabla.getType("ENTERO");
+		int num = Integer.parseInt(n.getLexema());
+		Expresion exp = new Expresion(tipo);
 
-	// CÓDIGO INTERMEDIO
-	IntermediateCodeBuilder cb = new IntermediateCodeBuilder(scope);
-	TemporalFactory tF = new TemporalFactory(scope);
-	TemporalIF temp = tF.create();
-	cb.addQuadruple("MV", temp, new Value(num));
-	exp.setIntermediateCode(cb.create());
-	exp.setTemporal((Temporal)temp);
+		// CÓDIGO INTERMEDIO
+		IntermediateCodeBuilder cb = new IntermediateCodeBuilder(scope);
+		TemporalFactory tF = new TemporalFactory(scope);
+		TemporalIF temp = tF.create();
+		cb.addQuadruple("MV", temp, new Value(num));
+		exp.setIntermediateCode(cb.create());
+		exp.setTemporal((Temporal)temp);
 
-	RESULT = exp;
- :} | IDENTIFICADOR:id {: RESULT = id; :}  // En este a lo mejor lo que tendría que hacer es buscar el valor almacenado en el identificador
-	|  OPEN_KEY expresion:expr CLOSE_KEY  {: RESULT = expr; :}
+		RESULT = exp;
+ :} | IDENTIFICADOR:id {: 
+		String identificador = id.getLexema();
+		Expresion exp = new Expresion(identificador);
+
+		// CÓDIGO INTERMEDIO
+		if(scopeManager.containsSymbol(identificador)) {
+			SymbolIF simboloID = scopeManager.searchSymbol(identificador);
+			ScopeIF ambito = scopeManager.getCurrentScope();
+			IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
+			TemporalFactory tF = new TemporalFactory(ambito);
+			TemporalIF temp = tF.create();
+			/*
+			// Es una variable
+			if(simboloID instanceof SymbolVariable) {
+				TemporalIF tempMVP = tF.create();
+				cb.addQuadruple("MVA", temp, new Variable((SymbolVariable)simboloID)); // TemporalIF cannot be converted to Temporal
+				cb.addQuadruple("MVP", tempMVP, temp);
+				exp.setTemporal(tempMVP);
+			}
+			// Es una constante de tipo ENTERO
+			else if (simboloID instanceof SymbolConstantEntero) {
+				int num = ((SymbolConstantEntero)simboloID).getValorEntero();
+				cb.addQuadruple("MV", temp, new Value(num));
+				exp.setTemporal(temp);
+			}
+			// Es una contante de tipo LÓGICO
+			else {
+				boolean logico = ((SymbolConstantLogico)simboloID).getValorLogico();
+				if(logico) {
+					cb.addQuadruple("MV", temp, new Value(1));
+					exp.setTemporal(temp);
+				} else {
+					cb.addQuadruple("MV", temp, new Value(0));
+					exp.setTemporal(temp);
+				}
+			}
+			*/
+			exp.setIntermediateCode(cb.create());
+		}
+		RESULT = exp; 
+ :} |  OPEN_KEY expresion:expr CLOSE_KEY  {: RESULT = expr; :}
  	|  expresion:a PLUS expresion:b {: RESULT = null; :}
  	|  expresion:a MULT expresion:b {: RESULT = null; :}
  	|  expresion:autoincre AUTO_INCREMENTO {: RESULT = null; :}
@@ -601,19 +640,36 @@ listadoSentencias ::= listadoSentencias:lista sentencia:sent {:
 
 :};
 
-sentencia ::= sentenciaDevuelve {: RESULT = null; :}
-	| sentenciaIncremento {: RESULT = null; :}
-	| sentenciaAsignacion {: RESULT = null; :}
-	| sentenciaAsignacionSuma {: RESULT = null; :}
-	| sentenciaSi {: RESULT = null; :}
-	| sentenciaAlternativas {: RESULT = null; :}
-	| sentenciaMientras {: RESULT = null; :}
-	| sentenciaLlamadaFuncion {: RESULT = null; :}
+sentencia ::= sentenciaDevuelve:s {: RESULT = s; :}
+	| sentenciaIncremento:s {: RESULT = s; :}
+	| sentenciaAsignacion:s {: RESULT = s; :}
+	| sentenciaAsignacionSuma:s {: RESULT = s; :}
+	| sentenciaSi:s {: RESULT = s; :}
+	| sentenciaAlternativas:s {: RESULT = s; :}
+	| sentenciaMientras:s {: RESULT = s; :}
+	| sentenciaLlamadaFuncion:s {: RESULT = s; :}
 	| sentenciaSalida:s {: RESULT = s; :}
 	| bloque {: RESULT = null; :};
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: RESULT = null; :}	
-	| DEVUELVE expresion:expr SEMI_COLON {: RESULT = expr; :};  // Entiendo que esto es lo que le debe devolver...?
+	| DEVUELVE expresion:exp SEMI_COLON {: 
+		// Recuperar el nombre del ámbito actual
+		String nombre = scopeManager.getCurrentScope().getName();
+		TypeIF tipoSubprograma = scopeManager.searchType(nombre);
+		Sentenciadevuelve s = new Sentenciadevuelve();
+
+		// CÓDIGO INTERMEDIO
+		ScopeIF ambito = scopeManager.getCurrentScope();
+		IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
+		/* Comentado hasta que funcione exp
+		cb.addQuadruples(exp.getIntermediateCode());		
+		//cb.addQuadruple("RETURN", exp.getTemporal());		// Posible incorrecto
+
+		s.setIntermediateCode(cb.create());
+		s.setTemporal(exp.getTemporal());
+		*/
+		RESULT = s; 
+:};  // Entiendo que esto es lo que le debe devolver...?
 
 sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON {: RESULT = null; :};
 
