@@ -262,7 +262,7 @@ seccionConstantes ::= declaracionConstante seccionConstantes {: RESULT = null; :
                       
 declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:valor SEMI_COLON {: 
 //!!! A lo mejor esto está mal declarado
-// Copiado del vídeo de Pérez (mod)
+// Vídeo de ED (mod)
 //recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
 ScopeIF scope = scopeManager.getCurrentScope();
 TypeTableIF typeTable = scope.getTypeTable ();
@@ -340,7 +340,7 @@ seccionVariables ::= seccionVariables declaracionVariable {: RESULT = null; :} |
 
 declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {: 
 //!!! A lo mejor esto está mal declarado
-// Copiado del vídeo de Pérez (mod)
+// Vídeo de ED (mod)
 //recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
 ScopeIF scope = scopeManager.getCurrentScope();
 TypeTableIF typeTable = scope.getTypeTable ();
@@ -377,7 +377,7 @@ RESULT = ids;
 :}
                       | IDENTIFICADOR:id listadoIDs:ids SEMI_COLON {: 
 //!!! A lo mejor esto está mal declarado
-// Copiado del vídeo de Pérez (mod)
+// Vídeo de ED (mod)
 //recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
 ScopeIF scope = scopeManager.getCurrentScope();
 TypeTableIF typeTable = scope.getTypeTable ();
@@ -425,12 +425,7 @@ listadoIDs ::= id:ident listadoIDs1:listadoIdents {:
 	listado.addList((Listadoids) listadoIdents);
 
 	//ScopeIF ambito = scopeManager.getCurrentScope();
-/* Código no revisado
-	IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
-	cb.addQuadruples(s.getIntermediateCode());
-	cb.addQuadruples(lista.getIntermediateCode());
-	lista.setIntermediateCode(cb.create());
-*/
+
 
 	RESULT = listado; 
 :};
@@ -557,28 +552,38 @@ parametros ::= expresion {: RESULT = null; :} | expresion COLON parametros {: RE
 
 //  SENTENCIAS
 
-bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
-// abrir ámbitos (resumido)
-scopeManager.openScope("bloque");//id.getLexema());
+bloque ::= OPEN_PARENTHESIS nuevobloque seccionVariables listadoSentencias:sentencias CLOSE_PARENTHESIS {: 
 ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+
+
+
+RESULT = null;
 
 // cerrar ámbito (resumido)
 System.out.println("FIN: " + scope.getName());
 scopeManager.closeScope();
-RESULT = null; :}
- 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS {: 
-// abrir ámbitos (resumido)
-scopeManager.openScope("bloque");//id.getLexema());
+:}
+ 	|  OPEN_PARENTHESIS nuevobloque listadoSentencias:sentencias CLOSE_PARENTHESIS {: 
 ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
+
+RESULT = null;
 
 // cerrar ámbito (resumido)
 System.out.println("FIN: " + scope.getName());
 scopeManager.closeScope();
-RESULT = null; :};
+:};
 
-listadoSentencias ::= listadoSentencias sentencia {: RESULT = null; :} | sentencia {: RESULT = null; :};
+listadoSentencias ::= listadoSentencias:lista sentencia:sent {: 
+	
+
+	RESULT = null;
+
+:} | sentencia:sent {: 
+
+
+	RESULT = null;
+
+:};
 
 sentencia ::= sentenciaDevuelve {: RESULT = null; :}
 	| sentenciaIncremento {: RESULT = null; :}
@@ -588,7 +593,7 @@ sentencia ::= sentenciaDevuelve {: RESULT = null; :}
 	| sentenciaAlternativas {: RESULT = null; :}
 	| sentenciaMientras {: RESULT = null; :}
 	| sentenciaLlamadaFuncion {: RESULT = null; :}
-	| sentenciaSalida {: RESULT = null; :}
+	| sentenciaSalida:s {: RESULT = s; :}
 	| bloque {: RESULT = null; :};
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: RESULT = null; :}	
@@ -624,7 +629,29 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia {: RESULT 
 sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: RESULT = null; :};
 
 sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:salida CLOSE_KEY SEMI_COLON 
-{: System.out.println("CodInt: PRINT: " + salida); RESULT = null; :} // Entiendo que aquí tiene que ser más profesional y hacer referencia a la tabla de símbolos
-	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON {: RESULT = null; :};
-opcionesEscribe ::= epsilon {: RESULT = null; :} | STRING:string {: RESULT = string; :};
-opcionesEscribeEnt ::= epsilon {: RESULT = null; :} | expresion {: RESULT = null; :};
+{: 
+	Sentenciasalida s = new Sentenciasalida();		// Comentar en ejecución - uso no claro
+	ScopeIF scope = scopeManager.getCurrentScope();
+	IntermediateCodeBuilder cb = new IntermediateCodeBuilder(scope);
+
+// CÓDIGO INTERMEDIO
+System.out.println("CodInt: PRINT: " + salida);
+
+String texto = (String) salida;
+	
+	if(!texto.isEmpty() || texto!=null) {
+		cb.addQuadruple("string", texto);
+	} else {
+		cb.addQuadruple("empty");
+System.out.println("cadena vacia");
+	}
+	s.setIntermediateCode(cb.create());
+
+RESULT = s;
+
+:} // Entiendo que aquí tiene que ser más profesional y hacer referencia a la tabla de símbolos
+	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON {:
+ RESULT = null; 
+:};
+opcionesEscribe ::= epsilon {: RESULT = new String(); :} | STRING:string {: RESULT = string.getLexema(); :};
+opcionesEscribeEnt ::= epsilon {: RESULT = null; :} | expresion:expr {: RESULT = null; :}; // poner expr en retorno
