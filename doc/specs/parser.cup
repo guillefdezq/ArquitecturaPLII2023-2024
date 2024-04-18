@@ -93,86 +93,47 @@ terminal Token STRING;
 
 // Declaracion de no terminales
 
-non terminal Program	 			program;
+non terminal  			program;
 non terminal Axiom		axiom;
 non terminal axiom1,listadoIDs1,id1,funcion1;
-non terminal              			funcionPrincipal;
-// non terminal FuncionPrincipal  			funcionPrincipal;
-non terminal            		    epsilon;
-// non terminal Epsilon		        	epsilon;
-non terminal            			seccionFunciones;
-// non terminal SeccionFunciones			seccionFunciones;
-non terminal                    	funcion;
-// non terminal Funcion        			funcion;
-non terminal            			seccionParametros;
-// non terminal SeccionParametros			seccionParametros;
-non terminal            		    declaracionParametros;
-// non terminal DeclaracionParametros		declaracionParametros;
-non terminal            			parametro;
-// non terminal Parametro			        parametro;
-non terminal            			seccionConstantes;
-// non terminal SeccionConstantes			seccionConstantes;
-non terminal            		    declaracionConstante;
-// non terminal DeclaracionConstante		declaracionConstante;
-non terminal            			seccionTipos;
-// non terminal SeccionTipos			    seccionTipos;
-non terminal            			declaracionTipo;
-// non terminal DeclaracionTipo			declaracionTipo;
-non terminal            		    tamTipo;
-// non terminal TamTipo		        	tamTipo;
-non terminal            			seccionVariables;
-// non terminal SeccionVariables			seccionVariables;
-non terminal             		    declaracionVariable;
-// non terminal DeclaracionVariable 		declaracionVariable;
-non terminal            		    listadoIDs;
-// non terminal ListadoIDs		        	listadoIDs;
-non terminal                        id;
-// non terminal Id                			id;
-non terminal            		    expresion;
-// non terminal Expresion		        	expresion;
-non terminal             	    	accesoVector;
-// non terminal AccesoVector 	    		accesoVector;
-non terminal            	    	llamadaFuncion;
-// non terminal LlamadaFuncion	    		llamadaFuncion;
-non terminal            			bloque;
-// non terminal Bloque			            bloque;
-non terminal            			listadoSentencias;
-// non terminal ListadoSentencias			listadoSentencias;
-non terminal            			sentencia;
-// non terminal Sentencia			        sentencia;
-non terminal            		    sentenciaIncremento;
-// non terminal SentenciaIncremento		sentenciaIncremento;
-non terminal            		    sentenciaAsignacion;
-// non terminal SentenciaAsignacion		sentenciaAsignacion;
-non terminal            			ref;
-// non terminal Ref			            ref;
-non terminal            	        sentenciaAsignacionSuma;
-// non terminal SentenciaAsignacionSuma	sentenciaAsignacionSuma;
-non terminal            		    sentenciaSi;
-// non terminal SentenciaSi		    	sentenciaSi;
-non terminal            		    sentenciaAlternativas;
-// non terminal SentenciaAlternativas		sentenciaAlternativas;
-non terminal            			casosAlternativa;
-// non terminal CasosAlternativa			casosAlternativa;
-non terminal            			casoAlt; 
-// non terminal CasoAlt			        casoAlt; 
-non terminal            			porDefecto;
-// non terminal PorDefecto			        porDefecto;
-non terminal            			sentenciaMientras;
-// non terminal SentenciaMientras			sentenciaMientras;
-non terminal            	        sentenciaLlamadaFuncion;
-// non terminal SentenciaLlamadaFuncion	sentenciaLlamadaFuncion;
-non terminal            		    parametros;
-// non terminal Parametros		        	parametros;
-non terminal            			sentenciaSalida;
-// non terminal SentenciaSalida			sentenciaSalida;
-non terminal            			opcionesEscribe;
-// non terminal OpcionesEscribe			opcionesEscribe;
-non terminal            			opcionesEscribeEnt;
-// non terminal OpcionesEscribeEnt			opcionesEscribeEnt;
-non terminal            			sentenciaDevuelve;
-// non terminal SentenciaDevuelve			sentenciaDevuelve;
-non terminal						nuevobloque;
+non terminal  			funcionPrincipal;
+non terminal			epsilon;
+non terminal			seccionFunciones;
+non terminal			funcion;
+non terminal			seccionParametros;
+non terminal		 	declaracionParametros;
+non terminal			parametro;
+non terminal			seccionConstantes;
+non terminal			declaracionConstante;
+non terminal			seccionTipos;
+non terminal			declaracionTipo;
+non terminal			tamTipo;
+non terminal			seccionVariables;
+non terminal 			declaracionVariable;
+non terminal			listadoIDs;
+non terminal			id;
+non terminal			expresion;
+non terminal 			accesoVector;
+non terminal			llamadaFuncion;
+non terminal			bloque;
+non terminal			listadoSentencias;
+non terminal			sentencia;
+non terminal			sentenciaIncremento;
+non terminal			sentenciaAsignacion;
+non terminal			ref;
+non terminal			sentenciaAsignacionSuma;
+non terminal			sentenciaSi;
+non terminal			sentenciaAlternativas;
+non terminal			casosAlternativa;
+non terminal			casoAlt; 
+non terminal			porDefecto;
+non terminal			sentenciaMientras;
+non terminal			sentenciaLlamadaFuncion;
+non terminal			parametros;
+non terminal			sentenciaSalida;
+non terminal			opcionesEscribe;
+non terminal			opcionesEscribeEnt;
+non terminal			sentenciaDevuelve;
 
 // Declaracion de relaciones de precedencia
 precedence left     AND_LOGICA;
@@ -195,44 +156,9 @@ start with program;
 program ::= 
   {: 
         syntaxErrorManager.syntaxInfo ("Starting parsing..."); 
-
-// abrir ámbitos (resumido)
-scopeManager.openScope("global");
-ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + ")");
-
-//Obtenemos del ámbito creado la Tabla del Tipos
-TypeTableIF typeTable = scope.getTypeTable ();
-SymbolTableIF sTable = scope.getSymbolTable();
-
-
-
-//Introduccion del Tipo Simple Entero o Integer y Logico o Booleano, vacio y vector
-TypeSimple tsEntero = new TypeSimple(scope);
-tsEntero.setName("ENTERO");
-typeTable.addType("ENTERO",tsEntero);
-TypeSimple tsLogico = new TypeSimple(scope);
-tsLogico.setName("LOGICO");
-typeTable.addType("LOGICO",tsLogico);
-// Es muy posible que este no sea necesario
-TypeSimple tsVacio = new TypeSimple(scope);
-tsVacio.setName("VACIO");
-typeTable.addType("VACIO",tsVacio);
-
-TypeArray tsVector = new TypeArray(scope);
-tsVector.setName("VECTORexp");
-typeTable.addType("VECTORexp",tsVector);
-System.out.println("GLOBAL: creando tipos");
-
    :}
   axiom:ax
   {:   		
-
-// cerrar ámbito (resumido)
-ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("FIN: " + scope.getName());
-scopeManager.closeScope();
-
   		// No modificar esta estructura, aunque se pueden añadir más acciones semánticas
   		
   		//List intermediateCode = ax.getIntermediateCode ();
@@ -253,545 +179,123 @@ epsilon ::= ;
 
 axiom ::=  seccionConstantes seccionTipos  axiom1 ;
 
-axiom1 ::= seccionVariables seccionFunciones {: RESULT = null; :}
- | seccionFunciones {: RESULT = null; :};
+axiom1 ::= seccionVariables seccionFunciones  | seccionFunciones;
 
-seccionConstantes ::= declaracionConstante seccionConstantes {: RESULT = null; :}
-                      | epsilon {: RESULT = null; :};
+seccionConstantes ::= declaracionConstante seccionConstantes
+                      | epsilon;
                       
                       
-declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:valor SEMI_COLON {: 
-//!!! A lo mejor esto está mal declarado
-// Vídeo de ED (mod)
-//recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
-ScopeIF scope = scopeManager.getCurrentScope();
-TypeTableIF typeTable = scope.getTypeTable ();
-SymbolTableIF sTable = scope.getSymbolTable(); 
-String nombre = id.getLexema();
-String contenido = valor.getLexema();
-//comprobamos que la constante no este ya declarada en la tabla de símbolos
-if (sTable.containsSymbol(nombre)) {
-	semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
-} else {
-	//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
-	TypeIF tipo = scopeManager.searchType("ENTERO");
-	SymbolConstant simboloConstante = new SymbolConstant(scope, nombre, tipo);
-	simboloConstante.setValor(contenido);
-	sTable.addSymbol(nombre, simboloConstante);
+declaracionConstante ::= CONSTANTE IDENTIFICADOR NUMERO SEMI_COLON;
 
-	// Mirando que tiene
-System.out.println("NEW: constante: " + nombre + "@" + scope.getName() + "=" + contenido);
-
-
-// Intentando buscar - TRY FETCH
-SymbolIF fetchSymbol = sTable.getSymbol(nombre);
-System.out.println(fetchSymbol.getType());
-
-} //fin if
-
-RESULT = null; 
-:};
-
-seccionTipos ::= declaracionTipo seccionTipos {: RESULT = null; :}		// recursividad para añadir más tipos
-                      | epsilon {: RESULT = null; :};
+seccionTipos ::= declaracionTipo seccionTipos
+                      | epsilon;
                       
-declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tamtipo CLOSE_BRACKET SEMI_COLON {: // esto es para vectores (falta tamaño)
-//recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
-ScopeIF scope = scopeManager.getCurrentScope();
-TypeTableIF typeTable = scope.getTypeTable ();
-SymbolTableIF sTable = scope.getSymbolTable(); 
-String nombre = id.getLexema();
-String tamano = tamtipo.toString();
-//comprobamos que la constante no este ya declarada en la tabla de símbolos
-if (typeTable.containsType(nombre)) {
-	semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarada");
-} else {
-	TypeArray tsVector = new TypeArray(scope);
-	tsVector.setName(nombre);
-	// faltan métodos de tamaño y hacer con tam
-	typeTable.addType(nombre,tsVector);
-	typeTable.addType(nombre, tsVector);
+declaracionTipo ::= TIPO ENTERO IDENTIFICADOR OPEN_BRACKET tamTipo CLOSE_BRACKET SEMI_COLON;
 
-	// Mirando que tiene
-System.out.println("NEW: vector: " + nombre + "@" + scope.getName() + "=" + "tamaño(" + tamano + ")"); //contenido);
+tamTipo ::= NUMERO | IDENTIFICADOR;
 
+seccionVariables ::= seccionVariables declaracionVariable | declaracionVariable;
 
-// Intentando buscar - TRY FETCH
-TypeIF tipo = typeTable.getType(nombre);
-System.out.println(tipo);
-
-} //fin if
-
-RESULT = null; 
-:};
-
-tamTipo ::= NUMERO:numero {: RESULT = numero.getLexema(); :} | IDENTIFICADOR:id {: 
-ScopeIF scope = scopeManager.getCurrentScope();
-TypeTableIF typeTable = scope.getTypeTable ();
-SymbolTableIF sTable = scope.getSymbolTable();
-String nombre = id.getLexema();
-if (!sTable.containsSymbol(nombre)) {
-		semanticErrorManager.semanticFatalError("Variable " + nombre + " no localizada");
-}
-SymbolIF wsimbolo = sTable.getSymbol(nombre);  // No estoy inspirado, pero debería poder obtener el valor de la variable
-RESULT = null; :};  // En identificador, debería buscar este en la tabla de símbolos.
-
-seccionVariables ::= seccionVariables declaracionVariable {: RESULT = null; :} | declaracionVariable {: RESULT = null; :};  // recursividad para declarar varias variables
-
-declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {: 
-//!!! A lo mejor esto está mal declarado
-// Vídeo de ED (mod)
-//recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
-ScopeIF scope = scopeManager.getCurrentScope();
-TypeTableIF typeTable = scope.getTypeTable ();
-SymbolTableIF sTable = scope.getSymbolTable();
-ArrayList<String> nombres = ((Listadoids) ids).getIdentificadores();
-String contenido = null;
-if (nombres.size() > 1 && nombres.get(nombres.size()-2).contains("=")) { contenido = nombres.get(nombres.size()-1);} 
-
-//comprobamos que la constante no este ya declarada en la tabla de símbolos
-
-for (String nombre : nombres) {
-	if (nombre.contains("=")) { break;} 
-	if (sTable.containsSymbol(nombre)) {
-		semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
-	} else {
-		//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
-		TypeIF tipo = scopeManager.searchType("ENTERO");
-		SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-		simboloVariable.setValor(contenido);
-		sTable.addSymbol(nombre, simboloVariable);
-
-		// Mirando que tiene
-	System.out.println("NEW: entero: " + nombre + "@" + scope.getName() + "=" + contenido);
-
-	// Intentando buscar - TRY FETCH
-	System.out.println(sTable.getSymbol(nombre));
-	} //fin if
-
-} //fin for
-
-RESULT = ids; 
-:}
-                      | IDENTIFICADOR:id listadoIDs:ids SEMI_COLON {: 
-//!!! A lo mejor esto está mal declarado
-// Vídeo de ED (mod)
-//recuperamos el ámbito donde nos encontramos y obtenemos la tabla de símbolos
-ScopeIF scope = scopeManager.getCurrentScope();
-TypeTableIF typeTable = scope.getTypeTable ();
-SymbolTableIF sTable = scope.getSymbolTable();
-String identificador = id.getLexema(); 
-ArrayList<String> nombres = ((Listadoids) ids).getIdentificadores();
-String contenido = null;
-if (nombres.size() > 1 && nombres.get(nombres.size()-2).contains("=")) { contenido = nombres.get(nombres.size()-1);System.out.println("DETECTED VALUE = " + contenido);} 
-
-//comprobamos que la constante no este ya declarada en la tabla de símbolos
-
-// No sé si es posible hacer uso de asignación en variables que no son del tipo entero.
-
-for (String nombre : nombres) {
-	if (nombre.contains("=")) { break;} 
-	if (sTable.containsSymbol(nombre)) {
-		semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
-	} else {
-		//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
-		if (!scopeManager.containsType(identificador)) { semanticErrorManager.semanticFatalError("Tipo \"" + nombre + "\" no existe"); }
-		TypeIF tipo = scopeManager.searchType(identificador);
-		SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-		simboloVariable.setValor(contenido);
-		sTable.addSymbol(nombre, simboloVariable);
-
-		// Mirando que tiene
-	System.out.println("NEW: "+ identificador + ": " + nombre + "@" + scope.getName() + "=" + contenido);
-
-	// Intentando buscar - TRY FETCH
-	SymbolIF fetchSymbol = sTable.getSymbol(nombre);
-	System.out.println(fetchSymbol.getType());
-
-	} //fin if
-
-} //fin for
-
-RESULT = ids; 
-:};
+declaracionVariable ::= ENTERO listadoIDs SEMI_COLON
+                      | IDENTIFICADOR listadoIDs SEMI_COLON;
                       
-listadoIDs ::= id:ident listadoIDs1:listadoIdents {: 
-	Listadoids listado = new Listadoids();
-	for (String element : (ArrayList<String>)ident) {  // ¿No sería más fácil usar sólo un tipo de adición?
-		listado.addElement((String) element); 
-	}
-	listado.addList((Listadoids) listadoIdents);
+listadoIDs ::= id listadoIDs1;
 
-	//ScopeIF ambito = scopeManager.getCurrentScope();
+listadoIDs1 ::= COLON listadoIDs
+                      | epsilon;
 
+id ::= IDENTIFICADOR id1;
 
-	RESULT = listado; 
-:};
+id1 ::= epsilon
+        | ASSIGN NUMERO;
 
-listadoIDs1 ::= COLON listadoIDs:listadoIdents {: RESULT = listadoIdents; :}
-                      | epsilon {: RESULT = new Listadoids(); :};
-
-id ::= IDENTIFICADOR:ident id1:asign {:
-
-	ArrayList<String> salida = new ArrayList<String>();
-	salida.add(ident.getLexema());
-	if (asign != null) {
-		salida.add("=");
-		salida.add((String)asign);
-	}
-
-// RESULT = ident.getLexema();
-	RESULT = salida; 
-:};
-
-id1 ::= epsilon {: RESULT = null; :}
-        | ASSIGN NUMERO:num {: RESULT = num.getLexema(); :};
-
-seccionFunciones ::= funcion seccionFunciones {: RESULT = null; :}
-                      | funcionPrincipal {: RESULT = null; :};
+seccionFunciones ::= funcion seccionFunciones
+                      | funcionPrincipal;
                       
-funcion ::= VACIO IDENTIFICADOR:id nuevobloque OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1
-{: 
- :}
-            | ENTERO IDENTIFICADOR:id nuevobloque  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1:salida
-{: 
-	// creo que la salida viene del último no terminal
-	// RESULT = salida;
-:};		// El RESULT debe devolver lo que se encuentre en la variable return de algunas de estas opciones...
+funcion ::= VACIO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1
+            | ENTERO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1;
                      
          
-funcion1 ::= listadoSentencias:salida CLOSE_PARENTHESIS {: 
-ScopeIF scope = scopeManager.getCurrentScope();
-
-// cerrar ámbito (resumido)
-System.out.println("FIN: " + scope.getName());
-scopeManager.closeScope();
-// RESULT = salida; ?
-RESULT = null; :}
-                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS {: 
-ScopeIF scope = scopeManager.getCurrentScope();
-
-// cerrar ámbito (resumido)
-System.out.println("FIN: " + scope.getName());
-scopeManager.closeScope();
-// RESULT = salida; ?
-RESULT = null; :};
+funcion1 ::= listadoSentencias CLOSE_PARENTHESIS
+                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS;
 
 
 
 
 
-seccionParametros ::= declaracionParametros {: RESULT = null; :} | epsilon {: RESULT = null; :};
+seccionParametros ::= declaracionParametros | epsilon;
 
-declaracionParametros  ::= parametro {: RESULT = null; :} | parametro COLON declaracionParametros {: RESULT = null; :};
+declaracionParametros  ::= parametro | parametro COLON declaracionParametros;
 
-parametro ::= ENTERO IDENTIFICADOR {: 
-//Insertar tabla de tipos
-RESULT = null; :} | IDENTIFICADOR IDENTIFICADOR {: 
-//Insertar tabla de tipos
-RESULT = null; :};
+parametro ::= ENTERO IDENTIFICADOR | IDENTIFICADOR IDENTIFICADOR;
 
-funcionPrincipal ::= VACIO principal:id OPEN_KEY CLOSE_KEY nuevobloque OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
-{:
-ScopeIF scope = scopeManager.getCurrentScope();
+funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
+	|  VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS;
 
-// cerrar ámbito (resumido)
-System.out.println("FIN: " + scope.getName());
-scopeManager.closeScope();
 
-//System.out.println ( "El nombre del nuevo ambito es: " + scope.getName());
-//System.out.println ("El nivel del ambito es: " + scope.getLevel());
-//System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
-//SymbolTableIF tablaSimbolosPrincipal = scope.getSymbolTable();
-//System.out.println("Probando esto " + tablaSimbolosPrincipal);
-//TypeTableIF tablaTiposPrincipal = scope.getTypeTable();
-//System.out.println("Otra vez probando " + tablaTiposPrincipal);
- 
-//SymbolIF fxprincipal = new SymbolProcedure(scope, "procedureprincipal", null);
-//fxprincipal.setName("FuncionPrincipal");
-//sTable.addSymbol(fxprincipal);
-
-RESULT = null;
-:}
-	|  VACIO principal:id OPEN_KEY CLOSE_KEY nuevobloque OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: 
-ScopeIF scope = scopeManager.getCurrentScope();
-// cerrar ámbito (resumido)
-System.out.println("FIN: " + scope.getName());
-scopeManager.closeScope();
-RESULT = null; :};
-
-nuevobloque ::= {:
-// abrir ámbitos (resumido)
-scopeManager.openScope("nuevoBloque"+ scopeManager.getCurrentScope().getLevel());
-ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + ")");
-:}; 
 
 // EXPRESIONES
 
-expresion ::= NUMERO:n {:
-		ScopeIF ambito = scopeManager.getCurrentScope();
-		TypeTableIF tiposTabla = ambito.getTypeTable();
-		TypeIF tipo = tiposTabla.getType("ENTERO");
-		int num = Integer.parseInt(n.getLexema());
-		Expresion exp = new Expresion(tipo);
+expresion ::= NUMERO | IDENTIFICADOR
+	|  OPEN_KEY expresion CLOSE_KEY 
+ 	|  expresion PLUS expresion
+ 	|  expresion MULT expresion
+ 	|  expresion AUTO_INCREMENTO
+ 	|  NEGACION expresion
+ 	|  expresion LOWER_THAN expresion
+ 	|  expresion EQUAL expresion
+ 	|  expresion AND_LOGICA expresion
+ 	|  accesoVector
+ 	|  llamadaFuncion;
 
-		IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
-		TemporalFactory tF = new TemporalFactory(ambito);
-		TemporalIF temp = tF.create();
-		cb.addQuadruple("MV", temp, new Value(num));
-		exp.setIntermediateCode(cb.create());
-		exp.setTemporal(temp);
+accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET;
 
-		System.out.println("numero");
-
-		RESULT = exp;
- :} | IDENTIFICADOR:id {: // Devolver valor de un identificador
-		String identificador = id.getLexema(); 
-
-		Expresion exp = new Expresion(identificador);
-		if(scopeManager.containsSymbol(identificador)) {
-			// Solo funcionando para enteros ahora
-
-			// Search for SymbolVariable
-			SymbolIF symbol = scopeManager.searchSymbol(identificador);
-			SymbolVariable variable = (SymbolVariable) symbol;
-			int num = Integer.parseInt(variable.getValor());
-
-			ScopeIF ambito = scopeManager.getCurrentScope();
-			IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
-			TemporalFactory tF = new TemporalFactory(ambito);
-			TemporalIF temp = tF.create();
-
-			exp.setTemporal(temp);
-
-			System.out.println("Variable: " + num);
-
-		} else {
-			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
-		}
-		RESULT = exp;
-		
- :} |  OPEN_KEY expresion:expr CLOSE_KEY  {:
-
-		  RESULT = null;
- :}	|  expresion:exp1 PLUS expresion:exp2 {: 
-		RESULT = null;
- :}	|  expresion:a MULT expresion:b {: RESULT = null; :}
- 	|  expresion:autoincre AUTO_INCREMENTO {: RESULT = null; :}
- 	|  NEGACION expresion:negac {: RESULT = null; :}
- 	|  expresion LOWER_THAN expresion {: RESULT = null; :}
- 	|  expresion EQUAL expresion {: RESULT = null; :}
- 	|  expresion AND_LOGICA expresion {: RESULT = null; :}
- 	|  accesoVector {: RESULT = null; :}
- 	|  llamadaFuncion {: RESULT = null; :};
-
-accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET {: RESULT = null; :};
-
-llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY {: RESULT = null; :}
-	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: RESULT = null; :};
-parametros ::= expresion {: RESULT = null; :} | expresion COLON parametros {: RESULT = null; :};
-// Hacer una lista como en la lista de identificadores pero con ¿expresiones?
+llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY
+	| IDENTIFICADOR OPEN_KEY CLOSE_KEY;
+parametros ::= expresion | expresion COLON parametros;
 
 //  SENTENCIAS
 
-bloque ::= OPEN_PARENTHESIS nuevobloque seccionVariables listadoSentencias:sentencias CLOSE_PARENTHESIS {: 
-ScopeIF scope = scopeManager.getCurrentScope();
+bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS
+ 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS;
 
+listadoSentencias ::= listadoSentencias sentencia | sentencia;
 
+sentencia ::= sentenciaDevuelve
+	| sentenciaIncremento
+	| sentenciaAsignacion
+	| sentenciaAsignacionSuma
+	| sentenciaSi
+	| sentenciaAlternativas
+	| sentenciaMientras
+	| sentenciaLlamadaFuncion
+	| sentenciaSalida
+	| bloque;
 
-RESULT = null;
+sentenciaDevuelve ::= DEVUELVE SEMI_COLON	
+	| DEVUELVE expresion SEMI_COLON;
 
-// cerrar ámbito (resumido)
-System.out.println("FIN: " + scope.getName());
-scopeManager.closeScope();
-:}
- 	|  OPEN_PARENTHESIS nuevobloque listadoSentencias:sentencias CLOSE_PARENTHESIS {: 
-ScopeIF scope = scopeManager.getCurrentScope();
+sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON;
 
-RESULT = null;
+sentenciaAsignacion ::= ref ASSIGN expresion SEMI_COLON;
+ref ::= IDENTIFICADOR | accesoVector;
 
-// cerrar ámbito (resumido)
-System.out.println("FIN: " + scope.getName());
-scopeManager.closeScope();
-:};
+sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON;
 
-listadoSentencias ::= listadoSentencias:lista sentencia:sent {: 
+sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia
+	 | SI OPEN_KEY expresion CLOSE_KEY sentencia;
 	
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS;
+casosAlternativa ::= casosAlternativa casoAlt | casoAlt;
 
-	RESULT = null;
+casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON;
+porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON | epsilon; 
 
-:} | sentencia:sent {: 
+sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia;
 
+sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON;
 
-	RESULT = null;
-
-:};
-
-sentencia ::= sentenciaDevuelve:s {: RESULT = s; :}
-	| sentenciaIncremento:s {: RESULT = s; :}
-	| sentenciaAsignacion:s {: RESULT = s; :}
-	| sentenciaAsignacionSuma:s {: RESULT = s; :}
-	| sentenciaSi:s {: RESULT = s; :}
-	| sentenciaAlternativas:s {: RESULT = s; :}
-	| sentenciaMientras:s {: RESULT = s; :}
-	| sentenciaLlamadaFuncion:s {: RESULT = s; :}
-	| sentenciaSalida:s {: RESULT = s; :}
-	| bloque {: RESULT = null; :};
-
-sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: RESULT = null; :}	
-	| DEVUELVE expresion:exp SEMI_COLON {: 
-		// Recuperar el nombre del ámbito actual
-		String nombre = scopeManager.getCurrentScope().getName();
-		TypeIF tipoSubprograma = scopeManager.searchType(nombre);
-		Sentenciadevuelve s = new Sentenciadevuelve();
-
-		// CÓDIGO INTERMEDIO
-		ScopeIF ambito = scopeManager.getCurrentScope();
-		IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
-		/* Comentado hasta que funcione exp
-		cb.addQuadruples(exp.getIntermediateCode());		
-		//cb.addQuadruple("RETURN", exp.getTemporal());		// Posible incorrecto
-
-		s.setIntermediateCode(cb.create());
-		s.setTemporal(exp.getTemporal());
-		*/
-		RESULT = s; 
-:};  // Entiendo que esto es lo que le debe devolver...?
-
-sentenciaIncremento ::= IDENTIFICADOR:id AUTO_INCREMENTO SEMI_COLON {: 
-		// Recuperar ámbito y tablas
-		ScopeIF scope = scopeManager.getCurrentScope();
-		SymbolTableIF symbolTable = scope.getSymbolTable();
-		TypeTableIF typeTable = scope.getTypeTable();
-		
-		// Recuperar identificador
-		SymbolIF symbol = (SymbolIF) id;
-		Sentenciaincremento s = new Sentenciaincremento();
-		
-		// Comprobar que realmente es tipo entero
-		if (!symbol.getType().equals(scopeManager.searchType("ENTERO")))
-			semanticErrorManager.semanticFatalError("Tipo de variable " + symbol.getType() + " no coincide con tipo entero");
-		
-		// Código intermedio para aumentar valor
-
-
-		RESULT = s;
- :};
-
-sentenciaAsignacion ::= ref:id ASSIGN expresion:exp SEMI_COLON {:
-		// Comprobar que ambos tipos son iguales
-		SymbolIF symbol = (SymbolIF) id;
-		Expresion expresion = (Expresion) exp;
-		if (!symbol.getType().equals(expresion.getType()))
-			semanticErrorManager.semanticFatalError("Tipo de variable " + symbol.getType() + " no coincide con el tipo de expresión");
-		
-		// Pensamiento: creo que es irrelevante poner el valor de las variables en la tabla de símbolos, ya que al final se almacena con el código intermedio.
-		// 				En ese caso, la siguiente parte debería ser código intermedio.
-
-		Sentenciaasignacion sentencia = new Sentenciaasignacion();
-		
-		// CÓDIGO INTERMEDIO
-		ScopeIF ambito = scopeManager.getCurrentScope();
-		IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
-		TemporalFactory tF = new TemporalFactory(ambito);
-		TemporalIF temp = tF.create();
-		/*
-		cb.addQuadruples(exp.getIntermediateCode());
-		cb.addQuadruples(id.getIntermediateCode());
-		cb.addQuadruple("STP", id.getTemporal(), exp.getTemporal());
-		sentencia.setIntermediateCode(cb.create());
-		*/
-
-		RESULT = sentencia;
-:};
-ref ::= IDENTIFICADOR:id {: 
-		// Devolver identificador variable de la tabla de símbolos
-		ScopeIF scope = scopeManager.getCurrentScope();
-		TypeTableIF typeTable = scope.getTypeTable ();
-		SymbolTableIF sTable = scope.getSymbolTable();
-		SymbolIF symbol = sTable.getSymbol(id.getLexema());
-		if (symbol == null) {
-			semanticErrorManager.semanticFatalError("Variable " + id.getLexema() + " no declarada");
-		}
-		RESULT = symbol;
- :} | accesoVector {: RESULT = null; :};
-
-sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: RESULT = null; :};
-
-sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia {: RESULT = null; :}
-	 | SI OPEN_KEY expresion CLOSE_KEY sentencia {: RESULT = null; :};
-	
-sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: 
-// abrir ámbitos (resumido)
-scopeManager.openScope("alternativas");//id.getLexema());
-ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("AMB: " + scope.getName() + " (" + scope.getLevel() + ")");
-
-// cerrar ámbito (resumido)
-System.out.println("FIN: " + scope.getName());
-scopeManager.closeScope();
-RESULT = null; :};
-casosAlternativa ::= casosAlternativa casoAlt {: RESULT = null; :} | casoAlt {: RESULT = null; :};
-
-casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: RESULT = null; :};
-porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON {: RESULT = null; :} | epsilon {: RESULT = null; :}; 
-
-sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia {: RESULT = null; :};
-
-sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: RESULT = null; :};
-
-sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:salida CLOSE_KEY SEMI_COLON 
-{: 
-	Sentenciasalida s = new Sentenciasalida();		// Comentar en ejecución - uso no claro
-	ScopeIF scope = scopeManager.getCurrentScope();
-	IntermediateCodeBuilder cb = new IntermediateCodeBuilder(scope);
-
-// CÓDIGO INTERMEDIO
-System.out.println("CodInt: PRINT: " + salida);
-
-String texto = (String) salida;
-	
-	if(texto!=null) {
-		cb.addQuadruple("string", texto);
-	} else {
-		cb.addQuadruple("empty");
-		System.out.println("no existe cadena / NULL");
-	}
-	s.setIntermediateCode(cb.create());
-
-RESULT = s;
-
-:} // Entiendo que aquí tiene que ser más profesional y hacer referencia a la tabla de símbolos
-	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:entero CLOSE_KEY SEMI_COLON {:
-
-		// Copiar código de la otra alternativa
-			Sentenciasalida s = new Sentenciasalida();		// Comentar en ejecución - uso no claro
-			ScopeIF scope = scopeManager.getCurrentScope();
-			IntermediateCodeBuilder cb = new IntermediateCodeBuilder(scope);
-
-		// CÓDIGO INTERMEDIO por definir
-		String salida = (String) ( ((String) entero).contains("vacio") ? "" : entero);
-
-		// CÓDIGO INTERMEDIO por definir
-		System.out.println("CodInt: PRINT: " + salida);
-
-		String texto = (String) salida;
-			
-
-		RESULT = s;
-:};
-opcionesEscribe ::= epsilon {: String cadena = null; RESULT = cadena; :} | STRING:string {: RESULT = string.getLexema(); :};
-opcionesEscribeEnt ::= epsilon {: RESULT = "vacio"; :} | expresion:expr {: 
-
-// ¿Comprobación de tipo entero?
-
-// Esta sección no funciona
-
-String salida = (String) expr;
-
-
-System.out.println("Entrada: " + salida);
-
-RESULT = salida; 
-:}; // poner expr en retorno
+sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON
+	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON;
+opcionesEscribe ::= epsilon | STRING;
+opcionesEscribeEnt ::= epsilon | expresion;
