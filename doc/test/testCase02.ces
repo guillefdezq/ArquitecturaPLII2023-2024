@@ -2,13 +2,11 @@
 vacio principal () {
 
 
-entero hola = 10;
+entero a = 10;
 
 
 escribe("hola");
-escribeEnt(hola);
-escribeEnt(9);
-escribeEnt((23))
+escribe(a);
 
 devuelve;
 
