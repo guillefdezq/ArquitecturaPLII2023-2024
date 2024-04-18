@@ -177,125 +177,139 @@ program ::=
 epsilon ::= ;
 
 
-axiom ::=  seccionConstantes seccionTipos  axiom1 ;
+axiom ::=  seccionConstantes seccionTipos  axiom1 {: System.out.println("READ> axiom = constantes y tipos"); RESULT = null; :} ;
 
-axiom1 ::= seccionVariables seccionFunciones  | seccionFunciones;
+axiom1 ::= seccionVariables seccionFunciones {: System.out.println("READ> axiom1 = variables y funciones"); RESULT = null; :}
+  | seccionFunciones {: System.out.println("READ> axiom1 = solo funciones"); RESULT = null; :};
 
-seccionConstantes ::= declaracionConstante seccionConstantes
-                      | epsilon;
+seccionConstantes ::= declaracionConstante seccionConstantes {: System.out.println("READ> seccionConstantes + recursion"); RESULT = null; :}
+                      | epsilon {: System.out.println("READ> seccionConstantes = ya está"); RESULT = null; :};
                       
                       
-declaracionConstante ::= CONSTANTE IDENTIFICADOR NUMERO SEMI_COLON;
+declaracionConstante ::= CONSTANTE IDENTIFICADOR NUMERO SEMI_COLON {: System.out.println("READ> declaracionConstante"); RESULT = null; :};
 
-seccionTipos ::= declaracionTipo seccionTipos
-                      | epsilon;
+seccionTipos ::= declaracionTipo seccionTipos {: System.out.println("READ> seccionTipos + recursion"); RESULT = null; :}
+                      | epsilon {: System.out.println("READ> seccionTipos = ya está"); RESULT = null; :};
                       
-declaracionTipo ::= TIPO ENTERO IDENTIFICADOR OPEN_BRACKET tamTipo CLOSE_BRACKET SEMI_COLON;
+declaracionTipo ::= TIPO ENTERO IDENTIFICADOR OPEN_BRACKET tamTipo CLOSE_BRACKET SEMI_COLON {: System.out.println("READ> declaracionTipo"); RESULT = null; :};
 
-tamTipo ::= NUMERO | IDENTIFICADOR;
+tamTipo ::= NUMERO {: System.out.println("READ> tamTipo = NUMERO"); RESULT = null; :}
+ | IDENTIFICADOR {: System.out.println("READ> tamTipo = IDENTIFICADOR"); RESULT = null; :};
 
-seccionVariables ::= seccionVariables declaracionVariable | declaracionVariable;
+seccionVariables ::= seccionVariables declaracionVariable {: System.out.println("READ> seccionVariables + recursion"); RESULT = null; :}
+ | declaracionVariable {: System.out.println("READ> seccionVariables"); RESULT = null; :};
 
-declaracionVariable ::= ENTERO listadoIDs SEMI_COLON
-                      | IDENTIFICADOR listadoIDs SEMI_COLON;
+declaracionVariable ::= ENTERO listadoIDs SEMI_COLON {: System.out.println("READ> declaracionVariable = ENTERO"); RESULT = null; :}
+                      | IDENTIFICADOR listadoIDs SEMI_COLON {: System.out.println("READ> declaracionVariable = IDENTIFICADOR"); RESULT = null; :};
                       
-listadoIDs ::= id listadoIDs1;
+listadoIDs ::= id listadoIDs1 {: System.out.println("READ> listadoIDs"); RESULT = null; :};
 
-listadoIDs1 ::= COLON listadoIDs
-                      | epsilon;
+listadoIDs1 ::= COLON listadoIDs {: System.out.println("READ> listadoIDs1 = más variables"); RESULT = null; :}
+                      | epsilon {: System.out.println("READ> listadoIDs1 = ya está"); RESULT = null; :};
 
-id ::= IDENTIFICADOR id1;
+id ::= IDENTIFICADOR id1 {: System.out.println("READ> id"); RESULT = null; :};
 
-id1 ::= epsilon
-        | ASSIGN NUMERO;
+id1 ::= epsilon {: System.out.println("READ> id1 = epsilon"); RESULT = null; :}
+        | ASSIGN NUMERO {: System.out.println("READ> id1 = ASSIGN NUMERO"); RESULT = null; :};
 
-seccionFunciones ::= funcion seccionFunciones
-                      | funcionPrincipal;
+seccionFunciones ::= funcion seccionFunciones {: System.out.println("READ> seccionFunciones = funciones extra"); RESULT = null; :}
+                      | funcionPrincipal {: System.out.println("READ> seccionFunciones = funcion principal"); RESULT = null; :};
                       
-funcion ::= VACIO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1
-            | ENTERO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1;
+funcion ::= VACIO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = vacio"); RESULT = null; :}
+            | ENTERO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = entero"); RESULT = null; :};
                      
          
-funcion1 ::= listadoSentencias CLOSE_PARENTHESIS
-                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS;
+funcion1 ::= listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
+                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
 
 
 
 
 
-seccionParametros ::= declaracionParametros | epsilon;
+seccionParametros ::= declaracionParametros {: System.out.println("READ> seccionParametros = sí"); RESULT = null; :}
+ | epsilon {: System.out.println("READ> seccionParametros = no"); RESULT = null; :};
 
-declaracionParametros  ::= parametro | parametro COLON declaracionParametros;
+declaracionParametros  ::= parametro {: System.out.println("READ> declaracionParametros = uno/ultimo"); RESULT = null; :}
+ | parametro COLON declaracionParametros {: System.out.println("READ> declaracionParametros = uno mas"); RESULT = null; :};
 
-parametro ::= ENTERO IDENTIFICADOR | IDENTIFICADOR IDENTIFICADOR;
+parametro ::= ENTERO IDENTIFICADOR {: System.out.println("READ> parametro = entero"); RESULT = null; :}
+ | IDENTIFICADOR IDENTIFICADOR {: System.out.println("READ> parametro = identificador"); RESULT = null; :};
 
-funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS
-	|  VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS;
+funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> funcionPrincipal"); RESULT = null; :}
+				  |  VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> funcionPrincipal + seccion variables"); RESULT = null; :};
 
 
 
 // EXPRESIONES
 
-expresion ::= NUMERO | IDENTIFICADOR
-	|  OPEN_KEY expresion CLOSE_KEY 
- 	|  expresion PLUS expresion
- 	|  expresion MULT expresion
- 	|  expresion AUTO_INCREMENTO
- 	|  NEGACION expresion
- 	|  expresion LOWER_THAN expresion
- 	|  expresion EQUAL expresion
- 	|  expresion AND_LOGICA expresion
- 	|  accesoVector
- 	|  llamadaFuncion;
+expresion ::= NUMERO {: System.out.println("READ> expresion = NUMERO"); RESULT = null; :}
+	| IDENTIFICADOR {: System.out.println("READ> expresion = IDENTIFICADOR"); RESULT = null; :}
+	|  OPEN_KEY expresion CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY"); RESULT = null; :}
+ 	|  expresion PLUS expresion {: System.out.println("READ> expresion = PLUS"); RESULT = null; :}
+ 	|  expresion MULT expresion {: System.out.println("READ> expresion = MULT"); RESULT = null; :}
+ 	|  expresion AUTO_INCREMENTO expresion {: System.out.println("READ> expresion = AUTO_INCREMENTO"); RESULT = null; :}
+ 	|  NEGACION expresion {: System.out.println("READ> expresion = NEGACION"); RESULT = null; :}
+ 	|  expresion LOWER_THAN expresion {: System.out.println("READ> expresion = LOWER_THAN "); RESULT = null; :}
+ 	|  expresion EQUAL expresion {: System.out.println("READ> expresion = EQUAL "); RESULT = null; :}
+ 	|  expresion AND_LOGICA expresion {: System.out.println("READ> expresion = AND_LOGICA "); RESULT = null; :}
+ 	|  accesoVector {: System.out.println("READ> expresion = accesoVector"); RESULT = null; :}
+ 	|  llamadaFuncion {: System.out.println("READ> expresion = llamadaFuncion"); RESULT = null; :};
 
-accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET;
+accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET {: System.out.println("READ> accesoVector"); RESULT = null; :};
 
-llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY
-	| IDENTIFICADOR OPEN_KEY CLOSE_KEY;
-parametros ::= expresion | expresion COLON parametros;
+llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY {: System.out.println("READ> llamadaFuncion = conParametros"); RESULT = null; :}
+	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros"); RESULT = null; :};
+parametros ::= expresion {: System.out.println("READ> parametros = expresion"); RESULT = null; :}
+ | expresion COLON parametros {: System.out.println("READ> parametros = expresion COLON parametros"); RESULT = null; :};
 
 //  SENTENCIAS
 
-bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS
- 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS;
+bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :}
+ 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :};
 
-listadoSentencias ::= listadoSentencias sentencia | sentencia;
+listadoSentencias ::= listadoSentencias sentencia {: System.out.println("READ> listadoSentencias = listadoSentencias sentencia"); RESULT = null; :}
+ | sentencia {: System.out.println("READ> listadoSentencias = sentencia"); RESULT = null; :};
 
-sentencia ::= sentenciaDevuelve
-	| sentenciaIncremento
-	| sentenciaAsignacion
-	| sentenciaAsignacionSuma
-	| sentenciaSi
-	| sentenciaAlternativas
-	| sentenciaMientras
-	| sentenciaLlamadaFuncion
-	| sentenciaSalida
-	| bloque;
+sentencia ::= sentenciaDevuelve {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = null; :}
+	| sentenciaIncremento {: System.out.println("READ> sentencia = sentenciaIncremento"); RESULT = null; :}
+	| sentenciaAsignacion {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = null; :}
+	| sentenciaAsignacionSuma {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = null; :}
+	| sentenciaSi {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = null; :}
+	| sentenciaAlternativas {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = null; :}
+	| sentenciaMientras {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = null; :}
+	| sentenciaLlamadaFuncion {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
+	| sentenciaSalida {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = null; :}
+	| bloque {: System.out.println("READ> sentencia = bloque"); RESULT = null; :};
 
-sentenciaDevuelve ::= DEVUELVE SEMI_COLON	
-	| DEVUELVE expresion SEMI_COLON;
+sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve"); RESULT = null; :}
+	| DEVUELVE expresion SEMI_COLON {: System.out.println("READ> sentenciaDevuelve + expresion"); RESULT = null; :};
 
-sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON;
+sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON {: System.out.println("READ> sentenciaIncremento"); RESULT = null; :};
 
-sentenciaAsignacion ::= ref ASSIGN expresion SEMI_COLON;
-ref ::= IDENTIFICADOR | accesoVector;
+sentenciaAsignacion ::= ref ASSIGN expresion SEMI_COLON {: System.out.println("READ> sentenciaAsignacion"); RESULT = null; :};
+ref ::= IDENTIFICADOR {: System.out.println("READ> ref"); RESULT = null; :}
+ | accesoVector {: System.out.println("READ> accesoVector"); RESULT = null; :};
 
-sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON;
+sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma"); RESULT = null; :};
 
-sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia
-	 | SI OPEN_KEY expresion CLOSE_KEY sentencia;
+sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia {: System.out.println("READ> sentenciaSi + SINO"); RESULT = null; :}
+	 | SI OPEN_KEY expresion CLOSE_KEY sentencia {: System.out.println("READ> sentenciaSi"); RESULT = null; :};
 	
-sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS;
-casosAlternativa ::= casosAlternativa casoAlt | casoAlt;
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: System.out.println("READ> sentenciaAlternativas"); RESULT = null; :};
+casosAlternativa ::= casosAlternativa casoAlt {: System.out.println("READ> casosAlternativa = casoAlternativa"); RESULT = null; :}
+ | casoAlt {: System.out.println("READ> casoAlternativa = casoAlt"); RESULT = null; :};
 
-casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON;
-porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON | epsilon; 
+casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> casoAlt"); RESULT = null; :};
+porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> porDefecto = PORDEFECTO"); RESULT = null; :}
+ | epsilon {: System.out.println("READ> porDefecto = epsilon"); RESULT = null; :};
 
-sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia;
+sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia {: System.out.println("READ> sentenciaMientras"); RESULT = null; :};
 
-sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON;
+sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
 
-sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON
-	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON;
-opcionesEscribe ::= epsilon | STRING;
-opcionesEscribeEnt ::= epsilon | expresion;
+sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON {: System.out.println("READ> sentenciaSalida = ESCRIBE"); RESULT = null; :}
+	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON {: System.out.println("READ> sentenciaSalida = ESCRIBE_ENT"); RESULT = null; :};
+opcionesEscribe ::= epsilon {: System.out.println("READ> opcionesEscribe = epsilon"); RESULT = null; :}
+ | STRING {: System.out.println("READ> opcionesEscribe = STRING"); RESULT = null; :};
+opcionesEscribeEnt ::= epsilon {: System.out.println("READ> opcionesEscribeEnt = epsilon"); RESULT = null; :}
+ | expresion {: System.out.println("READ> opcionesEscribeEnt = expresion"); RESULT = null; :};
