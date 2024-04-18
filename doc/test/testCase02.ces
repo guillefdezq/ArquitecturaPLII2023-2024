@@ -2,11 +2,12 @@
 vacio principal () {
 
 
-entero hola, adios = 69;
-/*entero hola, buenas, tardes = 1;*/
-/* tipo entero hola[2]; */
+entero hola = 10;
 
-escribe();
+
+escribe("hola");
+escribeEnt(hola);
+escribeEnt();
 
 devuelve;
 
