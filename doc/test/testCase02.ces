@@ -1,12 +1,6 @@
-
 vacio principal () {
 
-
-entero a = 10;
-
-
-escribe("hola");
-escribe(a);
+escribe("imprime");
 
 devuelve;
 

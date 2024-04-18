@@ -211,7 +211,7 @@ program ::=
 			tsEntero.setName("ENTERO");
 			typeTable.addType("ENTERO",tsEntero);
 
-		TypeSimple tsLogico = new TypeSimple(scope);
+		TypeSimple tsLogico = new TypeSimple(scope); // DUDA: realmente se utiliza este?
 			tsLogico.setName("LOGICO");
 			typeTable.addType("LOGICO",tsLogico);
 
@@ -277,10 +277,36 @@ declaracionConstante ::= CONSTANTE IDENTIFICADOR NUMERO SEMI_COLON {: System.out
 seccionTipos ::= declaracionTipo seccionTipos {: System.out.println("READ> seccionTipos + recursion"); RESULT = null; :}
                       | epsilon {: System.out.println("READ> seccionTipos = ya está"); RESULT = null; :};
                       
-declaracionTipo ::= TIPO ENTERO IDENTIFICADOR OPEN_BRACKET tamTipo CLOSE_BRACKET SEMI_COLON {: System.out.println("READ> declaracionTipo"); RESULT = null; :};
+declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_BRACKET SEMI_COLON {: 
+	System.out.println("READ> declaracionTipo"); 
+	
+	ScopeIF scope = scopeManager.getCurrentScope();
+	TypeTableIF typeTable = scope.getTypeTable ();
+	SymbolTableIF sTable = scope.getSymbolTable(); 
+	String nombre = id.getLexema();
+	String tamano = tam.toString();
+	
+	if (typeTable.containsType(nombre)) {  // ¿Tipo declarado?
+		semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarada");
+	} else {
+		TypeArray tsVector = new TypeArray(scope);
+		tsVector.setName(nombre);
+		tsVector.setSize(Integer.parseInt(tamano));
+		typeTable.addType(nombre,tsVector);
 
-tamTipo ::= NUMERO {: System.out.println("READ> tamTipo = NUMERO"); RESULT = null; :}
- | IDENTIFICADOR {: System.out.println("READ> tamTipo = IDENTIFICADOR"); RESULT = null; :};
+		// Mirando que tiene
+		System.out.println("VCTR>NEW> " + nombre + "@" + scope.getName() + "=" + "tamaño(" + tamano + ")"); //contenido);
+
+		// Intentando buscar - TRY FETCH
+		TypeIF tipo = typeTable.getType(nombre);
+		System.out.println(tipo);
+	} //fin if
+
+	RESULT = null; 
+:};
+
+tamTipo ::= NUMERO:numero {: System.out.println("READ> tamTipo = NUMERO = " + numero.getLexema()); RESULT = numero.getLexema(); :}
+ | IDENTIFICADOR {: System.out.println("READ> tamTipo = IDENTIFICADOR = " + "sin definir"); RESULT = null; :};
 
 seccionVariables ::= seccionVariables declaracionVariable {: System.out.println("READ> seccionVariables + recursion"); RESULT = null; :}
  | declaracionVariable {: System.out.println("READ> seccionVariables"); RESULT = null; :};
