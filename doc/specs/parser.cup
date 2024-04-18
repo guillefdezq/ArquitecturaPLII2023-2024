@@ -530,27 +530,52 @@ System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + 
 // EXPRESIONES
 
 expresion ::= NUMERO:n {:
+		ScopeIF ambito = scopeManager.getCurrentScope();
+		TypeTableIF tiposTabla = ambito.getTypeTable();
+		TypeIF tipo = tiposTabla.getType("ENTERO");
 		int num = Integer.parseInt(n.getLexema());
+		Expresion exp = new Expresion(tipo);
 
-		RESULT = num;
+		IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
+		TemporalFactory tF = new TemporalFactory(ambito);
+		TemporalIF temp = tF.create();
+		cb.addQuadruple("MV", temp, new Value(num));
+		exp.setIntermediateCode(cb.create());
+		exp.setTemporal(temp);
+
+		System.out.println("numero");
+
+		RESULT = exp;
  :} | IDENTIFICADOR:id {: // Devolver valor de un identificador
 		String identificador = id.getLexema(); 
 
+		Expresion exp = new Expresion(identificador);
 		if(scopeManager.containsSymbol(identificador)) {
+			// Solo funcionando para enteros ahora
+
 			// Search for SymbolVariable
-			ScopeIF ambito = scopeManager.getCurrentScope();
 			SymbolIF symbol = scopeManager.searchSymbol(identificador);
 			SymbolVariable variable = (SymbolVariable) symbol;
+			int num = Integer.parseInt(variable.getValor());
 
-			System.out.println("Variable: " + variable);
-			RESULT = variable.getValor();
+			ScopeIF ambito = scopeManager.getCurrentScope();
+			IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
+			TemporalFactory tF = new TemporalFactory(ambito);
+			TemporalIF temp = tF.create();
+
+			exp.setTemporal(temp);
+
+			System.out.println("Variable: " + num);
 
 		} else {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
 		}
+		RESULT = exp;
 		
- :} |  OPEN_KEY expresion:expr CLOSE_KEY  {: RESULT = expr; :}
- 	|  expresion:exp1 PLUS expresion:exp2 {: 
+ :} |  OPEN_KEY expresion:expr CLOSE_KEY  {:
+
+		  RESULT = null;
+ :}	|  expresion:exp1 PLUS expresion:exp2 {: 
 		RESULT = null;
  :}	|  expresion:a MULT expresion:b {: RESULT = null; :}
  	|  expresion:autoincre AUTO_INCREMENTO {: RESULT = null; :}

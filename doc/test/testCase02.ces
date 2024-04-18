@@ -7,7 +7,8 @@ entero hola = 10;
 
 escribe("hola");
 escribeEnt(hola);
-escribeEnt();
+escribeEnt(9);
+escribeEnt((23))
 
 devuelve;
 
