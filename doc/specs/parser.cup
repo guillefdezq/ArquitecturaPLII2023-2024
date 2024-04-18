@@ -93,47 +93,87 @@ terminal Token STRING;
 
 // Declaracion de no terminales
 
-non terminal  			program;
+non terminal Program	 			program;
 non terminal Axiom		axiom;
 non terminal axiom1,listadoIDs1,id1,funcion1;
-non terminal  			funcionPrincipal;
-non terminal			epsilon;
-non terminal			seccionFunciones;
-non terminal			funcion;
-non terminal			seccionParametros;
-non terminal		 	declaracionParametros;
-non terminal			parametro;
-non terminal			seccionConstantes;
-non terminal			declaracionConstante;
-non terminal			seccionTipos;
-non terminal			declaracionTipo;
-non terminal			tamTipo;
-non terminal			seccionVariables;
-non terminal 			declaracionVariable;
-non terminal			listadoIDs;
-non terminal			id;
-non terminal			expresion;
-non terminal 			accesoVector;
-non terminal			llamadaFuncion;
-non terminal			bloque;
-non terminal			listadoSentencias;
-non terminal			sentencia;
-non terminal			sentenciaIncremento;
-non terminal			sentenciaAsignacion;
-non terminal			ref;
-non terminal			sentenciaAsignacionSuma;
-non terminal			sentenciaSi;
-non terminal			sentenciaAlternativas;
-non terminal			casosAlternativa;
-non terminal			casoAlt; 
-non terminal			porDefecto;
-non terminal			sentenciaMientras;
-non terminal			sentenciaLlamadaFuncion;
-non terminal			parametros;
-non terminal			sentenciaSalida;
-non terminal			opcionesEscribe;
-non terminal			opcionesEscribeEnt;
-non terminal			sentenciaDevuelve;
+non terminal              			funcionPrincipal;
+// non terminal FuncionPrincipal  			funcionPrincipal;
+non terminal            		    epsilon;
+// non terminal Epsilon		        	epsilon;
+non terminal            			seccionFunciones;
+// non terminal SeccionFunciones			seccionFunciones;
+non terminal                    	funcion;
+// non terminal Funcion        			funcion;
+non terminal            			seccionParametros;
+// non terminal SeccionParametros			seccionParametros;
+non terminal            		    declaracionParametros;
+// non terminal DeclaracionParametros		declaracionParametros;
+non terminal            			parametro;
+// non terminal Parametro			        parametro;
+non terminal            			seccionConstantes;
+// non terminal SeccionConstantes			seccionConstantes;
+non terminal            		    declaracionConstante;
+// non terminal DeclaracionConstante		declaracionConstante;
+non terminal            			seccionTipos;
+// non terminal SeccionTipos			    seccionTipos;
+non terminal            			declaracionTipo;
+// non terminal DeclaracionTipo			declaracionTipo;
+non terminal            		    tamTipo;
+// non terminal TamTipo		        	tamTipo;
+non terminal            			seccionVariables;
+// non terminal SeccionVariables			seccionVariables;
+non terminal             		    declaracionVariable;
+// non terminal DeclaracionVariable 		declaracionVariable;
+non terminal            		    listadoIDs;
+// non terminal ListadoIDs		        	listadoIDs;
+non terminal                        id;
+// non terminal Id                			id;
+non terminal            		    expresion;
+// non terminal Expresion		        	expresion;
+non terminal             	    	accesoVector;
+// non terminal AccesoVector 	    		accesoVector;
+non terminal            	    	llamadaFuncion;
+// non terminal LlamadaFuncion	    		llamadaFuncion;
+non terminal            			bloque;
+// non terminal Bloque			            bloque;
+non terminal            			listadoSentencias;
+// non terminal ListadoSentencias			listadoSentencias;
+non terminal            			sentencia;
+// non terminal Sentencia			        sentencia;
+non terminal            		    sentenciaIncremento;
+// non terminal SentenciaIncremento		sentenciaIncremento;
+non terminal            		    sentenciaAsignacion;
+// non terminal SentenciaAsignacion		sentenciaAsignacion;
+non terminal            			ref;
+// non terminal Ref			            ref;
+non terminal            	        sentenciaAsignacionSuma;
+// non terminal SentenciaAsignacionSuma	sentenciaAsignacionSuma;
+non terminal            		    sentenciaSi;
+// non terminal SentenciaSi		    	sentenciaSi;
+non terminal            		    sentenciaAlternativas;
+// non terminal SentenciaAlternativas		sentenciaAlternativas;
+non terminal            			casosAlternativa;
+// non terminal CasosAlternativa			casosAlternativa;
+non terminal            			casoAlt; 
+// non terminal CasoAlt			        casoAlt; 
+non terminal            			porDefecto;
+// non terminal PorDefecto			        porDefecto;
+non terminal            			sentenciaMientras;
+// non terminal SentenciaMientras			sentenciaMientras;
+non terminal            	        sentenciaLlamadaFuncion;
+// non terminal SentenciaLlamadaFuncion	sentenciaLlamadaFuncion;
+non terminal            		    parametros;
+// non terminal Parametros		        	parametros;
+non terminal            			sentenciaSalida;
+// non terminal SentenciaSalida			sentenciaSalida;
+non terminal            			opcionesEscribe;
+// non terminal OpcionesEscribe			opcionesEscribe;
+non terminal            			opcionesEscribeEnt;
+// non terminal OpcionesEscribeEnt			opcionesEscribeEnt;
+non terminal            			sentenciaDevuelve;
+// non terminal SentenciaDevuelve			sentenciaDevuelve;
+non terminal						abrirAmbito;
+non terminal						cerrarAmbito;
 
 // Declaracion de relaciones de precedencia
 precedence left     AND_LOGICA;
@@ -156,6 +196,35 @@ start with program;
 program ::= 
   {: 
         syntaxErrorManager.syntaxInfo ("Starting parsing..."); 
+
+		scopeManager.openScope("global");
+		ScopeIF scope = scopeManager.getCurrentScope();
+		System.out.println("AMB>comenzamos! " + scope.getName() + " (" + scope.getLevel() + ")");
+
+		System.out.println("GLBL> creando tipos");
+		//Obtenemos del ámbito creado la Tabla de Tipos y Símbolos
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		//Introduccion del Tipo Simple Entero o Integer y Logico o Booleano, vacio y vector
+		TypeSimple tsEntero = new TypeSimple(scope);
+			tsEntero.setName("ENTERO");
+			typeTable.addType("ENTERO",tsEntero);
+
+		TypeSimple tsLogico = new TypeSimple(scope);
+			tsLogico.setName("LOGICO");
+			typeTable.addType("LOGICO",tsLogico);
+
+		// Es muy posible que este no sea necesario
+		TypeSimple tsVacio = new TypeSimple(scope);
+			tsVacio.setName("VACIO");
+			typeTable.addType("VACIO",tsVacio);
+
+		// Es muy posible que este no haga falta
+		TypeArray tsVector = new TypeArray(scope);
+			tsVector.setName("VECTORexp");
+			typeTable.addType("VECTORexp",tsVector);
+
    :}
   axiom:ax
   {:   		
@@ -169,6 +238,10 @@ program ::=
   		// aún no se tendrá implementada la generación de código intermedio ni final.
   		// Para la entrega final deberán descomentarse y usarse.
   		
+		ScopeIF scope = scopeManager.getCurrentScope();
+		System.out.println("AMBT>terminamos! " + scope.getName() + " (" + scope.getLevel() + ")");
+		scopeManager.closeScope();
+
   		syntaxErrorManager.syntaxInfo ("Parsing process ended.");
   		
    :};
@@ -176,6 +249,19 @@ program ::=
 
 epsilon ::= ;
 
+abrirAmbito ::= {:
+// abrir ámbito
+ScopeIF scope = scopeManager.getCurrentScope();
+scopeManager.openScope("ambito"+ scope.getLevel());
+System.out.println("AMBT>abrir/abril " + scope.getName() + " (" + scope.getLevel() + ")");
+:}; 
+
+cerrarAmbito ::= {:
+// cerrar ámbito
+ScopeIF scope = scopeManager.getCurrentScope();
+System.out.println("AMBT>cerrar/mayo " + scope.getName());
+scopeManager.closeScope();
+:}; 
 
 axiom ::=  seccionConstantes seccionTipos  axiom1 {: System.out.println("READ> axiom = constantes y tipos"); RESULT = null; :} ;
 
@@ -215,12 +301,12 @@ id1 ::= epsilon {: System.out.println("READ> id1 = epsilon"); RESULT = null; :}
 seccionFunciones ::= funcion seccionFunciones {: System.out.println("READ> seccionFunciones = funciones extra"); RESULT = null; :}
                       | funcionPrincipal {: System.out.println("READ> seccionFunciones = funcion principal"); RESULT = null; :};
                       
-funcion ::= VACIO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = vacio"); RESULT = null; :}
-            | ENTERO IDENTIFICADOR  OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = entero"); RESULT = null; :};
+funcion ::= VACIO IDENTIFICADOR abrirAmbito OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = vacio"); RESULT = null; :}
+            | ENTERO IDENTIFICADOR abrirAmbito OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = entero"); RESULT = null; :};
                      
          
-funcion1 ::= listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
-                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
+funcion1 ::= listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
+                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
 
 
 
@@ -235,8 +321,8 @@ declaracionParametros  ::= parametro {: System.out.println("READ> declaracionPar
 parametro ::= ENTERO IDENTIFICADOR {: System.out.println("READ> parametro = entero"); RESULT = null; :}
  | IDENTIFICADOR IDENTIFICADOR {: System.out.println("READ> parametro = identificador"); RESULT = null; :};
 
-funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> funcionPrincipal"); RESULT = null; :}
-				  |  VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> funcionPrincipal + seccion variables"); RESULT = null; :};
+funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal"); RESULT = null; :}
+				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); RESULT = null; :};
 
 
 
@@ -244,7 +330,7 @@ funcionPrincipal ::= VACIO principal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccion
 
 expresion ::= NUMERO {: System.out.println("READ> expresion = NUMERO"); RESULT = null; :}
 	| IDENTIFICADOR {: System.out.println("READ> expresion = IDENTIFICADOR"); RESULT = null; :}
-	|  OPEN_KEY expresion CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY"); RESULT = null; :}
+	|  OPEN_KEY expresion CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY"); RESULT = null; :}  // DUDA: Debería crear un ámbito aquí?
  	|  expresion PLUS expresion {: System.out.println("READ> expresion = PLUS"); RESULT = null; :}
  	|  expresion MULT expresion {: System.out.println("READ> expresion = MULT"); RESULT = null; :}
  	|  expresion AUTO_INCREMENTO expresion {: System.out.println("READ> expresion = AUTO_INCREMENTO"); RESULT = null; :}
@@ -257,6 +343,7 @@ expresion ::= NUMERO {: System.out.println("READ> expresion = NUMERO"); RESULT =
 
 accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET {: System.out.println("READ> accesoVector"); RESULT = null; :};
 
+// DUDA: es necesario poner aquí ámbito?
 llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY {: System.out.println("READ> llamadaFuncion = conParametros"); RESULT = null; :}
 	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros"); RESULT = null; :};
 parametros ::= expresion {: System.out.println("READ> parametros = expresion"); RESULT = null; :}
@@ -264,8 +351,8 @@ parametros ::= expresion {: System.out.println("READ> parametros = expresion"); 
 
 //  SENTENCIAS
 
-bloque ::= OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :}
- 	|  OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :};
+bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :}
+ 	|  OPEN_PARENTHESIS abrirAmbito listadoSentencias cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :};
 
 listadoSentencias ::= listadoSentencias sentencia {: System.out.println("READ> listadoSentencias = listadoSentencias sentencia"); RESULT = null; :}
  | sentencia {: System.out.println("READ> listadoSentencias = sentencia"); RESULT = null; :};
@@ -292,9 +379,11 @@ ref ::= IDENTIFICADOR {: System.out.println("READ> ref"); RESULT = null; :}
 
 sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma"); RESULT = null; :};
 
+// ATENTO! No hace falta poner aquí ninguna apertura o cierre de ámbito, ya lo hace sentencia con bloque.
 sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia {: System.out.println("READ> sentenciaSi + SINO"); RESULT = null; :}
 	 | SI OPEN_KEY expresion CLOSE_KEY sentencia {: System.out.println("READ> sentenciaSi"); RESULT = null; :};
 	
+// 'Ergo', aquí tampoco hace falta, al usar bloque directamente.
 sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: System.out.println("READ> sentenciaAlternativas"); RESULT = null; :};
 casosAlternativa ::= casosAlternativa casoAlt {: System.out.println("READ> casosAlternativa = casoAlternativa"); RESULT = null; :}
  | casoAlt {: System.out.println("READ> casoAlternativa = casoAlt"); RESULT = null; :};
@@ -303,7 +392,8 @@ casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println
 porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> porDefecto = PORDEFECTO"); RESULT = null; :}
  | epsilon {: System.out.println("READ> porDefecto = epsilon"); RESULT = null; :};
 
-sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY sentencia {: System.out.println("READ> sentenciaMientras"); RESULT = null; :};
+// Duda: está bien colocado el ámbito? tanto aquí como en el si y en el alternativas
+sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY abrirAmbito sentencia cerrarAmbito {: System.out.println("READ> sentenciaMientras"); RESULT = null; :};
 
 sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
 
