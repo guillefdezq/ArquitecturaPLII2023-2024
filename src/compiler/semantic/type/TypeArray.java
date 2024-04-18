@@ -14,6 +14,8 @@ public class TypeArray
     extends TypeBase
 {   
     
+    private int size;
+
 	/**
      * Constructor for TypeArray.
      * @param scope The declaration scope.
@@ -41,6 +43,11 @@ public class TypeArray
     public int getSize ()
     {
         // TODO: Student work
-        return 1;
+        return size;
+    }
+
+    public void setSize (int size)
+    {
+        this.size = size;
     }
 }
