@@ -1,16 +1,23 @@
 
   package compiler.syntax.nonTerminal;
 
-  import compiler.intermediate.Temporal;
+  import compiler.CompilerContext;
   import compiler.semantic.symbol.SymbolVariable;
-  import es.uned.lsi.compiler.semantic.type.TypeIF;
+import es.uned.lsi.compiler.intermediate.TemporalIF;
+import es.uned.lsi.compiler.semantic.ScopeIF;
+import es.uned.lsi.compiler.semantic.ScopeManagerIF;
+import es.uned.lsi.compiler.semantic.SemanticErrorManager;
+import es.uned.lsi.compiler.semantic.symbol.SymbolIF;
+import es.uned.lsi.compiler.semantic.symbol.SymbolTableIF;
+import es.uned.lsi.compiler.semantic.type.TypeIF;
 
   public class Expresion extends NonTerminal {
-
+    
     protected SymbolVariable symbolVariableIdentificador; // Utilizaré string, pero quiero cambiarlo
     protected String identificador;
     protected boolean esIdentificador = false;
     protected TypeIF tipo;
+    protected TemporalIF temporal;
     
     public String getIdentificador() {
 		return identificador;
@@ -36,15 +43,14 @@
 		this.tipo = tipo;
 	}
 
-	public Temporal getTemporal() {
+	public TemporalIF getTemporal() {
 		return temporal;
 	}
 
-	public void setTemporal(Temporal temporal) {
+	public void setTemporal(TemporalIF temporal) {
 		this.temporal = temporal;
 	}
 
-	protected Temporal temporal;
 
     public Expresion() {
       super();
@@ -80,6 +86,25 @@
         return symbolVariableIdentificador.getType();
       } else return null;
     }
+
+    public TypeIF getTipoExpresion() {
+        
+      ScopeManagerIF scopeManager = CompilerContext.getScopeManager();
+      SemanticErrorManager semanticErrorManager = CompilerContext.getSemanticErrorManager();
+
+      if(esIdentificador) {
+          // Se busca el identificador en la Tabla de Símbolos
+          ScopeIF ambito = scopeManager.getCurrentScope();
+          SymbolTableIF simbolosTabla = ambito.getSymbolTable();
+          if(!simbolosTabla.containsSymbol(identificador)) {
+              semanticErrorManager.semanticFatalError("Error semantico: identificador " + identificador + " no esta declarado");
+          }
+          SymbolIF simbolo = simbolosTabla.getSymbol(identificador);
+          return simbolo.getType();
+      } else {
+          return tipo;
+      }
+  }
 
   }
   

@@ -366,9 +366,7 @@ for (String nombre : nombres) {
 	System.out.println("NEW: entero: " + nombre + "@" + scope.getName() + "=" + contenido);
 
 	// Intentando buscar - TRY FETCH
-	SymbolIF fetchSymbol = sTable.getSymbol(nombre);
-	System.out.println(fetchSymbol.getType());
-
+	System.out.println(sTable.getSymbol(nombre));
 	} //fin if
 
 } //fin for
@@ -532,64 +530,29 @@ System.out.println("AMB: nuevo: " + scope.getName() + " (" + scope.getLevel() + 
 // EXPRESIONES
 
 expresion ::= NUMERO:n {:
-		ScopeIF scope = scopeManager.getCurrentScope();
-		TypeTableIF tiposTabla = scope.getTypeTable();
-		TypeIF tipo = tiposTabla.getType("ENTERO");
 		int num = Integer.parseInt(n.getLexema());
-		Expresion exp = new Expresion(tipo);
 
-		// CÓDIGO INTERMEDIO
-		IntermediateCodeBuilder cb = new IntermediateCodeBuilder(scope);
-		TemporalFactory tF = new TemporalFactory(scope);
-		TemporalIF temp = tF.create();
-		cb.addQuadruple("MV", temp, new Value(num));
-		exp.setIntermediateCode(cb.create());
-		exp.setTemporal((Temporal)temp);
+		RESULT = num;
+ :} | IDENTIFICADOR:id {: // Devolver valor de un identificador
+		String identificador = id.getLexema(); 
 
-		RESULT = exp;
- :} | IDENTIFICADOR:id {: 
-		String identificador = id.getLexema();
-		Expresion exp = new Expresion(identificador);
-
-		// CÓDIGO INTERMEDIO
 		if(scopeManager.containsSymbol(identificador)) {
-			SymbolIF simboloID = scopeManager.searchSymbol(identificador);
+			// Search for SymbolVariable
 			ScopeIF ambito = scopeManager.getCurrentScope();
-			IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
-			TemporalFactory tF = new TemporalFactory(ambito);
-			TemporalIF temp = tF.create();
-			/*
-			// Es una variable
-			if(simboloID instanceof SymbolVariable) {
-				TemporalIF tempMVP = tF.create();
-				cb.addQuadruple("MVA", temp, new Variable((SymbolVariable)simboloID)); // TemporalIF cannot be converted to Temporal
-				cb.addQuadruple("MVP", tempMVP, temp);
-				exp.setTemporal(tempMVP);
-			}
-			// Es una constante de tipo ENTERO
-			else if (simboloID instanceof SymbolConstantEntero) {
-				int num = ((SymbolConstantEntero)simboloID).getValorEntero();
-				cb.addQuadruple("MV", temp, new Value(num));
-				exp.setTemporal(temp);
-			}
-			// Es una contante de tipo LÓGICO
-			else {
-				boolean logico = ((SymbolConstantLogico)simboloID).getValorLogico();
-				if(logico) {
-					cb.addQuadruple("MV", temp, new Value(1));
-					exp.setTemporal(temp);
-				} else {
-					cb.addQuadruple("MV", temp, new Value(0));
-					exp.setTemporal(temp);
-				}
-			}
-			*/
-			exp.setIntermediateCode(cb.create());
+			SymbolIF symbol = scopeManager.searchSymbol(identificador);
+			SymbolVariable variable = (SymbolVariable) symbol;
+
+			System.out.println("Variable: " + variable);
+			RESULT = variable.getValor();
+
+		} else {
+			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
 		}
-		RESULT = exp; 
+		
  :} |  OPEN_KEY expresion:expr CLOSE_KEY  {: RESULT = expr; :}
- 	|  expresion:a PLUS expresion:b {: RESULT = null; :}
- 	|  expresion:a MULT expresion:b {: RESULT = null; :}
+ 	|  expresion:exp1 PLUS expresion:exp2 {: 
+		RESULT = null;
+ :}	|  expresion:a MULT expresion:b {: RESULT = null; :}
  	|  expresion:autoincre AUTO_INCREMENTO {: RESULT = null; :}
  	|  NEGACION expresion:negac {: RESULT = null; :}
  	|  expresion LOWER_THAN expresion {: RESULT = null; :}
@@ -671,10 +634,63 @@ sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: RESULT = null; :}
 		RESULT = s; 
 :};  // Entiendo que esto es lo que le debe devolver...?
 
-sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON {: RESULT = null; :};
+sentenciaIncremento ::= IDENTIFICADOR:id AUTO_INCREMENTO SEMI_COLON {: 
+		// Recuperar ámbito y tablas
+		ScopeIF scope = scopeManager.getCurrentScope();
+		SymbolTableIF symbolTable = scope.getSymbolTable();
+		TypeTableIF typeTable = scope.getTypeTable();
+		
+		// Recuperar identificador
+		SymbolIF symbol = (SymbolIF) id;
+		Sentenciaincremento s = new Sentenciaincremento();
+		
+		// Comprobar que realmente es tipo entero
+		if (!symbol.getType().equals(scopeManager.searchType("ENTERO")))
+			semanticErrorManager.semanticFatalError("Tipo de variable " + symbol.getType() + " no coincide con tipo entero");
+		
+		// Código intermedio para aumentar valor
 
-sentenciaAsignacion ::= ref ASSIGN expresion SEMI_COLON {: RESULT = null; :};
-ref ::= IDENTIFICADOR {: RESULT = null; :} | accesoVector {: RESULT = null; :};
+
+		RESULT = s;
+ :};
+
+sentenciaAsignacion ::= ref:id ASSIGN expresion:exp SEMI_COLON {:
+		// Comprobar que ambos tipos son iguales
+		SymbolIF symbol = (SymbolIF) id;
+		Expresion expresion = (Expresion) exp;
+		if (!symbol.getType().equals(expresion.getType()))
+			semanticErrorManager.semanticFatalError("Tipo de variable " + symbol.getType() + " no coincide con el tipo de expresión");
+		
+		// Pensamiento: creo que es irrelevante poner el valor de las variables en la tabla de símbolos, ya que al final se almacena con el código intermedio.
+		// 				En ese caso, la siguiente parte debería ser código intermedio.
+
+		Sentenciaasignacion sentencia = new Sentenciaasignacion();
+		
+		// CÓDIGO INTERMEDIO
+		ScopeIF ambito = scopeManager.getCurrentScope();
+		IntermediateCodeBuilder cb = new IntermediateCodeBuilder(ambito);
+		TemporalFactory tF = new TemporalFactory(ambito);
+		TemporalIF temp = tF.create();
+		/*
+		cb.addQuadruples(exp.getIntermediateCode());
+		cb.addQuadruples(id.getIntermediateCode());
+		cb.addQuadruple("STP", id.getTemporal(), exp.getTemporal());
+		sentencia.setIntermediateCode(cb.create());
+		*/
+
+		RESULT = sentencia;
+:};
+ref ::= IDENTIFICADOR:id {: 
+		// Devolver identificador variable de la tabla de símbolos
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+		SymbolIF symbol = sTable.getSymbol(id.getLexema());
+		if (symbol == null) {
+			semanticErrorManager.semanticFatalError("Variable " + id.getLexema() + " no declarada");
+		}
+		RESULT = symbol;
+ :} | accesoVector {: RESULT = null; :};
 
 sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: RESULT = null; :};
 
@@ -722,16 +738,35 @@ String texto = (String) salida;
 RESULT = s;
 
 :} // Entiendo que aquí tiene que ser más profesional y hacer referencia a la tabla de símbolos
-	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON {:
+	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:entero CLOSE_KEY SEMI_COLON {:
 
 		// Copiar código de la otra alternativa
+			Sentenciasalida s = new Sentenciasalida();		// Comentar en ejecución - uso no claro
+			ScopeIF scope = scopeManager.getCurrentScope();
+			IntermediateCodeBuilder cb = new IntermediateCodeBuilder(scope);
 
- RESULT = null; 
+		// CÓDIGO INTERMEDIO por definir
+		String salida = (String) ( ((String) entero).contains("vacio") ? "" : entero);
+
+		// CÓDIGO INTERMEDIO por definir
+		System.out.println("CodInt: PRINT: " + salida);
+
+		String texto = (String) salida;
+			
+
+		RESULT = s;
 :};
 opcionesEscribe ::= epsilon {: String cadena = null; RESULT = cadena; :} | STRING:string {: RESULT = string.getLexema(); :};
-opcionesEscribeEnt ::= epsilon {: RESULT = -1; :} | expresion:expr {: 
+opcionesEscribeEnt ::= epsilon {: RESULT = "vacio"; :} | expresion:expr {: 
 
 // ¿Comprobación de tipo entero?
 
-RESULT = expr; 
+// Esta sección no funciona
+
+String salida = (String) expr;
+
+
+System.out.println("Entrada: " + salida);
+
+RESULT = salida; 
 :}; // poner expr en retorno
