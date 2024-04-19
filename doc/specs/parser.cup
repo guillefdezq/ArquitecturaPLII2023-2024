@@ -351,6 +351,9 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 
 		//comprobamos que la variable no este ya declarada en la tabla de símbolos
 
+		// MEJORA: el igual puede ir en cualquier parte, no solo al final.
+		// MEJORA: si se pone un igual a varias variables, se pone únicamente a la que tiene el igual o a todas?
+
 		for (String nombre : nombres) {
 			if (nombre.contains("=")) { break;} 
 			if (sTable.containsSymbol(nombre)) {	// MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
@@ -480,8 +483,23 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 // EXPRESIONES
 
 expresion ::= NUMERO {: System.out.println("READ> expresion = NUMERO"); RESULT = null; :}
-	| IDENTIFICADOR {: System.out.println("READ> expresion = IDENTIFICADOR"); RESULT = null; :}
-	|  OPEN_KEY expresion CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY"); RESULT = null; :}  // DUDA: Debería crear un ámbito aquí?
+	| IDENTIFICADOR:id {: 
+
+		// CODIGO SIN REVISAR
+		// DUDA: hace falta implementar una comprobación de variable de mismo nombre en distintos valores entre ámbitos?
+		String identificador = id.getLexema(); 
+
+		Expresion exp = new Expresion(identificador);
+		if(!(scopeManager.containsSymbol(identificador))) {
+			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
+		}
+		SymbolIF symbol = scopeManager.searchSymbol(identificador);
+		SymbolVariable variable = (SymbolVariable) symbol;
+		String num = variable.getValor();
+		System.out.println("READ> expresion = IDENTIFICADOR = " + num);
+		RESULT = num;
+
+ :}	|  OPEN_KEY expresion CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY"); RESULT = null; :}  // DUDA: Debería crear un ámbito aquí?
  	|  expresion PLUS expresion {: System.out.println("READ> expresion = PLUS"); RESULT = null; :}
  	|  expresion MULT expresion {: System.out.println("READ> expresion = MULT"); RESULT = null; :}
  	|  expresion AUTO_INCREMENTO expresion {: System.out.println("READ> expresion = AUTO_INCREMENTO"); RESULT = null; :}
@@ -548,9 +566,30 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY abrirAmbito sentenci
 
 sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
 
-sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON {: System.out.println("READ> sentenciaSalida = ESCRIBE"); RESULT = null; :}
-	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt CLOSE_KEY SEMI_COLON {: System.out.println("READ> sentenciaSalida = ESCRIBE_ENT"); RESULT = null; :};
-opcionesEscribe ::= epsilon {: System.out.println("READ> opcionesEscribe = epsilon"); RESULT = null; :}
- | STRING {: System.out.println("READ> opcionesEscribe = STRING"); RESULT = null; :};
-opcionesEscribeEnt ::= epsilon {: System.out.println("READ> opcionesEscribeEnt = epsilon"); RESULT = null; :}
- | expresion {: System.out.println("READ> opcionesEscribeEnt = expresion"); RESULT = null; :};
+sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON {:
+		System.out.println("READ> sentenciaSalida = ESCRIBE");
+		RESULT = null;
+ :}
+	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:expr CLOSE_KEY SEMI_COLON {: 
+		String salida = (String) expr;
+		System.out.println("READ> sentenciaSalida = ESCRIBE_ENT"); 
+		System.out.println("PRNT> " + salida); 
+		RESULT = null;
+ :};
+opcionesEscribe ::= epsilon {:
+		System.out.println("READ> opcionesEscribe = epsilon");
+		RESULT = null;
+ :}
+ | STRING {: 
+ 		System.out.println("READ> opcionesEscribe = STRING"); 
+		RESULT = null;
+ :};
+opcionesEscribeEnt ::= epsilon {:
+		System.out.println("READ> opcionesEscribeEnt = epsilon");
+		RESULT = null;
+ :}
+ | expresion:expr {:
+		String salida = (String) expr;
+		System.out.println("READ> opcionesEscribeEnt = expresion = " + salida);
+		RESULT = salida;
+ :};

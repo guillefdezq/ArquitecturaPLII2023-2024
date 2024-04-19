@@ -9,11 +9,16 @@
 
 vacio principal () {
 
+entero a = 25;
+entero b = 10;
+escribeEnt(a);
 
-si (a==b) {
-	escribe("si bien");
+si (a==0) {
+	entero a = 50;
+	escribeEnt(b);
+	escribeEnt(a);
 }
-
+escribeEnt(a);
 devuelve;
 
 }
