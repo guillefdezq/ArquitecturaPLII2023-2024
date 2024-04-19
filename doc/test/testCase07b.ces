@@ -1,0 +1,19 @@
+
+/* 
+
+// Flujo , operadores relacionales y l�gicos (si mientras)
+
+*/
+
+
+
+vacio principal () {
+
+
+si (a==b) {
+	escribe("si bien");
+}
+
+devuelve;
+
+}
