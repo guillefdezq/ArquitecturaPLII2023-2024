@@ -199,7 +199,7 @@ program ::=
 
 		scopeManager.openScope("global");
 		ScopeIF scope = scopeManager.getCurrentScope();
-		System.out.println("AMB>comenzamos! " + scope.getName() + " (" + scope.getLevel() + ")");
+		System.out.println("AMBT>comenzamos! " + scope.getName() + " (" + scope.getLevel() + ")");
 
 		System.out.println("GLBL> creando tipos");
 		//Obtenemos del ámbito creado la Tabla de Tipos y Símbolos
@@ -250,17 +250,18 @@ program ::=
 epsilon ::= ;
 
 abrirAmbito ::= {:
-// abrir ámbito
-ScopeIF scope = scopeManager.getCurrentScope();
-scopeManager.openScope("ambito"+ scope.getLevel());
-System.out.println("AMBT>abrir/abril " + scope.getName() + " (" + scope.getLevel() + ")");
+		// abrir ámbito
+		ScopeIF scope = scopeManager.getCurrentScope();
+		scopeManager.openScope("ambito"+ (scope.getLevel()+1));
+		System.out.println("AMBT>abrir " + "ambito"+ (scope.getLevel()+1) + " (" + (scope.getLevel()+1) + ")");
+		// System.out.println(scopeManager.getAllScopes()); // Para debug
 :}; 
 
 cerrarAmbito ::= {:
-// cerrar ámbito
-ScopeIF scope = scopeManager.getCurrentScope();
-System.out.println("AMBT>cerrar/mayo " + scope.getName());
-scopeManager.closeScope();
+		// cerrar ámbito
+		ScopeIF scope = scopeManager.getCurrentScope();
+		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		scopeManager.closeScope();
 :}; 
 
 axiom ::=  seccionConstantes seccionTipos  axiom1 {: System.out.println("READ> axiom = constantes y tipos"); RESULT = null; :} ;
@@ -272,57 +273,181 @@ seccionConstantes ::= declaracionConstante seccionConstantes {: System.out.print
                       | epsilon {: System.out.println("READ> seccionConstantes = ya está"); RESULT = null; :};
                       
                       
-declaracionConstante ::= CONSTANTE IDENTIFICADOR NUMERO SEMI_COLON {: System.out.println("READ> declaracionConstante"); RESULT = null; :};
+declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:num SEMI_COLON {:
+		System.out.println("READ> declaracionConstante");
+		ScopeIF scope = scopeManager.getCurrentScope();
+		SymbolTableIF sTable = scope.getSymbolTable(); 
+		TypeTableIF typeTable = scope.getTypeTable ();
+		String nombre = id.getLexema();
+		String valor = num.getLexema();
+		System.out.println("CONS>existe? "+sTable.containsSymbol(nombre));
+		if (sTable.containsSymbol(nombre)) {  // ¿Constante declarada?
+			semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
+		} else {
+			//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
+			TypeIF tipo = scopeManager.searchType("ENTERO");
+			SymbolConstant simboloConstante = new SymbolConstant(scope, nombre, tipo);
+			simboloConstante.setValor(valor);
+			sTable.addSymbol(nombre, simboloConstante);
+
+			// Intentando buscar - TRY FETCH
+			SymbolIF fetch = sTable.getSymbol(nombre);
+
+			System.out.println("CONS>nuevo " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolConstant)fetch).getValor());
+		}
+		RESULT = null;
+ :};
 
 seccionTipos ::= declaracionTipo seccionTipos {: System.out.println("READ> seccionTipos + recursion"); RESULT = null; :}
                       | epsilon {: System.out.println("READ> seccionTipos = ya está"); RESULT = null; :};
                       
 declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_BRACKET SEMI_COLON {: 
-	System.out.println("READ> declaracionTipo"); 
-	
-	ScopeIF scope = scopeManager.getCurrentScope();
-	TypeTableIF typeTable = scope.getTypeTable ();
-	SymbolTableIF sTable = scope.getSymbolTable(); 
-	String nombre = id.getLexema();
-	String tamano = tam.toString();
-	
-	if (typeTable.containsType(nombre)) {  // ¿Tipo declarado?
-		semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarada");
-	} else {
-		TypeArray tsVector = new TypeArray(scope);
-		tsVector.setName(nombre);
-		tsVector.setSize(Integer.parseInt(tamano));
-		typeTable.addType(nombre,tsVector);
+		System.out.println("READ> declaracionTipo"); 
+		
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable(); 
+		String nombre = id.getLexema();
+		String tamano = tam.toString();
+		
+		if (typeTable.containsType(nombre)) {  // ¿Tipo declarado?
+			semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarada");
+		} else {
+			TypeArray tsVector = new TypeArray(scope);
+			tsVector.setName(nombre);
+			tsVector.setSize(Integer.parseInt(tamano));
+			typeTable.addType(nombre,tsVector);
 
-		// Mirando que tiene
-		System.out.println("VCTR>NEW> " + nombre + "@" + scope.getName() + "=" + "tamaño(" + tamano + ")"); //contenido);
+			// Mirando que tiene
+			System.out.println("VCTR>NEW> " + nombre + "@" + scope.getName() + "=" + "tamaño(" + tamano + ")"); //contenido);
 
-		// Intentando buscar - TRY FETCH
-		TypeIF tipo = typeTable.getType(nombre);
-		System.out.println(tipo);
-	} //fin if
+			// Intentando buscar - TRY FETCH
+			TypeIF tipo = typeTable.getType(nombre);
+			System.out.println(tipo);
+		} //fin if
 
-	RESULT = null; 
+		RESULT = null; 
 :};
 
-tamTipo ::= NUMERO:numero {: System.out.println("READ> tamTipo = NUMERO = " + numero.getLexema()); RESULT = numero.getLexema(); :}
+tamTipo ::= NUMERO:numero {: 
+System.out.println("READ> tamTipo = NUMERO = " + numero.getLexema()); 
+if (!(Integer.parseInt(numero.getLexema()) > 0)) { semanticErrorManager.semanticFatalError("Tamaño de vector debe ser positivo"); }
+RESULT = numero.getLexema(); :}
  | IDENTIFICADOR {: System.out.println("READ> tamTipo = IDENTIFICADOR = " + "sin definir"); RESULT = null; :};
 
 seccionVariables ::= seccionVariables declaracionVariable {: System.out.println("READ> seccionVariables + recursion"); RESULT = null; :}
  | declaracionVariable {: System.out.println("READ> seccionVariables"); RESULT = null; :};
 
-declaracionVariable ::= ENTERO listadoIDs SEMI_COLON {: System.out.println("READ> declaracionVariable = ENTERO"); RESULT = null; :}
-                      | IDENTIFICADOR listadoIDs SEMI_COLON {: System.out.println("READ> declaracionVariable = IDENTIFICADOR"); RESULT = null; :};
+declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
+		System.out.println("READ> declaracionVariable = ENTERO"); 
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+		ArrayList<String> nombres = ((Listadoids) ids).getIdentificadores();
+
+		String contenido = null;
+		if (nombres.size() > 1 && nombres.get(nombres.size()-2).contains("=")) { contenido = nombres.get(nombres.size()-1);} 
+
+		//comprobamos que la variable no este ya declarada en la tabla de símbolos
+
+		for (String nombre : nombres) {
+			if (nombre.contains("=")) { break;} 
+			if (sTable.containsSymbol(nombre)) {	// MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
+				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+			} else {
+				//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
+				TypeIF tipo = scopeManager.searchType("ENTERO");
+				SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
+				simboloVariable.setValor(contenido);
+				sTable.addSymbol(nombre, simboloVariable);
+
+				// Si se ha creado crrectamente
+				SymbolIF fetch = sTable.getSymbol(nombre);
+				System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
+			} 
+		}
+
+		RESULT = null;		//RESULT = ids; 
+ :}
+                      | IDENTIFICADOR listadoIDs:ids SEMI_COLON {:
+		System.out.println("READ> declaracionVariable = IDENTIFICADOR");
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+		ArrayList<String> nombres = ((Listadoids) ids).getIdentificadores();
+
+		String contenido = null;
+		if (nombres.size() > 1 && nombres.get(nombres.size()-2).contains("=")) { contenido = nombres.get(nombres.size()-1);} 
+
+		//comprobamos que la variable no este ya declarada en la tabla de símbolos
+
+		// DUDA: no creo que sea posible hacer asignaciones a vectores
+		
+
+		for (String nombre : nombres) {
+			if (nombre.contains("=")) { semanticErrorManager.semanticFatalError("Declaraciones en vectores con valor no permitidas");}
+			if (sTable.containsSymbol(nombre)) {	// MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
+				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+			} else {
+				//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
+				TypeIF tipo = scopeManager.searchType("ENTERO");
+				SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
+				simboloVariable.setValor(contenido);
+				sTable.addSymbol(nombre, simboloVariable);
+
+				// Si se ha creado crrectamente
+				SymbolIF fetch = sTable.getSymbol(nombre);
+				System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
+			} 
+		}
+
+		RESULT = null;		//RESULT = ids; 
+ :};
                       
-listadoIDs ::= id listadoIDs1 {: System.out.println("READ> listadoIDs"); RESULT = null; :};
+listadoIDs ::= id:ident listadoIDs1:listadoIdents {: 
+		System.out.println("READ> listadoIDs");
+		Listadoids listado = new Listadoids();
+		for (String element : (ArrayList<String>)ident) {  // ¿No sería más fácil usar sólo un tipo de adición?
+		System.out.println("DEBUG");
+			listado.addElement((String) element); 
+		}
+		listado.addList((Listadoids) listadoIdents);
 
-listadoIDs1 ::= COLON listadoIDs {: System.out.println("READ> listadoIDs1 = más variables"); RESULT = null; :}
-                      | epsilon {: System.out.println("READ> listadoIDs1 = ya está"); RESULT = null; :};
+		//ScopeIF ambito = scopeManager.getCurrentScope();
 
-id ::= IDENTIFICADOR id1 {: System.out.println("READ> id"); RESULT = null; :};
+		RESULT = listado; 
+ :};
 
-id1 ::= epsilon {: System.out.println("READ> id1 = epsilon"); RESULT = null; :}
-        | ASSIGN NUMERO {: System.out.println("READ> id1 = ASSIGN NUMERO"); RESULT = null; :};
+listadoIDs1 ::= COLON listadoIDs:listadoIdents {:
+		System.out.println("READ> listadoIDs1 = más variables");
+		RESULT = listadoIdents;
+ :}
+                      | epsilon {:
+		System.out.println("READ> listadoIDs1 = ya está");
+		RESULT = new Listadoids();
+ :};
+
+id ::= IDENTIFICADOR:ident id1:asign {:
+		System.out.println("READ> id"); 
+		ArrayList<String> salida = new ArrayList<String>();  // MEJORA: Cambiar por listadoIDS
+		salida.add(ident.getLexema());
+		if (asign != null) {
+			salida.add("=");
+			salida.add((String)asign);
+		}
+		RESULT = salida;
+ :};
+
+id1 ::= epsilon {:
+		System.out.println("READ> id1 = epsilon");
+		RESULT = null;
+ :}
+        | ASSIGN NUMERO:num {: 
+		System.out.println("READ> id1 = ASSIGN NUMERO"); 
+		RESULT = num.getLexema();
+ :};
 
 seccionFunciones ::= funcion seccionFunciones {: System.out.println("READ> seccionFunciones = funciones extra"); RESULT = null; :}
                       | funcionPrincipal {: System.out.println("READ> seccionFunciones = funcion principal"); RESULT = null; :};
