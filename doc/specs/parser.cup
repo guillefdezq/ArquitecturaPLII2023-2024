@@ -281,7 +281,7 @@ declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:num SEMI_COLON {:
 		String nombre = id.getLexema();
 		String valor = num.getLexema();
 		System.out.println("CONS>existe? "+sTable.containsSymbol(nombre));
-		if (sTable.containsSymbol(nombre)) {  // ¿Constante declarada?
+		if (sTable.containsSymbol(nombre)) {  // MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
 			semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
 		} else {
 			//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
@@ -310,7 +310,7 @@ declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_
 		String nombre = id.getLexema();
 		String tamano = tam.toString();
 		
-		if (typeTable.containsType(nombre)) {  // ¿Tipo declarado?
+		if (typeTable.containsType(nombre)) {  // MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
 			semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarada");
 		} else {
 			TypeArray tsVector = new TypeArray(scope);
