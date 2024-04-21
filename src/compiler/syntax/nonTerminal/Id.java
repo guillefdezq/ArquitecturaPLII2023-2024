@@ -9,14 +9,23 @@
 
     protected SymbolVariable symbolVariableIdentificador;
     protected Temporal temporal;
-    protected String cadenaID;
+    protected String nombre;
+    protected String valor;
 
-    public String getCadenaID() {
-		return cadenaID;
+    public String getValor() {
+      return valor;
+    }
+
+    public void setValor(String valor) {
+      this.valor = valor;
+    }
+
+    public String getNombre() {
+		return nombre;
 	}
 
-	public void setCadenaID(String cadenaID) {
-		this.cadenaID = cadenaID;
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 
 	public Id() {
@@ -25,7 +34,7 @@
 	
 	public Id(String nombre) {
 	  super();
-	  this.cadenaID = nombre;
+	  this.nombre = nombre;
     }
 
     public Id(SymbolVariable symbolVariableIdentificador) {
