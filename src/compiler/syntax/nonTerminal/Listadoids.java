@@ -12,45 +12,20 @@ import compiler.intermediate.Temporal;
 
     protected SymbolVariable symbolVariableIdentificador;
     protected Temporal temporal;
-    protected ArrayList<String> identificadores = new ArrayList<String>();
+    protected ArrayList<Id> objetos = new ArrayList<Id>();
 
     
-    public ArrayList<String> getIdentificadores() {
-		return identificadores;
-	}
-
-	public void setIdentificadores(ArrayList<String> identificadores) {
-		this.identificadores = identificadores;
-	}
-	
-	public void addElement(String identificador) {
-		identificadores.add(identificador);
-	}
-    
-	public void addList(Listadoids identificadores) {
-		ArrayList<String> listado = identificadores.getIdentificadores();
-		this.identificadores.addAll(listado);
-	}
-	
-    public String debugOutput() {
-    	String salida = "";
-    	for (String string : identificadores) {
-			salida = salida + " " +  string;
-		}
-    	return salida;
+    public ArrayList<Id> getObjetos() {
+      return objetos;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
+    public void setObjetos(ArrayList<Id> objetos) {
+      this.objetos = objetos;
+    }
+
+    public void addObjeto(Id objeto) {
+      this.objetos.add(objeto);
+    }
 
 	public Listadoids() {
       super();

@@ -344,66 +344,48 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
-		ArrayList<String> nombres = ((Listadoids) ids).getIdentificadores();
 
-		String contenido = null;
-		if (nombres.size() > 1 && nombres.get(nombres.size()-2).contains("=")) { contenido = nombres.get(nombres.size()-1);} 
+		ArrayList<Id> identificadores = ((Listadoids) ids).getObjetos();
 
-		//comprobamos que la variable no este ya declarada en la tabla de símbolos
-
-		// MEJORA: el igual puede ir en cualquier parte, no solo al final.
-		// MEJORA: si se pone un igual a varias variables, se pone únicamente a la que tiene el igual o a todas?
-
-		for (String nombre : nombres) {
-			if (nombre.contains("=")) { break;} 
-			if (sTable.containsSymbol(nombre)) {	// MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
+		for (Id id : identificadores) {
+			String nombre = id.getNombre();
+			if (sTable.containsSymbol(nombre)) {
 				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
 			} else {
-				//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
 				TypeIF tipo = scopeManager.searchType("ENTERO");
 				SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-				simboloVariable.setValor(contenido);
+				if (id.getValor() != null) { simboloVariable.setValor(id.getValor()); }
 				sTable.addSymbol(nombre, simboloVariable);
-
-				// Si se ha creado crrectamente
+				
 				SymbolIF fetch = sTable.getSymbol(nombre);
 				System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
-			} 
+			}
 		}
 
 		RESULT = null;		//RESULT = ids; 
  :}
-                      | IDENTIFICADOR listadoIDs:ids SEMI_COLON {:
+                      | IDENTIFICADOR:ident listadoIDs:ids SEMI_COLON {:
 		System.out.println("READ> declaracionVariable = IDENTIFICADOR");
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
-		ArrayList<String> nombres = ((Listadoids) ids).getIdentificadores();
 
-		String contenido = null;
-		if (nombres.size() > 1 && nombres.get(nombres.size()-2).contains("=")) { contenido = nombres.get(nombres.size()-1);} 
+		ArrayList<Id> identificadores = ((Listadoids) ids).getObjetos();
 
-		//comprobamos que la variable no este ya declarada en la tabla de símbolos
-
-		// DUDA: no creo que sea posible hacer asignaciones a vectores
-		
-
-		for (String nombre : nombres) {
-			if (nombre.contains("=")) { semanticErrorManager.semanticFatalError("Declaraciones en vectores con valor no permitidas");}
-			if (sTable.containsSymbol(nombre)) {	// MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
+		for (Id id : identificadores) {
+			String nombre = id.getNombre();
+			if (sTable.containsSymbol(nombre)) {
 				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
 			} else {
-				//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
-				TypeIF tipo = scopeManager.searchType("ENTERO");
+				TypeIF tipo = scopeManager.searchType(ident.getLexema());
 				SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-				simboloVariable.setValor(contenido);
+				if (id.getValor() != null) { semanticErrorManager.semanticFatalError("Declaraciones en vectores con valor no permitidas"); }
 				sTable.addSymbol(nombre, simboloVariable);
-
-				// Si se ha creado crrectamente
+				
 				SymbolIF fetch = sTable.getSymbol(nombre);
 				System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
-			} 
+			}
 		}
 
 		RESULT = null;		//RESULT = ids; 
@@ -411,14 +393,22 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
                       
 listadoIDs ::= id:ident listadoIDs1:listadoIdents {: 
 		System.out.println("READ> listadoIDs");
-		Listadoids listado = new Listadoids();
-		for (String element : (ArrayList<String>)ident) {  // ¿No sería más fácil usar sólo un tipo de adición?
-		System.out.println("DEBUG");
-			listado.addElement((String) element); 
-		}
-		listado.addList((Listadoids) listadoIdents);
+		
 
-		//ScopeIF ambito = scopeManager.getCurrentScope();
+				// Nuevo Sistema
+		Listadoids listado = (Listadoids) listadoIdents;
+		Id identificador = (Id) ident;
+		listado.addObjeto(identificador);
+
+		System.out.print("LIDS> ");
+
+		// Print names from ArrayList in the same line
+		for (Id id : listado.getObjetos()) {
+			System.out.print(id.getNombre() + " ");
+		}
+		System.out.println();
+
+
 
 		RESULT = listado; 
  :};
@@ -434,13 +424,16 @@ listadoIDs1 ::= COLON listadoIDs:listadoIdents {:
 
 id ::= IDENTIFICADOR:ident id1:asign {:
 		System.out.println("READ> id"); 
-		ArrayList<String> salida = new ArrayList<String>();  // MEJORA: Cambiar por listadoIDS
-		salida.add(ident.getLexema());
+
+		// Nueva implementación
+		Id identificador = new Id();
+		identificador.setNombre(ident.getLexema());
 		if (asign != null) {
-			salida.add("=");
-			salida.add((String)asign);
-		}
-		RESULT = salida;
+			System.out.println("ID> Asignar valor " + asign);
+			identificador.setValor((String) asign);
+		} else { System.out.println("ID> No asignar valor"); identificador.setValor(null);}
+		System.out.println("ID> Testing data = " + identificador.getValor());
+		RESULT = identificador;
  :};
 
 id1 ::= epsilon {:
