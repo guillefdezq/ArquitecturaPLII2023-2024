@@ -281,7 +281,7 @@ declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:num SEMI_COLON {:
 		String nombre = id.getLexema();
 		String valor = num.getLexema();
 		System.out.println("CONS>existe? "+sTable.containsSymbol(nombre));
-		if (sTable.containsSymbol(nombre)) {  // MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
+		if (sTable.containsSymbol(nombre)) {
 			semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
 		} else {
 			//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
@@ -310,8 +310,8 @@ declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_
 		String nombre = id.getLexema();
 		String tamano = tam.toString();
 		
-		if (typeTable.containsType(nombre)) {  // MEJORA: añadir comprobación de nivel actual vs niveles anteriores (scopes)
-			semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarada");
+		if (typeTable.containsType(nombre)) {
+			semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarado.");
 		} else {
 			TypeArray tsVector = new TypeArray(scope);
 			tsVector.setName(nombre);
@@ -475,24 +475,30 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 // EXPRESIONES
 
-expresion ::= NUMERO {: System.out.println("READ> expresion = NUMERO"); RESULT = null; :}
+expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO"); 
+		String numero = num.getLexema();
+		Expresion expr = new Expresion();
+		expr.setTipo(scopeManager.searchType("ENTERO"));
+		expr.setValor(numero);
+		RESULT = expr; :}
 	| IDENTIFICADOR:id {: 
-
-		// CODIGO SIN REVISAR
-		// DUDA: hace falta implementar una comprobación de variable de mismo nombre en distintos valores entre ámbitos?
 		String identificador = id.getLexema(); 
-
-		Expresion exp = new Expresion(identificador);
+		Expresion expr = new Expresion();
 		if(!(scopeManager.containsSymbol(identificador))) {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
 		}
+		
 		SymbolIF symbol = scopeManager.searchSymbol(identificador);
 		SymbolVariable variable = (SymbolVariable) symbol;
-		String num = variable.getValor();
-		System.out.println("READ> expresion = IDENTIFICADOR = " + num);
-		RESULT = num;
 
- :}	|  OPEN_KEY expresion CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY"); RESULT = null; :}  // DUDA: Debería crear un ámbito aquí?
+		String numero = variable.getValor();
+		System.out.println("READ> expresion = IDENTIFICADOR = " + numero + symbol.getType());
+
+		expr.setTipo(symbol.getType());
+		expr.setValor(numero);
+		RESULT = expr;
+
+ :}	|  OPEN_KEY expresion:expr CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY"); RESULT = expr; :}  // DUDA: Debería crear un ámbito aquí?
  	|  expresion PLUS expresion {: System.out.println("READ> expresion = PLUS"); RESULT = null; :}
  	|  expresion MULT expresion {: System.out.println("READ> expresion = MULT"); RESULT = null; :}
  	|  expresion AUTO_INCREMENTO expresion {: System.out.println("READ> expresion = AUTO_INCREMENTO"); RESULT = null; :}
@@ -506,6 +512,7 @@ expresion ::= NUMERO {: System.out.println("READ> expresion = NUMERO"); RESULT =
 accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET {: System.out.println("READ> accesoVector"); RESULT = null; :};
 
 // DUDA: es necesario poner aquí ámbito?
+// IDEA: para los parámetros crear variables del tipo nombreFunción+Parametro+nombreParámetro o bien, crear en el no terminal un booleano que compruebe si es parámetro y su posición en la función.
 llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY {: System.out.println("READ> llamadaFuncion = conParametros"); RESULT = null; :}
 	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros"); RESULT = null; :};
 parametros ::= expresion {: System.out.println("READ> parametros = expresion"); RESULT = null; :}
@@ -533,10 +540,47 @@ sentencia ::= sentenciaDevuelve {: System.out.println("READ> sentencia = sentenc
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve"); RESULT = null; :}
 	| DEVUELVE expresion SEMI_COLON {: System.out.println("READ> sentenciaDevuelve + expresion"); RESULT = null; :};
 
-sentenciaIncremento ::= IDENTIFICADOR AUTO_INCREMENTO SEMI_COLON {: System.out.println("READ> sentenciaIncremento"); RESULT = null; :};
+sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.out.println("READ> sentenciaIncremento"); 
+		
+		String nombre = (String) iden.getLexema();
+		SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(nombre);
+		System.out.println("DEBUG");
+		SymbolVariable vari = (SymbolVariable) sym;
 
-sentenciaAsignacion ::= ref ASSIGN expresion SEMI_COLON {: System.out.println("READ> sentenciaAsignacion"); RESULT = null; :};
-ref ::= IDENTIFICADOR {: System.out.println("READ> ref"); RESULT = null; :}
+
+		if (sym.getType() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+		}
+
+		System.out.println(vari);
+		String valor = vari.getValor();
+		vari.setValor(Integer.toString((Integer.parseInt(valor) + 1)));
+
+		System.out.println("SN++> " + vari.getName() + " = " + vari.getValor());
+		
+		RESULT = null; :};
+
+sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.println("READ> sentenciaAsignacion"); 
+
+		Expresion expr = (Expresion) exp;
+		SymbolIF sym = (SymbolIF) ref;
+		SymbolVariable vari = (SymbolVariable) sym;
+
+		if (sym.getType() != expr.getTipo()) {
+			semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+		}
+
+		vari.setValor(expr.getValor());
+
+		System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
+
+		RESULT = null; :};
+ref ::= IDENTIFICADOR:ident {: System.out.println("READ> ref"); 
+		if (!(scopeManager.containsSymbol(ident.getLexema()))) {
+			semanticErrorManager.semanticFatalError("No se encuentra la variable " + ident.getLexema());
+		}
+		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
+		RESULT = symbol; :}
  | accesoVector {: System.out.println("READ> accesoVector"); RESULT = null; :};
 
 sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma"); RESULT = null; :};
@@ -581,8 +625,14 @@ opcionesEscribeEnt ::= epsilon {:
 		System.out.println("READ> opcionesEscribeEnt = epsilon");
 		RESULT = null;
  :}
- | expresion:expr {:
-		String salida = (String) expr;
+ | expresion:expr {:  // DUDA: se permite imprimir lógicos como uno o cero?
+		Expresion expresion = (Expresion) expr;
+		// Si es tipo lógico, escribir error semántico.
+		if (expresion.getTipo() == scopeManager.searchType("LOGICO")) {
+			semanticErrorManager.semanticFatalError("No se puede imprimir un valor lógico");
+		}
+
+		String salida = expresion.getValor();
 		System.out.println("READ> opcionesEscribeEnt = expresion = " + salida);
 		RESULT = salida;
  :};

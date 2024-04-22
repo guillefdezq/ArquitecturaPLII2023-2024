@@ -16,6 +16,9 @@ entero c, d = 9;
 vector e;
 escribeEnt(a);
 
+c = d;
+c++;
+c++;
 
 si (a==0) {
 	entero a = 50;
