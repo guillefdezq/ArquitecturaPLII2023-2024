@@ -5,10 +5,7 @@
   import compiler.semantic.symbol.SymbolVariable;
   import es.uned.lsi.compiler.semantic.type.TypeIF;
 
-  public class Sentenciasi extends NonTerminal {
-
-    protected SymbolVariable symbolVariableIdentificador;
-    protected Temporal temporal;
+  public class Sentenciasi extends Sentencia {
 
     public Sentenciasi() {
       super();

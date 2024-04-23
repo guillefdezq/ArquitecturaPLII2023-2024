@@ -211,10 +211,6 @@ program ::=
 			tsEntero.setName("ENTERO");
 			typeTable.addType("ENTERO",tsEntero);
 
-		TypeSimple tsLogico = new TypeSimple(scope); // DUDA: realmente se utiliza este?
-			tsLogico.setName("LOGICO");
-			typeTable.addType("LOGICO",tsLogico);
-
 		// Es muy posible que este no sea necesario
 		TypeSimple tsVacio = new TypeSimple(scope);
 			tsVacio.setName("VACIO");
@@ -559,8 +555,26 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 		System.out.println("EX++> " + expr.getValor());
 		
 		RESULT = expr; :}
- 	|  NEGACION expresion {: System.out.println("READ> expresion = NEGACION"); RESULT = null; :}
- 	|  expresion LOWER_THAN expresion {: System.out.println("READ> expresion = LOWER_THAN "); RESULT = null; :}
+ 	|  NEGACION expresion:exp {: System.out.println("READ> expresion = NEGACION"); 
+			Expresion expr = (Expresion) exp;
+			if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+				semanticErrorManager.semanticFatalError("No se puede negar una variable de tipo " + expr.getTipo().getName() + ", únicamente usando enteros.");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor((Integer.parseInt(expr.getValor()) == 0)?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EXP-> " + expr.getValor());
+			RESULT = expr; :}
+ 	|  expresion:a LOWER_THAN expresion:b {: System.out.println("READ> expresion = LOWER_THAN "); 
+			Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(exprb.getTipo()))) {
+				semanticErrorManager.semanticFatalError("La expresión de igualdad requiere que los operandos sean del mismo tipo");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor((Integer.parseInt(expra.getValor()) < Integer.parseInt(exprb.getValor()))?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EXP<> " + expra.getValor() + "<" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
  	|  expresion:a EQUAL expresion:b {: System.out.println("READ> expresion = EQUAL "); 
 			Expresion expr = new Expresion();
 			Expresion expra = (Expresion) a;
@@ -568,11 +582,22 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			if (!(expra.getTipo().equals(exprb.getTipo()))) {
 				semanticErrorManager.semanticFatalError("La expresión de igualdad requiere que los operandos sean del mismo tipo");
 			}
-			expr.setTipo(scopeManager.searchType("LOGICO"));
+			expr.setTipo(scopeManager.searchType("ENTERO"));
 			expr.setValor((Integer.parseInt(expra.getValor()) == Integer.parseInt(exprb.getValor()))?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
 			System.out.println("EX==> " + expra.getValor() + "==" + exprb.getValor() + "=" + expr.getValor());
 			RESULT = expr; :}
- 	|  expresion AND_LOGICA expresion {: System.out.println("READ> expresion = AND_LOGICA "); RESULT = null; :}
+ 	|  expresion:a AND_LOGICA expresion:b {: System.out.println("READ> expresion = AND_LOGICA "); Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión AND requiere el operando izquierdo sea de tipo lógico");
+			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión AND requiere el operando derecho sea de tipo lógico");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor((Integer.parseInt(expra.getValor()) == 1 && Integer.parseInt(exprb.getValor()) == 1)?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EX&&> " + expra.getValor() + "AND" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
  	|  accesoVector {: System.out.println("READ> expresion = accesoVector"); RESULT = null; :}
  	|  llamadaFuncion {: System.out.println("READ> expresion = llamadaFuncion"); RESULT = null; :};
 
@@ -677,11 +702,35 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 		RESULT = null;  :};
 
 // ATENTO! No hace falta poner aquí ninguna apertura o cierre de ámbito, ya lo hace sentencia con bloque.
-sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia {: System.out.println("READ> sentenciaSi + SINO"); RESULT = null; :}
-	 | SI OPEN_KEY expresion CLOSE_KEY sentencia {: System.out.println("READ> sentenciaSi"); RESULT = null; :};
+sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia SINO sentencia {: System.out.println("READ> sentenciaSi + SINO"); 
+		Sentenciasi sentSi = new Sentenciasi();
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+		
+		RESULT = sentSi; :}
+	 | SI OPEN_KEY expresion:exp CLOSE_KEY sentencia {: System.out.println("READ> sentenciaSi");
+		Sentenciasi sentSi = new Sentenciasi();
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+
+		RESULT = sentSi; :};
 	
 // 'Ergo', aquí tampoco hace falta, al usar bloque directamente.
-sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: System.out.println("READ> sentenciaAlternativas"); RESULT = null; :};
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: System.out.println("READ> sentenciaAlternativas"); 
+		Sentenciaalternativas sentAlternativas = new Sentenciaalternativas();
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+
+		RESULT = sentAlternativas; :};
 casosAlternativa ::= casosAlternativa casoAlt {: System.out.println("READ> casosAlternativa = casoAlternativa"); RESULT = null; :}
  | casoAlt {: System.out.println("READ> casoAlternativa = casoAlt"); RESULT = null; :};
 
@@ -689,8 +738,15 @@ casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println
 porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> porDefecto = PORDEFECTO"); RESULT = null; :}
  | epsilon {: System.out.println("READ> porDefecto = epsilon"); RESULT = null; :};
 
-// Duda: está bien colocado el ámbito? tanto aquí como en el si y en el alternativas
-sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY abrirAmbito sentencia cerrarAmbito {: System.out.println("READ> sentenciaMientras"); RESULT = null; :};
+sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia {: System.out.println("READ> sentenciaMientras"); 
+		Sentenciamientras sentMientras = new Sentenciamientras();
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+		
+		RESULT = sentMientras; :};
 
 sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
 
@@ -721,8 +777,8 @@ opcionesEscribeEnt ::= epsilon {:
  | expresion:expr {:  // DUDA: se permite imprimir lógicos como uno o cero?
 		Expresion expresion = (Expresion) expr;
 		// Si es tipo lógico, escribir error semántico.
-		if (expresion.getTipo() == scopeManager.searchType("LOGICO")) {
-			semanticErrorManager.semanticFatalError("No se puede imprimir un valor lógico");
+		if (expresion.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("Únicamente se pueden imprimir valores enteros.");
 		}
 
 		String salida = expresion.getValor();
