@@ -5,33 +5,38 @@
   import compiler.semantic.symbol.SymbolVariable;
   import es.uned.lsi.compiler.semantic.type.TypeIF;
 
-  public class Sentenciadevuelve extends NonTerminal {
+  public class Sentenciadevuelve extends Sentencia {
 
-    protected SymbolVariable symbolVariableIdentificador;
-    protected Temporal temporal;
+    protected boolean isDevuelveVacio = true;
+    protected String valor;
 
     public Sentenciadevuelve() {
       super();
     }
 
-    public Sentenciadevuelve(SymbolVariable symbolVariableIdentificador) {
-      this();
-      this.symbolVariableIdentificador = symbolVariableIdentificador;
+    public Sentenciadevuelve(String valor) {
+      super();
+      this.valor = valor;
     }
 
-    public SymbolVariable getSymbolVariableIdentificador() {
-      return symbolVariableIdentificador;
+    public boolean isDevuelveVacio() {
+      return isDevuelveVacio;
     }
 
-    public void setSymbolVariableIdentificador(SymbolVariable symbolVariableIdentificador) {
-      this.symbolVariableIdentificador = symbolVariableIdentificador;
+    public void setDevuelveVacio(boolean isDevuelveVacio) {
+      this.isDevuelveVacio = isDevuelveVacio;
     }
 
-    public TypeIF getType() {
-      if (symbolVariableIdentificador != null) {
-        return symbolVariableIdentificador.getType();
-      } else return null;
+    public String getValor() {
+      return valor;
     }
+
+    public void setValor(String valor) {
+      this.valor = valor;
+    }
+
+    
+
 
   }
   

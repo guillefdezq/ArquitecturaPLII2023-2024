@@ -489,22 +489,89 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 		}
 		
 		SymbolIF symbol = scopeManager.searchSymbol(identificador);
-		SymbolVariable variable = (SymbolVariable) symbol;
 
-		String numero = variable.getValor();
-		System.out.println("READ> expresion = IDENTIFICADOR = " + numero + symbol.getType());
+		// Get instance of symbol
+		System.out.println(symbol.getClass());
+
+		String numero = "";
+
+		if (symbol instanceof SymbolVariable) {
+			SymbolVariable variable = (SymbolVariable) symbol;
+			numero = variable.getValor();
+		} else if (symbol instanceof SymbolConstant) {
+			SymbolConstant constant = (SymbolConstant) symbol;
+			numero = constant.getValor();
+		} else {
+			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable o constante");
+		}
+
+		System.out.println("READ> expresion = IDENTIFICADOR = " + numero + " " + symbol.getType() + " " + symbol.getClass() );
 
 		expr.setTipo(symbol.getType());
 		expr.setValor(numero);
 		RESULT = expr;
 
- :}	|  OPEN_KEY expresion:expr CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY"); RESULT = expr; :}  // DUDA: Debería crear un ámbito aquí?
- 	|  expresion PLUS expresion {: System.out.println("READ> expresion = PLUS"); RESULT = null; :}
- 	|  expresion MULT expresion {: System.out.println("READ> expresion = MULT"); RESULT = null; :}
- 	|  expresion AUTO_INCREMENTO expresion {: System.out.println("READ> expresion = AUTO_INCREMENTO"); RESULT = null; :}
+ :}	|  OPEN_KEY expresion:exp CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY");
+ 		Expresion expr = (Expresion) exp;
+		System.out.println("(EX)> (" + expr.getValor() + ")");
+		RESULT = expr; :}  // DUDA: Debería crear un ámbito aquí?
+ 	|  expresion:a PLUS expresion:b {: System.out.println("READ> expresion = PLUS"); 
+			Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(exprb.getTipo()))) {
+				semanticErrorManager.semanticFatalError("La expresión de suma requiere que los operandos sean del mismo tipo");
+			} else if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión de suma requiere el operando izquierdo sea de tipo entero");
+			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión de suma requiere el operando derecho sea de tipo entero");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor(Integer.toString(Integer.parseInt(expra.getValor()) + Integer.parseInt(exprb.getValor())));		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EXP+> " + expra.getValor() + "+" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
+ 	|  expresion:a MULT expresion:b {: System.out.println("READ> expresion = MULT");
+			Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(exprb.getTipo()))) {
+				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere que los operandos sean del mismo tipo");
+			} else if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere el operando izquierdo sea de tipo entero");
+			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere el operando derecho sea de tipo entero");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor(Integer.toString(Integer.parseInt(expra.getValor()) * Integer.parseInt(exprb.getValor())));		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EXP*> " + expra.getValor() + "*" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
+ 	|  expresion:exp AUTO_INCREMENTO {: System.out.println("READ> expresion = AUTO_INCREMENTO"); 
+		
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+
+		String valor = expr.getValor();
+		expr.setValor(Integer.toString((Integer.parseInt(valor) + 1)));
+
+		System.out.println("EX++> " + expr.getValor());
+		
+		RESULT = expr; :}
  	|  NEGACION expresion {: System.out.println("READ> expresion = NEGACION"); RESULT = null; :}
  	|  expresion LOWER_THAN expresion {: System.out.println("READ> expresion = LOWER_THAN "); RESULT = null; :}
- 	|  expresion EQUAL expresion {: System.out.println("READ> expresion = EQUAL "); RESULT = null; :}
+ 	|  expresion:a EQUAL expresion:b {: System.out.println("READ> expresion = EQUAL "); 
+			Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(exprb.getTipo()))) {
+				semanticErrorManager.semanticFatalError("La expresión de igualdad requiere que los operandos sean del mismo tipo");
+			}
+			expr.setTipo(scopeManager.searchType("LOGICO"));
+			expr.setValor((Integer.parseInt(expra.getValor()) == Integer.parseInt(exprb.getValor()))?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EX==> " + expra.getValor() + "==" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
  	|  expresion AND_LOGICA expresion {: System.out.println("READ> expresion = AND_LOGICA "); RESULT = null; :}
  	|  accesoVector {: System.out.println("READ> expresion = accesoVector"); RESULT = null; :}
  	|  llamadaFuncion {: System.out.println("READ> expresion = llamadaFuncion"); RESULT = null; :};
@@ -526,7 +593,7 @@ bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias cerra
 listadoSentencias ::= listadoSentencias sentencia {: System.out.println("READ> listadoSentencias = listadoSentencias sentencia"); RESULT = null; :}
  | sentencia {: System.out.println("READ> listadoSentencias = sentencia"); RESULT = null; :};
 
-sentencia ::= sentenciaDevuelve {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = null; :}
+sentencia ::= sentenciaDevuelve {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = null; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
 	| sentenciaIncremento {: System.out.println("READ> sentencia = sentenciaIncremento"); RESULT = null; :}
 	| sentenciaAsignacion {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = null; :}
 	| sentenciaAsignacionSuma {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = null; :}
@@ -537,14 +604,19 @@ sentencia ::= sentenciaDevuelve {: System.out.println("READ> sentencia = sentenc
 	| sentenciaSalida {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = null; :}
 	| bloque {: System.out.println("READ> sentencia = bloque"); RESULT = null; :};
 
-sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve"); RESULT = null; :}
-	| DEVUELVE expresion SEMI_COLON {: System.out.println("READ> sentenciaDevuelve + expresion"); RESULT = null; :};
+sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve = vacío"); 
+		Sentenciadevuelve dev = new Sentenciadevuelve();
+		RESULT = dev; :}
+	| DEVUELVE expresion:exp SEMI_COLON {: 
+		Expresion expr = (Expresion) exp;
+		Sentenciadevuelve dev = new Sentenciadevuelve(expr.getValor());
+		System.out.println("READ> sentenciaDevuelve + expresion = " + expr.getValor()); 
+		RESULT = dev; :};
 
 sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.out.println("READ> sentenciaIncremento"); 
 		
 		String nombre = (String) iden.getLexema();
 		SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(nombre);
-		System.out.println("DEBUG");
 		SymbolVariable vari = (SymbolVariable) sym;
 
 
@@ -552,7 +624,6 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.
 			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
 		}
 
-		System.out.println(vari);
 		String valor = vari.getValor();
 		vari.setValor(Integer.toString((Integer.parseInt(valor) + 1)));
 
@@ -565,6 +636,7 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 		Expresion expr = (Expresion) exp;
 		SymbolIF sym = (SymbolIF) ref;
 		SymbolVariable vari = (SymbolVariable) sym;
+
 
 		if (sym.getType() != expr.getTipo()) {
 			semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
@@ -583,7 +655,26 @@ ref ::= IDENTIFICADOR:ident {: System.out.println("READ> ref");
 		RESULT = symbol; :}
  | accesoVector {: System.out.println("READ> accesoVector"); RESULT = null; :};
 
-sentenciaAsignacionSuma ::= ref ASSIGN_SUMA expresion SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma"); RESULT = null; :};
+sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma");
+		Expresion expr = (Expresion) exp;
+		SymbolIF sym = (SymbolIF) ref;
+		SymbolVariable vari = (SymbolVariable) sym;
+
+
+		if (sym.getType() != expr.getTipo()) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+		}
+
+		if (sym.getType() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+		}
+
+		String valor = vari.getValor();
+		vari.setValor(Integer.toString((Integer.parseInt(valor) + Integer.parseInt(expr.getValor()))));
+
+		System.out.println("ASI+> " + vari.getName() + " =+ " + expr.getValor() + " = " + vari.getValor());
+
+		RESULT = null;  :};
 
 // ATENTO! No hace falta poner aquí ninguna apertura o cierre de ámbito, ya lo hace sentencia con bloque.
 sentenciaSi ::= SI OPEN_KEY expresion CLOSE_KEY sentencia SINO sentencia {: System.out.println("READ> sentenciaSi + SINO"); RESULT = null; :}
@@ -603,8 +694,10 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY expresion CLOSE_KEY abrirAmbito sentenci
 
 sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
 
-sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe CLOSE_KEY SEMI_COLON {:
+sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
+		String salida = (String) expr;
 		System.out.println("READ> sentenciaSalida = ESCRIBE");
+		System.out.println("PRNT> " + salida); 
 		RESULT = null;
  :}
 	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:expr CLOSE_KEY SEMI_COLON {: 
@@ -617,9 +710,9 @@ opcionesEscribe ::= epsilon {:
 		System.out.println("READ> opcionesEscribe = epsilon");
 		RESULT = null;
  :}
- | STRING {: 
+ | STRING:string {: 
  		System.out.println("READ> opcionesEscribe = STRING"); 
-		RESULT = null;
+		RESULT = string.getLexema();
  :};
 opcionesEscribeEnt ::= epsilon {:
 		System.out.println("READ> opcionesEscribeEnt = epsilon");
