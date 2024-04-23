@@ -216,10 +216,12 @@ program ::=
 			tsVacio.setName("VACIO");
 			typeTable.addType("VACIO",tsVacio);
 
-		// Es muy posible que este no haga falta
+		/*
+		// Este no hace falta
 		TypeArray tsVector = new TypeArray(scope);
 			tsVector.setName("VECTORexp");
 			typeTable.addType("VECTORexp",tsVector);
+		*/
 
    :}
   axiom:ax
@@ -304,14 +306,12 @@ declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable(); 
 		String nombre = id.getLexema();
-		String tamano = tam.toString();
+		int tamano = Integer.parseInt(tam.toString());
 		
 		if (typeTable.containsType(nombre)) {
 			semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarado.");
-		} else {
-			TypeArray tsVector = new TypeArray(scope);
-			tsVector.setName(nombre);
-			tsVector.setSize(Integer.parseInt(tamano));
+		} else {			
+			TypeArray tsVector = new TypeArray (scope, nombre, tamano);
 			typeTable.addType(nombre,tsVector);
 
 			// Mirando que tiene
@@ -329,7 +329,13 @@ tamTipo ::= NUMERO:numero {:
 System.out.println("READ> tamTipo = NUMERO = " + numero.getLexema()); 
 if (!(Integer.parseInt(numero.getLexema()) > 0)) { semanticErrorManager.semanticFatalError("Tamaño de vector debe ser positivo"); }
 RESULT = numero.getLexema(); :}
- | IDENTIFICADOR {: System.out.println("READ> tamTipo = IDENTIFICADOR = " + "sin definir"); RESULT = null; :};
+ | IDENTIFICADOR:id {: 
+		String cadena = id.getLexema();
+		SymbolIF symbol = (SymbolIF) scopeManager.searchSymbol(cadena);
+		SymbolVariable simboloVariable = (SymbolVariable) symbol;
+		String valor = simboloVariable.getValor();
+		System.out.println("READ> tamTipo = IDENTIFICADOR = " + valor);
+ 		RESULT = valor; :};
 
 seccionVariables ::= seccionVariables declaracionVariable {: System.out.println("READ> seccionVariables + recursion"); RESULT = null; :}
  | declaracionVariable {: System.out.println("READ> seccionVariables"); RESULT = null; :};
@@ -601,7 +607,14 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
  	|  accesoVector {: System.out.println("READ> expresion = accesoVector"); RESULT = null; :}
  	|  llamadaFuncion {: System.out.println("READ> expresion = llamadaFuncion"); RESULT = null; :};
 
-accesoVector ::= IDENTIFICADOR OPEN_BRACKET expresion CLOSE_BRACKET {: System.out.println("READ> accesoVector"); RESULT = null; :};
+accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: System.out.println("READ> accesoVector");
+		Expresion expr = (Expresion) exp;
+		String cadena = (String) id.getLexema();
+		SymbolIF symbol = scopeManager.searchSymbol(cadena);
+		TypeArray vector = (TypeArray) symbol;
+		String salida = Integer.toString(vector.getElement(Integer.parseInt(expr.getValor())));
+		System.out.println("EXPV> " + salida);
+		RESULT = salida; :};
 
 // DUDA: es necesario poner aquí ámbito?
 // IDEA: para los parámetros crear variables del tipo nombreFunción+Parametro+nombreParámetro o bien, crear en el no terminal un booleano que compruebe si es parámetro y su posición en la función.
