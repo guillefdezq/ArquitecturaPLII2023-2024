@@ -112,8 +112,8 @@ non terminal            			parametro;
 // non terminal Parametro			        parametro;
 non terminal            			seccionConstantes;
 // non terminal SeccionConstantes			seccionConstantes;
-non terminal            		    declaracionConstante;
-// non terminal DeclaracionConstante		declaracionConstante;
+// non terminal            		    declaracionConstante;
+non terminal Declaracionconstante		declaracionConstante;
 non terminal            			seccionTipos;
 // non terminal SeccionTipos			    seccionTipos;
 non terminal            			declaracionTipo;
@@ -122,8 +122,8 @@ non terminal            		    tamTipo;
 // non terminal TamTipo		        	tamTipo;
 non terminal            			seccionVariables;
 // non terminal SeccionVariables			seccionVariables;
-non terminal             		    declaracionVariable;
-// non terminal DeclaracionVariable 		declaracionVariable;
+//non terminal             		    declaracionVariable;
+non terminal Declaracionvariable 		declaracionVariable;
 non terminal            		    listadoIDs;
 // non terminal ListadoIDs		        	listadoIDs;
 non terminal                        id;
@@ -294,8 +294,11 @@ declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:num SEMI_COLON {:
 			SymbolIF fetch = sTable.getSymbol(nombre);
 
 			System.out.println("CONS>nuevo " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolConstant)fetch).getValor());
+			
+			Declaracionconstante declCons = new Declaracionconstante(simboloConstante);
+			RESULT = declCons;
 		}
-		RESULT = null;
+
  :};
 
 seccionTipos ::= declaracionTipo seccionTipos {: System.out.println("READ> seccionTipos + recursion"); RESULT = null; :}
@@ -350,6 +353,8 @@ seccionVariables ::= seccionVariables declaracionVariable {: System.out.println(
 declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 		System.out.println("READ> declaracionVariable = ENTERO"); 
 
+		Declaracionvariable declVar = new Declaracionvariable((TypeSimple) scopeManager.searchType("ENTERO"), (Listadoids) ids);
+
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
@@ -357,7 +362,7 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 		ArrayList<Id> identificadores = ((Listadoids) ids).getObjetos();
 
 		for (Id id : identificadores) {
-			String nombre = id.getNombre();
+			String nombre = id.getNombre(); 
 			if (sTable.containsSymbol(nombre)) {
 				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
 			} else {
@@ -371,10 +376,12 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 			}
 		}
 
-		RESULT = null;		//RESULT = ids; 
+		RESULT = declVar;		//RESULT = ids; 
  :}
                       | IDENTIFICADOR:ident listadoIDs:ids SEMI_COLON {:
 		System.out.println("READ> declaracionVariable = IDENTIFICADOR");
+
+		Declaracionvariable declVar = new Declaracionvariable((TypeIF) scopeManager.searchType(ident.getLexema()), (Listadoids) ids);
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
@@ -397,7 +404,7 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 			}
 		}
 
-		RESULT = null;		//RESULT = ids; 
+		RESULT = declVar;		//RESULT = ids; 
  :};
                       
 listadoIDs ::= id:ident listadoIDs1:listadoIdents {: 
