@@ -98,8 +98,8 @@ non terminal Axiom		axiom;
 non terminal axiom1,listadoIDs1,id1,funcion1;
 non terminal              			funcionPrincipal;
 // non terminal FuncionPrincipal  			funcionPrincipal;
-non terminal            		    epsilon;
-// non terminal Epsilon		        	epsilon;
+// non terminal            		    epsilon;
+non terminal Epsilon		        	epsilon;
 non terminal            			seccionFunciones;
 // non terminal SeccionFunciones			seccionFunciones;
 non terminal                    	funcion;
@@ -259,6 +259,8 @@ cerrarAmbito ::= {:
 		// cerrar ámbito
 		ScopeIF scope = scopeManager.getCurrentScope();
 		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
 		scopeManager.closeScope();
 :}; 
 
@@ -317,9 +319,6 @@ declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_
 			// Mirando que tiene
 			System.out.println("VCTR>NEW> " + nombre + "@" + scope.getName() + "=" + "tamaño(" + tamano + ")"); //contenido);
 
-			// Intentando buscar - TRY FETCH
-			TypeIF tipo = typeTable.getType(nombre);
-			System.out.println(tipo);
 		} //fin if
 
 		RESULT = null; 
@@ -458,6 +457,7 @@ funcion1 ::= listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.prin
                       | seccionVariables listadoSentencias  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
 
 
+ 
 
 
 
@@ -608,13 +608,10 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
  	|  llamadaFuncion {: System.out.println("READ> expresion = llamadaFuncion"); RESULT = null; :};
 
 accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: System.out.println("READ> accesoVector");
-		Expresion expr = (Expresion) exp;
-		String cadena = (String) id.getLexema();
-		SymbolIF symbol = scopeManager.searchSymbol(cadena);
-		TypeArray vector = (TypeArray) symbol;
-		String salida = Integer.toString(vector.getElement(Integer.parseInt(expr.getValor())));
-		System.out.println("EXPV> " + salida);
-		RESULT = salida; :};
+		System.out.println("READ> accesoVector");
+
+		RESULT = null;
+		 :};
 
 // DUDA: es necesario poner aquí ámbito?
 // IDEA: para los parámetros crear variables del tipo nombreFunción+Parametro+nombreParámetro o bien, crear en el no terminal un booleano que compruebe si es parámetro y su posición en la función.
@@ -673,25 +670,30 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 
 		Expresion expr = (Expresion) exp;
 		SymbolIF sym = (SymbolIF) ref;
-		SymbolVariable vari = (SymbolVariable) sym;
 
-
-		if (sym.getType() != expr.getTipo()) {
-			semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+		if(sym.getType() instanceof TypeArray) {
+			TypeArray vector = (TypeArray) sym.getType();
+			String salida = Integer.toString(vector.getElement(Integer.parseInt(expr.getValor())));
+			System.out.println("ASIG> no asignado correctamente");
+		} else {
+			if (sym.getType() != expr.getTipo()) {
+				semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+			}
+			SymbolVariable vari = (SymbolVariable) sym;
+			vari.setValor(expr.getValor());
+			System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
 		}
-
-		vari.setValor(expr.getValor());
-
-		System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
-
-		RESULT = null; :};
+		RESULT = null; 
+		:};
 ref ::= IDENTIFICADOR:ident {: System.out.println("READ> ref"); 
 		if (!(scopeManager.containsSymbol(ident.getLexema()))) {
 			semanticErrorManager.semanticFatalError("No se encuentra la variable " + ident.getLexema());
 		}
 		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
 		RESULT = symbol; :}
- | accesoVector {: System.out.println("READ> accesoVector"); RESULT = null; :};
+ | accesoVector:id {: 
+ 
+ 		 :};
 
 sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma");
 		Expresion expr = (Expresion) exp;
