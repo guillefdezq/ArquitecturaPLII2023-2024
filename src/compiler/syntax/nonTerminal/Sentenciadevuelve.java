@@ -8,13 +8,13 @@
   public class Sentenciadevuelve extends Sentencia {
 
     protected boolean isDevuelveVacio = true;
-    protected String valor;
+    protected int valor;
 
     public Sentenciadevuelve() {
       super();
     }
 
-    public Sentenciadevuelve(String valor) {
+    public Sentenciadevuelve(int valor) {
       super();
       this.valor = valor;
     }
@@ -27,11 +27,11 @@
       this.isDevuelveVacio = isDevuelveVacio;
     }
 
-    public String getValor() {
+    public int getValor() {
       return valor;
     }
 
-    public void setValor(String valor) {
+    public void setValor(int valor) {
       this.valor = valor;
     }
 

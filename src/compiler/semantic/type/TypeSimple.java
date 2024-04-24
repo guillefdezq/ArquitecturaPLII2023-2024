@@ -16,6 +16,8 @@ import es.uned.lsi.compiler.semantic.type.TypeBase;
 public class TypeSimple
     extends TypeBase
 {
+
+    private int valor;
     
     /**
      * Constructor for TypeSimple.
@@ -36,4 +38,14 @@ public class TypeSimple
         ExecutionEnvironmentIF environment = CompilerContext.getExecutionEnvironment ();
         return environment.getTypeSize (this);
     }
+
+    public int getValor() {
+        return valor;
+    }
+
+    public void setValor(int valor) {
+        this.valor = valor;
+    }
+
+    
 }

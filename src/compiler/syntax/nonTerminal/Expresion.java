@@ -15,16 +15,16 @@ public class Expresion extends NonTerminal {
   
   protected SymbolVariable symbolVariableIdentificador; // Utilizaré string, pero quiero cambiarlo
   protected String identificador;
-  protected String valor;
+  protected int valor;
   
   protected TypeIF tipo;
   protected TemporalIF temporal;
   
-  public String getValor() {
+  public int getValor() {
     return valor;
   }
 
-  public void setValor(String valor) {
+  public void setValor(int valor) {
     this.valor = valor;
   }
   

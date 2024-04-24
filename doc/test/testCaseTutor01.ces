@@ -1,3 +1,14 @@
+/*
+    Tabla de tipos y tabla de símbolos
+    Para la comprobación de unicidad de declaraciones y definiciones:
+        - añadir `entero c;` de manera repetida en el ámbito 2
+    Para la comprobación de tipos:
+        - añadir la sentencia `entero a; a=lista3+3;`
+    Para la comprobación de paso de parámetros:
+        - añadir la sentencia `funcion(a, a);`
+*/
+
+
 #constante TAM 10;
 tipo entero vector1[3];
 tipo entero vector2[TAM];
@@ -14,6 +25,9 @@ entero incrementa (entero x)
     /* bloque nuevo ámbito, cerrar al cerrar las llaves*/
     {
         entero c;
+        /*
+        entero c;
+        */
         /* bloque nuevo ámbito, cerrar al cerrar las llaves*/
         {
 
@@ -37,6 +51,14 @@ vacio principal ()
     tipo entero vector3[4];
     vector3 lista3;
 
+    /*
+    entero a;
+    a=lista3+3;
+    */
+
+    /*
+    funcion(a, a);
+    */
 
     devuelve;
 }

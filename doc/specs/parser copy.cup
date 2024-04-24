@@ -1,0 +1,808 @@
+package compiler.syntax;
+
+// Declaracion de importaciones 
+//(No modificar las proporcionadas. Se pueden agregar mas)
+
+import java_cup.runtime.Symbol;
+import java.util.*;
+
+import es.uned.lsi.compiler.lexical.*;
+import es.uned.lsi.compiler.code.*;
+import es.uned.lsi.compiler.intermediate.*;
+import es.uned.lsi.compiler.semantic.*;
+import es.uned.lsi.compiler.semantic.symbol.*;
+import es.uned.lsi.compiler.semantic.type.*;
+import es.uned.lsi.compiler.syntax.*;
+
+import compiler.CompilerContext;
+import compiler.lexical.*;
+import compiler.syntax.nonTerminal.*;
+
+import compiler.semantic.symbol.*;
+import compiler.semantic.type.*;
+import compiler.intermediate.*;
+import compiler.code.*;
+
+// Declaracion del codigo de usuario
+
+action code {:
+	
+	SyntaxErrorManager   syntaxErrorManager   = CompilerContext.getSyntaxErrorManager();
+	SemanticErrorManager semanticErrorManager = CompilerContext.getSemanticErrorManager ();
+	ScopeManagerIF       scopeManager         = CompilerContext.getScopeManager ();
+	FinalCodeFactoryIF   finalCodeFactory     = CompilerContext.getFinalCodeFactory ();
+
+:}	
+
+parser code {:
+	SyntaxErrorManager syntaxErrorManager = CompilerContext.getSyntaxErrorManager();
+	
+	public void syntax_error(Symbol symbol)
+	{ 
+	    Token token = (Token) symbol.value;
+	    syntaxErrorManager.syntaxError ("Error sintactico", token);	    
+	}
+		
+	public void unrecovered_syntax_error(java_cup.runtime.Symbol symbol)
+	{	
+	    Token token = (Token) symbol.value;
+	    syntaxErrorManager.syntaxFatalError ("Error fatal", token);
+	}
+:}
+
+// Declaracion de terminales
+
+
+terminal Token PLUS;
+terminal Token AUTO_INCREMENTO;
+terminal Token MULT;
+terminal Token AND_LOGICA;
+terminal Token OPEN_BRACKET;
+terminal Token CLOSE_BRACKET;
+terminal Token OPEN_PARENTHESIS;
+terminal Token CLOSE_PARENTHESIS;
+terminal Token OPEN_KEY;
+terminal Token CLOSE_KEY;
+terminal Token SEMI_COLON;
+terminal Token COLON;
+terminal Token TWO_POINTS;
+terminal Token NEGACION;
+terminal Token EQUAL;
+terminal Token ASSIGN_SUMA;
+terminal Token ASSIGN;
+terminal Token LOWER_THAN;
+terminal Token CASO;
+terminal Token CONSTANTE;
+terminal Token CORTE;
+terminal Token ENTERO;
+terminal Token ESCRIBE;
+terminal Token ESCRIBE_ENT;
+terminal Token ALTENATIVAS;
+terminal Token MIENTRAS;
+terminal Token PORDEFECTO;
+terminal Token principal;
+terminal Token DEVUELVE;
+terminal Token SI;
+terminal Token SINO;
+terminal Token TIPO;
+terminal Token VACIO;
+terminal Token IDENTIFICADOR;
+terminal Token NUMERO;
+terminal Token STRING;
+
+
+// Declaracion de no terminales
+
+non terminal Program	 			program;
+non terminal Axiom		axiom;
+non terminal axiom1,listadoIDs1,id1,funcion1;
+non terminal              			funcionPrincipal;
+// non terminal FuncionPrincipal  			funcionPrincipal;
+// non terminal            		    epsilon;
+non terminal Epsilon		        	epsilon;
+non terminal            			seccionFunciones;
+// non terminal SeccionFunciones			seccionFunciones;
+non terminal                    	funcion;
+// non terminal Funcion        			funcion;
+non terminal            			seccionParametros;
+// non terminal SeccionParametros			seccionParametros;
+non terminal            		    declaracionParametros;
+// non terminal DeclaracionParametros		declaracionParametros;
+non terminal            			parametro;
+// non terminal Parametro			        parametro;
+non terminal            			seccionConstantes;
+// non terminal SeccionConstantes			seccionConstantes;
+non terminal            		    declaracionConstante;
+// non terminal DeclaracionConstante		declaracionConstante;
+non terminal            			seccionTipos;
+// non terminal SeccionTipos			    seccionTipos;
+non terminal            			declaracionTipo;
+// non terminal DeclaracionTipo			declaracionTipo;
+non terminal            		    tamTipo;
+// non terminal TamTipo		        	tamTipo;
+non terminal            			seccionVariables;
+// non terminal SeccionVariables			seccionVariables;
+non terminal             		    declaracionVariable;
+// non terminal DeclaracionVariable 		declaracionVariable;
+non terminal            		    listadoIDs;
+// non terminal ListadoIDs		        	listadoIDs;
+non terminal                        id;
+// non terminal Id                			id;
+non terminal            		    expresion;
+// non terminal Expresion		        	expresion;
+non terminal             	    	accesoVector;
+// non terminal AccesoVector 	    		accesoVector;
+non terminal            	    	llamadaFuncion;
+// non terminal LlamadaFuncion	    		llamadaFuncion;
+non terminal            			bloque;
+// non terminal Bloque			            bloque;
+non terminal            			listadoSentencias;
+// non terminal ListadoSentencias			listadoSentencias;
+non terminal            			sentencia;
+// non terminal Sentencia			        sentencia;
+non terminal            		    sentenciaIncremento;
+// non terminal SentenciaIncremento		sentenciaIncremento;
+non terminal            		    sentenciaAsignacion;
+// non terminal SentenciaAsignacion		sentenciaAsignacion;
+non terminal            			ref;
+// non terminal Ref			            ref;
+non terminal            	        sentenciaAsignacionSuma;
+// non terminal SentenciaAsignacionSuma	sentenciaAsignacionSuma;
+non terminal            		    sentenciaSi;
+// non terminal SentenciaSi		    	sentenciaSi;
+non terminal            		    sentenciaAlternativas;
+// non terminal SentenciaAlternativas		sentenciaAlternativas;
+non terminal            			casosAlternativa;
+// non terminal CasosAlternativa			casosAlternativa;
+non terminal            			casoAlt; 
+// non terminal CasoAlt			        casoAlt; 
+non terminal            			porDefecto;
+// non terminal PorDefecto			        porDefecto;
+non terminal            			sentenciaMientras;
+// non terminal SentenciaMientras			sentenciaMientras;
+non terminal            	        sentenciaLlamadaFuncion;
+// non terminal SentenciaLlamadaFuncion	sentenciaLlamadaFuncion;
+non terminal            		    parametros;
+// non terminal Parametros		        	parametros;
+non terminal            			sentenciaSalida;
+// non terminal SentenciaSalida			sentenciaSalida;
+non terminal            			opcionesEscribe;
+// non terminal OpcionesEscribe			opcionesEscribe;
+non terminal            			opcionesEscribeEnt;
+// non terminal OpcionesEscribeEnt			opcionesEscribeEnt;
+non terminal            			sentenciaDevuelve;
+// non terminal SentenciaDevuelve			sentenciaDevuelve;
+non terminal						abrirAmbito;
+non terminal						cerrarAmbito;
+
+// Declaracion de relaciones de precedencia
+precedence left     AND_LOGICA;
+precedence left		EQUAL;
+precedence left		LOWER_THAN;
+precedence left		PLUS;
+precedence left		MULT;
+precedence left		AUTO_INCREMENTO, NEGACION;
+precedence right	OPEN_BRACKET, CLOSE_BRACKET;
+precedence left 	OPEN_KEY, CLOSE_KEY;
+precedence nonassoc SINO;
+precedence nonassoc SI;
+            
+
+// Declaracion de reglas de produccion
+
+
+start with program;
+
+program ::= 
+  {: 
+        syntaxErrorManager.syntaxInfo ("Starting parsing..."); 
+
+		scopeManager.openScope("global");
+		ScopeIF scope = scopeManager.getCurrentScope();
+		System.out.println("AMBT>comenzamos! " + scope.getName() + " (" + scope.getLevel() + ")");
+
+		System.out.println("GLBL> creando tipos");
+		//Obtenemos del ámbito creado la Tabla de Tipos y Símbolos
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		//Introduccion del Tipo Simple Entero o Integer y Logico o Booleano, vacio y vector
+		TypeSimple tsEntero = new TypeSimple(scope);
+			tsEntero.setName("ENTERO");
+			typeTable.addType("ENTERO",tsEntero);
+
+		// Es muy posible que este no sea necesario
+		TypeSimple tsVacio = new TypeSimple(scope);
+			tsVacio.setName("VACIO");
+			typeTable.addType("VACIO",tsVacio);
+
+		/*
+		// Este no hace falta
+		TypeArray tsVector = new TypeArray(scope);
+			tsVector.setName("VECTORexp");
+			typeTable.addType("VECTORexp",tsVector);
+		*/
+
+   :}
+  axiom:ax
+  {:   		
+  		// No modificar esta estructura, aunque se pueden añadir más acciones semánticas
+  		
+  		//List intermediateCode = ax.getIntermediateCode ();
+  		//finalCodeFactory.create (intermediateCode);
+
+  		// En caso de no comentarse las dos sentencias anteriores se puede generar una excepcion
+  		// en las llamadas a cupTest si el compilador no está completo. Esto es debido a que 
+  		// aún no se tendrá implementada la generación de código intermedio ni final.
+  		// Para la entrega final deberán descomentarse y usarse.
+  		
+		ScopeIF scope = scopeManager.getCurrentScope();
+		System.out.println("AMBT>terminamos! " + scope.getName() + " (" + scope.getLevel() + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		scopeManager.closeScope();
+
+  		syntaxErrorManager.syntaxInfo ("Parsing process ended.");
+  		
+   :};
+
+
+epsilon ::= ;
+
+abrirAmbito ::= {:
+		// abrir ámbito
+		ScopeIF scope = scopeManager.getCurrentScope();
+		scopeManager.openScope("ambito"+ (scope.getId()+1));
+		System.out.println("AMBT>abrir " + "ambito"+ (scope.getId()+1) + " (" + (scope.getId()+1) + ")");
+		// System.out.println(scopeManager.getAllScopes()); // Para debug
+:}; 
+
+cerrarAmbito ::= {:
+		// cerrar ámbito
+		ScopeIF scope = scopeManager.getCurrentScope();
+		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		scopeManager.closeScope();
+:}; 
+
+axiom ::=  seccionConstantes seccionTipos  axiom1 {: System.out.println("READ> axiom = constantes y tipos"); RESULT = null; :} ;
+
+axiom1 ::= seccionVariables seccionFunciones {: System.out.println("READ> axiom1 = variables y funciones"); RESULT = null; :}
+  | seccionFunciones {: System.out.println("READ> axiom1 = solo funciones"); RESULT = null; :};
+
+seccionConstantes ::= declaracionConstante seccionConstantes {: System.out.println("READ> seccionConstantes + recursion"); RESULT = null; :}
+                      | epsilon {: System.out.println("READ> seccionConstantes = ya está"); RESULT = null; :};
+                      
+                      
+declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:num SEMI_COLON {:
+		System.out.println("READ> declaracionConstante");
+		ScopeIF scope = scopeManager.getCurrentScope();
+		SymbolTableIF sTable = scope.getSymbolTable(); 
+		TypeTableIF typeTable = scope.getTypeTable ();
+		String nombre = id.getLexema();
+		int valor = Integer.parseInt(num.getLexema());
+		System.out.println("CONS>existe? "+sTable.containsSymbol(nombre));
+		if (sTable.containsSymbol(nombre)) {
+			semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
+		} else {
+			//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
+			TypeIF tipo = scopeManager.searchType("ENTERO");
+			SymbolConstant symbol = new SymbolConstant(scope, nombre, tipo);
+			TypeSimple simple = (TypeSimple) symbol.getType();
+			simple.setValor(valor);
+			sTable.addSymbol(nombre, symbol);
+
+			// Intentando buscar - TRY FETCH
+			SymbolIF fetch = sTable.getSymbol(nombre);
+
+			System.out.println("CONS>nuevo " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + fetch.getType().getValor());
+		}
+		RESULT = null;
+ :};
+
+seccionTipos ::= declaracionTipo seccionTipos {: System.out.println("READ> seccionTipos + recursion"); RESULT = null; :}
+                      | epsilon {: System.out.println("READ> seccionTipos = ya está"); RESULT = null; :};
+                      
+declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_BRACKET SEMI_COLON {: 
+		System.out.println("READ> declaracionTipo"); 
+		
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable(); 
+		String nombre = id.getLexema();
+		int tamano = Integer.parseInt(tam.toString());
+		
+		if (typeTable.containsType(nombre)) {
+			semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarado.");
+		} else {			
+			TypeArray tsVector = new TypeArray (scope, nombre, tamano);
+			typeTable.addType(nombre,tsVector);
+
+			// Mirando que tiene
+			System.out.println("VCTR>NEW> " + nombre + "@" + scope.getName() + "=" + "tamaño(" + tamano + ")"); //contenido);
+
+		} //fin if
+
+		RESULT = null; 
+:};
+
+tamTipo ::= NUMERO:num {: 
+System.out.println("READ> tamTipo = NUMERO = " + num.getLexema()); 
+int numero = Integer.parseInt(num.getLexema());
+if (!(numero > 0)) { semanticErrorManager.semanticFatalError("Tamaño de vector debe ser positivo"); }
+RESULT = numero; :}
+ | IDENTIFICADOR:id {: 
+		String cadena = id.getLexema();
+		if(!(scopeManager.containsSymbol(cadena))) {
+			semanticErrorManager.semanticFatalError("La variable/constante " + cadena + " no existe");
+		}
+		SymbolIF symbol = (SymbolIF) scopeManager.searchSymbol(cadena);
+		TypeIF type = symbol.getType();
+		if(!(type instanceof TypeSimple)) {
+			semanticErrorManager.semanticFatalError("La variable/constante " + cadena + " no es de tipo entero");
+		}
+		int valor = ((TypeSimple) type).getValor();
+
+		System.out.println("READ> tamTipo = IDENTIFICADOR = " + valor);
+ 		RESULT = valor; 
+			
+		:};
+
+seccionVariables ::= seccionVariables declaracionVariable {: System.out.println("READ> seccionVariables + recursion"); RESULT = null; :}
+ | declaracionVariable {: System.out.println("READ> seccionVariables"); RESULT = null; :};
+
+declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
+		System.out.println("READ> declaracionVariable = ENTERO"); 
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		ArrayList<Id> identificadores = ((Listadoids) ids).getObjetos();
+
+		for (Id id : identificadores) {
+			String nombre = id.getNombre();
+			if (sTable.containsSymbol(nombre)) {
+				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+			} else {
+				TypeIF tipo = scopeManager.searchType("ENTERO");
+				SymbolVariable symbol = new SymbolVariable(scope, nombre, tipo);
+				TypeSimple simple = (TypeSimple) symbol.getType();
+				if (id.getValor() != null) { simple.setValor(id.getValor()); }
+				sTable.addSymbol(nombre, symbol);
+				
+				SymbolIF fetch = sTable.getSymbol(nombre);
+				System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getType().getValor());
+			}
+		}
+
+		RESULT = null;		//RESULT = ids; 
+ :}
+                      | IDENTIFICADOR:ident listadoIDs:ids SEMI_COLON {:
+		System.out.println("READ> declaracionVariable = IDENTIFICADOR");
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		ArrayList<Id> identificadores = ((Listadoids) ids).getObjetos();
+
+		for (Id id : identificadores) {
+			String nombre = id.getNombre();
+			if (sTable.containsSymbol(nombre)) {
+				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+			} else {
+				TypeIF tipo = scopeManager.searchType(ident.getLexema());
+				SymbolVariable symbol = new SymbolVariable(scope, nombre, tipo);
+				TypeSimple simple = (TypeSimple) symbol.getType();
+				if (id.getValor() != null) { semanticErrorManager.semanticFatalError("Declaraciones en vectores con valor no permitidas"); }
+				sTable.addSymbol(nombre, symbol);
+				
+				SymbolIF fetch = sTable.getSymbol(nombre);
+				System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getType().getValor());
+			}
+		}
+
+		RESULT = null;		//RESULT = ids; 
+ :};
+                      
+listadoIDs ::= id:ident listadoIDs1:listadoIdents {: 
+		System.out.println("READ> listadoIDs");
+		
+
+				// Nuevo Sistema
+		Listadoids listado = (Listadoids) listadoIdents;
+		Id identificador = (Id) ident;
+		listado.addObjeto(identificador);
+
+		System.out.print("LIDS> ");
+
+		// Print names from ArrayList in the same line
+		for (Id id : listado.getObjetos()) {
+			System.out.print(id.getNombre() + " ");
+		}
+		System.out.println();
+
+
+
+		RESULT = listado; 
+ :};
+
+listadoIDs1 ::= COLON listadoIDs:listadoIdents {:
+		System.out.println("READ> listadoIDs1 = más variables");
+		RESULT = listadoIdents;
+ :}
+                      | epsilon {:
+		System.out.println("READ> listadoIDs1 = ya está");
+		RESULT = new Listadoids();
+ :};
+
+id ::= IDENTIFICADOR:ident id1:asign {:
+		System.out.println("READ> id"); 
+
+		// Nueva implementación
+		Id identificador = new Id();
+		identificador.setNombre(ident.getLexema());
+		if (asign != null) {
+			System.out.println("ID> Asignar valor " + asign);
+			identificador.setValor((String) asign);
+		} else { System.out.println("ID> No asignar valor"); identificador.setValor(null);}
+		System.out.println("ID> Testing data = " + identificador.getValor());
+		RESULT = identificador;
+ :};
+
+id1 ::= epsilon {:
+		System.out.println("READ> id1 = epsilon");
+		RESULT = null;
+ :}
+        | ASSIGN NUMERO:num {: 
+		System.out.println("READ> id1 = ASSIGN NUMERO"); 
+		RESULT = num.getLexema();
+ :};
+
+seccionFunciones ::= funcion seccionFunciones {: System.out.println("READ> seccionFunciones = funciones extra"); RESULT = null; :}
+                      | funcionPrincipal {: System.out.println("READ> seccionFunciones = funcion principal"); RESULT = null; :};
+                      
+funcion ::= VACIO IDENTIFICADOR abrirAmbito OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = vacio"); RESULT = null; :}
+            | ENTERO IDENTIFICADOR abrirAmbito OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = entero"); RESULT = null; :};
+                     
+         
+funcion1 ::= listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
+                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
+
+
+ 
+
+
+
+seccionParametros ::= declaracionParametros {: System.out.println("READ> seccionParametros = sí"); RESULT = null; :}
+ | epsilon {: System.out.println("READ> seccionParametros = no"); RESULT = null; :};
+
+declaracionParametros  ::= parametro {: System.out.println("READ> declaracionParametros = uno/ultimo"); RESULT = null; :}
+ | parametro COLON declaracionParametros {: System.out.println("READ> declaracionParametros = uno mas"); RESULT = null; :};
+
+parametro ::= ENTERO IDENTIFICADOR {: System.out.println("READ> parametro = entero"); RESULT = null; :}
+ | IDENTIFICADOR IDENTIFICADOR {: System.out.println("READ> parametro = identificador"); RESULT = null; :};
+
+funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal"); RESULT = null; :}
+				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); RESULT = null; :};
+
+
+
+// EXPRESIONES
+
+expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO"); 
+		int numero = Integer.parseInt(num.getLexema());
+		Expresion expr = new Expresion();
+		expr.setTipo(scopeManager.searchType("ENTERO"));
+		expr.setValor(numero);
+		RESULT = expr; :}
+	| IDENTIFICADOR:id {: 
+		String identificador = id.getLexema(); 
+		Expresion expr = new Expresion();
+		if(!(scopeManager.containsSymbol(identificador))) {
+			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
+		}
+		
+		SymbolIF symbol = scopeManager.searchSymbol(identificador);
+		TypeIF tipoEntero = scopeManager.searchType("ENTERO");  // esto no se está usando
+		if(!(symbol.getType() instanceof TypeSimple)) {
+			semanticErrorManager.semanticFatalError("La variable/constante " + cadena + " no es de tipo simple."); }
+		TypeSimple simple = (TypeSimple) symbol.getType();
+		int numero = simple.getValor();
+
+		System.out.println("READ> expresion = IDENTIFICADOR = " + numero + " " + symbol.getType() + " " + symbol.getClass() );
+
+		expr.setTipo(tipoEntero);
+		expr.setValor(numero);
+		RESULT = expr;
+
+ :}	|  OPEN_KEY expresion:exp CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY");
+ 		Expresion expr = (Expresion) exp;
+		System.out.println("(EX)> (" + expr.getValor() + ")");
+		RESULT = expr; :}  // DUDA: Debería crear un ámbito aquí?
+ 	|  expresion:a PLUS expresion:b {: System.out.println("READ> expresion = PLUS"); 
+			Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(exprb.getTipo()))) {
+				semanticErrorManager.semanticFatalError("La expresión de suma requiere que los operandos sean del mismo tipo");
+			} else if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión de suma requiere el operando izquierdo sea de tipo entero");
+			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión de suma requiere el operando derecho sea de tipo entero");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor(expra.getValor() + exprb.getValor());
+			System.out.println("EXP+> " + expra.getValor() + "+" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
+ 	|  expresion:a MULT expresion:b {: System.out.println("READ> expresion = MULT");
+			Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(exprb.getTipo()))) {
+				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere que los operandos sean del mismo tipo");
+			} else if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere el operando izquierdo sea de tipo entero");
+			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere el operando derecho sea de tipo entero");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor(expra.getValor() * exprb.getValor());
+			System.out.println("EXP*> " + expra.getValor() + "*" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
+ 	|  expresion:exp AUTO_INCREMENTO {: System.out.println("READ> expresion = AUTO_INCREMENTO"); 
+		
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+
+		String valor = expr.getValor() + 1;
+		expr.setValor(valor);
+
+		System.out.println("EX++> " + valor);
+		
+		RESULT = expr; :}
+ 	|  NEGACION expresion:exp {: System.out.println("READ> expresion = NEGACION"); 
+			Expresion expr = (Expresion) exp;
+			if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+				semanticErrorManager.semanticFatalError("No se puede negar una variable de tipo " + expr.getTipo().getName() + ", únicamente usando enteros.");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));  // Redundante, ya debería serlo. De hecho, todas las expresiones parecen enteros.
+			expr.setValor((expr.getValor() == 0)?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EXP-> " + expr.getValor());
+			RESULT = expr; :}
+ 	|  expresion:a LOWER_THAN expresion:b {: System.out.println("READ> expresion = LOWER_THAN "); 
+			Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(exprb.getTipo()))) {
+				semanticErrorManager.semanticFatalError("La expresión de igualdad requiere que los operandos sean del mismo tipo");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor((expra.getValor() < exprb.getValor())?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EXP<> " + expra.getValor() + "<" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
+ 	|  expresion:a EQUAL expresion:b {: System.out.println("READ> expresion = EQUAL "); 
+			Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(exprb.getTipo()))) {
+				semanticErrorManager.semanticFatalError("La expresión de igualdad requiere que los operandos sean del mismo tipo");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor((expra.getValor() == exprb.getValor())?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EX==> " + expra.getValor() + "==" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
+ 	|  expresion:a AND_LOGICA expresion:b {: System.out.println("READ> expresion = AND_LOGICA "); Expresion expr = new Expresion();
+			Expresion expra = (Expresion) a;
+			Expresion exprb = (Expresion) b;
+			if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión AND requiere el operando izquierdo sea de tipo lógico");
+			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
+				semanticErrorManager.semanticFatalError("La expresión AND requiere el operando derecho sea de tipo lógico");
+			}
+			expr.setTipo(scopeManager.searchType("ENTERO"));
+			expr.setValor((expra.getValor() == 1 && exprb.getValor() == 1)?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
+			System.out.println("EX&&> " + expra.getValor() + "AND" + exprb.getValor() + "=" + expr.getValor());
+			RESULT = expr; :}
+ 	|  accesoVector {: System.out.println("READ> expresion = accesoVector"); RESULT = null; :}
+ 	|  llamadaFuncion {: System.out.println("READ> expresion = llamadaFuncion"); RESULT = null; :};
+
+accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: System.out.println("READ> accesoVector NO IMPLEMENTADO");
+
+		RESULT = null;
+		 :};
+
+// DUDA: es necesario poner aquí ámbito? Sí, para las sentencias, y eso ya lo hace solo.
+// IDEA: para los parámetros crear variables del tipo nombreFunción+Parametro+nombreParámetro o bien, crear en el no terminal un booleano que compruebe si es parámetro y su posición en la función.
+llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY {: System.out.println("READ> llamadaFuncion = conParametros"); RESULT = null; :}
+	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros"); RESULT = null; :};
+parametros ::= expresion {: System.out.println("READ> parametros = expresion"); RESULT = null; :}
+ | expresion COLON parametros {: System.out.println("READ> parametros = expresion COLON parametros"); RESULT = null; :};
+
+//  SENTENCIAS
+
+bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :}
+ 	|  OPEN_PARENTHESIS abrirAmbito listadoSentencias cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :};
+
+listadoSentencias ::= listadoSentencias sentencia {: System.out.println("READ> listadoSentencias = listadoSentencias sentencia"); RESULT = null; :}
+ | sentencia {: System.out.println("READ> listadoSentencias = sentencia"); RESULT = null; :};
+
+sentencia ::= sentenciaDevuelve {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = null; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
+	| sentenciaIncremento {: System.out.println("READ> sentencia = sentenciaIncremento"); RESULT = null; :}
+	| sentenciaAsignacion {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = null; :}
+	| sentenciaAsignacionSuma {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = null; :}
+	| sentenciaSi {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = null; :}
+	| sentenciaAlternativas {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = null; :}
+	| sentenciaMientras {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = null; :}
+	| sentenciaLlamadaFuncion {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
+	| sentenciaSalida {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = null; :}
+	| bloque {: System.out.println("READ> sentencia = bloque"); RESULT = null; :};
+
+sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve = vacío"); 
+		Sentenciadevuelve dev = new Sentenciadevuelve();
+		RESULT = dev; :}
+	| DEVUELVE expresion:exp SEMI_COLON {: 
+		Expresion expr = (Expresion) exp;
+		Sentenciadevuelve dev = new Sentenciadevuelve(expr.getValor());
+		System.out.println("READ> sentenciaDevuelve + expresion = " + expr.getValor()); 
+		RESULT = dev; :};
+
+sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.out.println("READ> sentenciaIncremento"); 
+		
+		String nombre = (String) iden.getLexema();
+		SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(nombre);
+
+		if (sym instanceof SymbolConstant) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar una variable constante.");
+		}
+
+		if (sym.getType() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+		}
+
+		int valor = sym.getType().getValor();
+		sym.getType().setValor(Integer.parseInt(valor) + 1);
+
+		System.out.println("SN++> " + sym.getName() + " = " + sym.getType().getValor());
+		
+		RESULT = null; :};
+
+sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.println("READ> sentenciaAsignacion"); 
+
+		Expresion expr = (Expresion) exp;
+		SymbolIF sym = (SymbolIF) ref;
+
+		if(sym.getType() instanceof TypeArray) {
+			TypeArray vector = (TypeArray) sym.getType();
+			String salida = Integer.toString(vector.getElement(Integer.parseInt(expr.getValor())));
+			System.out.println("ASIG> no asignado correctamente");
+		} if (sym.getType() instanceof TypeSimple) {
+			if (sym.getType() != expr.getTipo()) {
+				semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+			}
+			sym.getType().setValor(expr.getValor());
+			System.out.println("ASIG> " + sym.getType().getName() + " = " + expr.getValor());
+		} 
+		else {
+			semanticErrorManager.semanticFatalError("Error inesperado con expresión " + expr.getTipo().getName() + " y una variable de tipo " + sym.getType().getName());
+		}
+		RESULT = null; 
+		:};
+ref ::= IDENTIFICADOR:ident {: System.out.println("READ> ref"); 
+		if (!(scopeManager.containsSymbol(ident.getLexema()))) {
+			semanticErrorManager.semanticFatalError("No se encuentra la variable " + ident.getLexema());
+		}
+		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
+		RESULT = symbol; :}
+ | accesoVector:id {: 
+ 
+ 		 :};
+
+sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma");
+		Expresion expr = (Expresion) exp;
+		SymbolIF sym = (SymbolIF) ref;
+
+		if (sym.getType() != expr.getTipo()) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+		}
+
+		if (sym.getType() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+		}
+
+		sym.getType().setValor(sym.getType().getValor() + expr.getValor());
+
+		System.out.println("ASI+> " + sym.getType().getValor() + " =+ " + expr.getValor() + " = " + sym.getName());
+		
+
+		RESULT = null;  :};
+
+// ATENTO! No hace falta poner aquí ninguna apertura o cierre de ámbito, ya lo hace sentencia con bloque.
+sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia SINO sentencia {: System.out.println("READ> sentenciaSi + SINO"); 
+		Sentenciasi sentSi = new Sentenciasi();
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+		
+		RESULT = sentSi; :}
+	 | SI OPEN_KEY expresion:exp CLOSE_KEY sentencia {: System.out.println("READ> sentenciaSi");
+		Sentenciasi sentSi = new Sentenciasi();
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+
+		RESULT = sentSi; :};
+	
+// 'Ergo', aquí tampoco hace falta, al usar bloque directamente.
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: System.out.println("READ> sentenciaAlternativas"); 
+		Sentenciaalternativas sentAlternativas = new Sentenciaalternativas();
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+
+		RESULT = sentAlternativas; :};
+casosAlternativa ::= casosAlternativa casoAlt {: System.out.println("READ> casosAlternativa = casoAlternativa"); RESULT = null; :}
+ | casoAlt {: System.out.println("READ> casoAlternativa = casoAlt"); RESULT = null; :};
+
+casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> casoAlt"); RESULT = null; :};
+porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> porDefecto = PORDEFECTO"); RESULT = null; :}
+ | epsilon {: System.out.println("READ> porDefecto = epsilon"); RESULT = null; :};
+
+sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia {: System.out.println("READ> sentenciaMientras"); 
+		Sentenciamientras sentMientras = new Sentenciamientras();
+		Expresion expr = (Expresion) exp;
+
+		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+		}
+		
+		RESULT = sentMientras; :};
+
+sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
+
+sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
+		String salida = (String) expr;
+		System.out.println("READ> sentenciaSalida = ESCRIBE");
+		System.out.println("PRNT> " + salida); 
+		RESULT = null;
+ :}
+	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:expr CLOSE_KEY SEMI_COLON {: 
+		String salida = (String) expr;
+		System.out.println("READ> sentenciaSalida = ESCRIBE_ENT"); 
+		System.out.println("PRNT> " + salida); 
+		RESULT = null;
+ :};
+opcionesEscribe ::= epsilon {:
+		System.out.println("READ> opcionesEscribe = epsilon");
+		RESULT = null;
+ :}
+ | STRING:string {: 
+ 		System.out.println("READ> opcionesEscribe = STRING"); 
+		RESULT = string.getLexema();
+ :};
+opcionesEscribeEnt ::= epsilon {:
+		System.out.println("READ> opcionesEscribeEnt = epsilon");
+		RESULT = null;
+ :}
+ | expresion:expr {:  // DUDA: se permite imprimir lógicos como uno o cero?
+		Expresion expresion = (Expresion) expr;
+		// Si es tipo lógico, escribir error semántico.
+		if (expresion.getTipo() != scopeManager.searchType("ENTERO")) {
+			semanticErrorManager.semanticFatalError("Únicamente se pueden imprimir valores enteros.");
+		}
+
+		String salida = Integer.toString(expresion.getValor());
+		System.out.println("READ> opcionesEscribeEnt = expresion = " + salida);
+		RESULT = salida;
+ :};
