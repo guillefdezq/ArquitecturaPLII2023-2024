@@ -238,6 +238,8 @@ program ::=
   		
 		ScopeIF scope = scopeManager.getCurrentScope();
 		System.out.println("AMBT>terminamos! " + scope.getName() + " (" + scope.getLevel() + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
 		scopeManager.closeScope();
 
   		syntaxErrorManager.syntaxInfo ("Parsing process ended.");
@@ -464,8 +466,30 @@ id1 ::= epsilon {:
 seccionFunciones ::= funcion seccionFunciones {: System.out.println("READ> seccionFunciones = funciones extra"); RESULT = null; :}
                       | funcionPrincipal {: System.out.println("READ> seccionFunciones = funcion principal"); RESULT = null; :};
                       
-funcion ::= VACIO IDENTIFICADOR abrirAmbito OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = vacio"); RESULT = null; :}
-            | ENTERO IDENTIFICADOR abrirAmbito OPEN_KEY seccionParametros CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = entero"); RESULT = null; :};
+funcion ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParametros:params CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = vacio"); 
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("VACIO"));
+		simboloProcedimiento.setParameters((ArrayList<SymbolIF>) params);
+
+		sTable.addSymbol(identificador.getLexema(), simboloProcedimiento);
+
+		RESULT = null; :}
+            | ENTERO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParametros:params CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = entero"); 
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		SymbolFunction simboloFuncion = new SymbolFunction(scopeManager.getCurrentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("ENTERO"));
+		simboloFuncion.setParameters((ArrayList<SymbolIF>) params);
+
+		sTable.addSymbol(identificador.getLexema(), simboloFuncion);
+
+		RESULT = null; :};
                      
          
 funcion1 ::= listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
@@ -476,17 +500,89 @@ funcion1 ::= listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.prin
 
 
 
-seccionParametros ::= declaracionParametros {: System.out.println("READ> seccionParametros = sí"); RESULT = null; :}
+seccionParametros ::= declaracionParametros:params {: System.out.println("READ> seccionParametros = sí"); RESULT = params; :}
  | epsilon {: System.out.println("READ> seccionParametros = no"); RESULT = null; :};
 
-declaracionParametros  ::= parametro {: System.out.println("READ> declaracionParametros = uno/ultimo"); RESULT = null; :}
- | parametro COLON declaracionParametros {: System.out.println("READ> declaracionParametros = uno mas"); RESULT = null; :};
+declaracionParametros  ::= parametro:param {: System.out.println("READ> declaracionParametros = uno/ultimo");
+		ArrayList<SymbolIF> params = new ArrayList<SymbolIF>();
+		params.add(((Parametro) param).getSymbolVariableIdentificador());
+		 RESULT = params; :}
+ | parametro:param COLON declaracionParametros:paramsEntrada {: System.out.println("READ> declaracionParametros = uno mas");
+		ArrayList<SymbolIF> params = (ArrayList<SymbolIF>) paramsEntrada;
+		params.add(((Parametro) param).getSymbolVariableIdentificador());
+ 		 RESULT = params; :};
 
-parametro ::= ENTERO IDENTIFICADOR {: System.out.println("READ> parametro = entero"); RESULT = null; :}
- | IDENTIFICADOR IDENTIFICADOR {: System.out.println("READ> parametro = identificador"); RESULT = null; :};
+parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parametro = entero"); 
+				
+		
 
-funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal"); RESULT = null; :}
-				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); RESULT = null; :};
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		String nombre = id.getLexema(); 
+		if (sTable.containsSymbol(nombre)) {
+			semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+		} else {
+			TypeIF tipo = scopeManager.searchType("ENTERO");
+			SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
+			sTable.addSymbol(nombre, simboloVariable);
+			
+			SymbolIF fetch = sTable.getSymbol(nombre);
+			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
+			Parametro parametro = new Parametro(simboloVariable);
+			System.out.println(parametro.getSymbolVariableIdentificador());
+			RESULT = parametro; 
+		}
+
+		:}
+ | IDENTIFICADOR:ident IDENTIFICADOR:id {: System.out.println("READ> parametro = identificador"); 
+		
+
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		String nombre = id.getLexema(); 
+		if (sTable.containsSymbol(nombre)) {
+			semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+		} else {
+			TypeIF tipo = scopeManager.searchType(ident.getLexema());
+			SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
+			sTable.addSymbol(nombre, simboloVariable);
+			
+			SymbolIF fetch = sTable.getSymbol(nombre);
+			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
+
+			Parametro parametro = new Parametro(simboloVariable);
+			RESULT = parametro; 
+		}
+
+		:};
+
+funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal"); 
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		String identificador = "principal";
+
+		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador, (TypeIF) scopeManager.searchType("VACIO"));
+
+		sTable.addSymbol(identificador, simboloProcedimiento);
+		RESULT = null; :}
+				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); 
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		String identificador = "principal";
+
+		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador, (TypeIF) scopeManager.searchType("VACIO"));
+
+		sTable.addSymbol(identificador, simboloProcedimiento);
+		RESULT = null; :};
 
 
 

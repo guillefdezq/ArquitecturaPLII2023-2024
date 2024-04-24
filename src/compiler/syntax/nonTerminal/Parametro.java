@@ -3,12 +3,42 @@
 
   import compiler.intermediate.Temporal;
   import compiler.semantic.symbol.SymbolVariable;
-  import es.uned.lsi.compiler.semantic.type.TypeIF;
+import compiler.semantic.type.TypeSimple;
+import es.uned.lsi.compiler.semantic.type.TypeIF;
 
   public class Parametro extends NonTerminal {
 
-    protected SymbolVariable symbolVariableIdentificador;
+    /*
+     * ENTERO:entero IDENTIFICADOR:id
+     * | IDENTIFICADOR:ident IDENTIFICADOR:id
+     */
+
+    
+     // primera producción
+     protected TypeSimple typeSimple;
+     protected SymbolVariable symbolVariableIdentificador;
+     
+     // segunda producción
+     protected TypeIF tipoIdentificador;
+
+    
+      
     protected Temporal temporal;
+
+
+
+
+    public Parametro(TypeSimple typeSimple, SymbolVariable symbolVariableIdentificador) {
+      this();
+      this.typeSimple = typeSimple;
+      this.symbolVariableIdentificador = symbolVariableIdentificador;  
+    }
+
+    public Parametro(TypeIF tipoIdentificador, SymbolVariable symbolVariableIdentificador) {
+      this();
+      this.symbolVariableIdentificador = symbolVariableIdentificador;  
+      this.tipoIdentificador = tipoIdentificador;
+    }
 
     public Parametro() {
       super();

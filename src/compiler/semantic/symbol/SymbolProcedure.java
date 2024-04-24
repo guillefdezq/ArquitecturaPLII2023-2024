@@ -1,7 +1,10 @@
 package compiler.semantic.symbol;
 
+import java.util.ArrayList;
+
 import es.uned.lsi.compiler.semantic.ScopeIF;
 import es.uned.lsi.compiler.semantic.symbol.SymbolBase;
+import es.uned.lsi.compiler.semantic.symbol.SymbolIF;
 import es.uned.lsi.compiler.semantic.type.TypeIF;
 
 /**
@@ -14,7 +17,8 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
 public class SymbolProcedure
     extends SymbolBase
 {
-   
+    private ArrayList<SymbolIF> parameters = new ArrayList<SymbolIF>();
+    
     /**
      * Constructor for SymbolProcedure.
      * @param scope The declaration scope.
@@ -26,5 +30,15 @@ public class SymbolProcedure
                             TypeIF type)
     {
         super (scope, name, type);
+    }
+
+    public ArrayList<SymbolIF> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(ArrayList<SymbolIF> parameters) {
+        this.parameters = parameters;
     } 
+
+    
 }

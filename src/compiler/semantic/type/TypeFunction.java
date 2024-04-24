@@ -1,6 +1,9 @@
 package compiler.semantic.type;
 
+import java.util.ArrayList;
+
 import es.uned.lsi.compiler.semantic.ScopeIF;
+import es.uned.lsi.compiler.semantic.symbol.SymbolIF;
 
 /**
  * Class for TypeFunction.
@@ -13,6 +16,8 @@ public class TypeFunction
     extends TypeProcedure
 {   
     
+    
+
     /**
      * Constructor for TypeFunction.
      * @param scope The declaration scope.
@@ -42,4 +47,5 @@ public class TypeFunction
         // TODO: Student work
         return 1;
     }
+    
 }
