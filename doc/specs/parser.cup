@@ -331,10 +331,18 @@ RESULT = numero.getLexema(); :}
  | IDENTIFICADOR:id {: 
 		String cadena = id.getLexema();
 		SymbolIF symbol = (SymbolIF) scopeManager.searchSymbol(cadena);
-		SymbolVariable simboloVariable = (SymbolVariable) symbol;
-		String valor = simboloVariable.getValor();
-		System.out.println("READ> tamTipo = IDENTIFICADOR = " + valor);
- 		RESULT = valor; :};
+		String numero = "";
+		if (symbol instanceof SymbolVariable) {
+			SymbolVariable variable = (SymbolVariable) symbol;
+			numero = variable.getValor();
+		} else if (symbol instanceof SymbolConstant) {
+			SymbolConstant constant = (SymbolConstant) symbol;
+			numero = constant.getValor();
+		} else {
+			semanticErrorManager.semanticFatalError("La variable " + cadena + " no es una variable o constante");
+		}
+		System.out.println("READ> tamTipo = IDENTIFICADOR = " + numero);
+ 		RESULT = numero; :};
 
 seccionVariables ::= seccionVariables declaracionVariable {: System.out.println("READ> seccionVariables + recursion"); RESULT = null; :}
  | declaracionVariable {: System.out.println("READ> seccionVariables"); RESULT = null; :};
