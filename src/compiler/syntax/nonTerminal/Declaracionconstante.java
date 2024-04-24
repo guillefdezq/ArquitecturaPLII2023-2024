@@ -2,7 +2,7 @@
   package compiler.syntax.nonTerminal;
 
   import compiler.intermediate.Temporal;
-  import compiler.semantic.symbol.SymbolVariable;
+  import compiler.semantic.symbol.SymbolConstant;
 import compiler.semantic.type.TypeSimple;
 import es.uned.lsi.compiler.semantic.type.TypeIF;
 
@@ -13,17 +13,22 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
 	   */
 		  
 	  	protected TypeSimple numero;	// es esto correcto 1
-		protected SymbolVariable symbolVariableIdentificador; // segunda producción identificador
+		protected SymbolConstant SymbolConstantIdentificador; // segunda producción identificador
 	    protected Temporal temporal; // por si acaso
 
 	    public Declaracionconstante() {
 	      super();
 	    }
 
-	    public Declaracionconstante(TypeSimple numero, SymbolVariable symbolVariableIdentificador) {
+		public Declaracionconstante( SymbolConstant SymbolConstantIdentificador) {
+			this();
+			this.SymbolConstantIdentificador = SymbolConstantIdentificador;      
+		  }
+
+	    public Declaracionconstante(TypeSimple numero, SymbolConstant SymbolConstantIdentificador) {
 	      this();
 	      this.numero = numero;	// es esto correcto 1
-	      this.symbolVariableIdentificador = symbolVariableIdentificador;      
+	      this.SymbolConstantIdentificador = SymbolConstantIdentificador;      
 	    }
 
 	    public TypeSimple getNumero() {
@@ -42,17 +47,17 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
 			this.temporal = temporal;
 		}
 
-		public SymbolVariable getSymbolVariableIdentificador() {
-	      return symbolVariableIdentificador;
+		public SymbolConstant getSymbolConstantIdentificador() {
+	      return SymbolConstantIdentificador;
 	    }
 
-	    public void setSymbolVariableIdentificador(SymbolVariable symbolVariableIdentificador) {
-	      this.symbolVariableIdentificador = symbolVariableIdentificador;
+	    public void setSymbolConstantIdentificador(SymbolConstant SymbolConstantIdentificador) {
+	      this.SymbolConstantIdentificador = SymbolConstantIdentificador;
 	    }
 
 	    public TypeIF getType() {
-	      if (symbolVariableIdentificador != null) {
-	        return symbolVariableIdentificador.getType();
+	      if (SymbolConstantIdentificador != null) {
+	        return SymbolConstantIdentificador.getType();
 	      } else return null;
 	    }
 

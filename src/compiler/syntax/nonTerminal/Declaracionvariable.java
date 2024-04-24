@@ -21,17 +21,25 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
 	protected Listadoids listadoIDs; // aquí se usa el no terminal creado antes	  
 	  
 	protected SymbolVariable symbolVariableIdentificador; // segunda producción identificador
+
+  protected TypeIF tipoIdentificador;
+
     protected Temporal temporal; // por si acaso
 
     public Declaracionvariable() {
       super();
     }
 
-    public Declaracionvariable(TypeSimple typeSimple, Listadoids listadoIDs, SymbolVariable symbolVariableIdentificador) {
+    public Declaracionvariable(TypeSimple typeSimple, Listadoids listadoIDs) {
       this();
       this.typeSimple = typeSimple;
-      this.listadoIDs = listadoIDs;
-      this.symbolVariableIdentificador = symbolVariableIdentificador;      
+      this.listadoIDs = listadoIDs;  
+    }
+
+    public Declaracionvariable(TypeIF tipoIdentificador, Listadoids listadoIDs) {
+      this();
+      this.listadoIDs = listadoIDs;  
+      this.tipoIdentificador = tipoIdentificador;
     }
 
     public TypeSimple getTypeSimple() {
