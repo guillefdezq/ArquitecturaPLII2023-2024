@@ -16,6 +16,16 @@ public class Expresion extends NonTerminal {
   protected SymbolVariable symbolVariableIdentificador; // Utilizaré string, pero quiero cambiarlo
   protected String identificador;
   protected String valor;
+
+  // para vectores
+  protected int indice;
+  protected String nombreVector;
+  // ----------
+
+  // para funciones
+  protected int numeroParametros;
+  protected String nombreFuncion;
+  // ----------
   
   protected TypeIF tipo;
   protected TemporalIF temporal;
@@ -85,5 +95,24 @@ public class Expresion extends NonTerminal {
       return symbolVariableIdentificador.getType();
     } else return null;
   }
+
+  public int getIndice() {
+      return indice;
+  }
+
+  public void setIndice(int indice) {
+      this.indice = indice;
+  }
+
+  public String getNombreVector() {
+    return nombreVector;
+  }
+
+  public void setNombreVector(String nombreVector) {
+    this.nombreVector = nombreVector;
+  }
+
+  
+  
 
 }

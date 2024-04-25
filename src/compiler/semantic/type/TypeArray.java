@@ -1,7 +1,5 @@
 package compiler.semantic.type;
 
-import java.util.ArrayList;
-
 import es.uned.lsi.compiler.semantic.ScopeIF;
 import es.uned.lsi.compiler.semantic.type.TypeBase;
 
@@ -15,9 +13,8 @@ import es.uned.lsi.compiler.semantic.type.TypeBase;
 public class TypeArray
     extends TypeBase
 {   
-    
+
     private int size;
-    private int[] vector;
 
 	/**
      * Constructor for TypeArray.
@@ -42,9 +39,8 @@ public class TypeArray
     {
         super (scope, name);
         this.size = size;
-        this.vector = new int[size];
     }
-    
+
     /**
      * Returns the size of the type.
      * @return the size of the type.
@@ -61,23 +57,4 @@ public class TypeArray
         this.size = size;
     }
 
-    public int[] getVector ()
-    {
-        return vector;
-    }
-
-    public void setVector (int[] vector)
-    {
-        this.vector = vector;
-    }
-
-    public void setElement (int index, int value)
-    {
-        this.vector[index] = value;
-    }     
-
-    public int getElement (int index)
-    {
-        return this.vector[index];
-    }
 }
