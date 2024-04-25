@@ -399,6 +399,13 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 				TypeIF tipo = scopeManager.searchType(ident.getLexema());
 				SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
 				if (id.getValor() != null) { semanticErrorManager.semanticFatalError("Declaraciones en vectores con valor no permitidas"); }
+				int size = ((TypeArray)tipo).getSize();
+				String comas = "";
+				
+				for (int i = 1; i < size; i++) comas += "0,";
+				comas += "0";
+
+				simboloVariable.setValor(comas);
 				sTable.addSymbol(nombre, simboloVariable);
 				
 				SymbolIF fetch = sTable.getSymbol(nombre);
@@ -526,8 +533,8 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parame
 		} else {
 			TypeIF tipo = scopeManager.searchType("ENTERO");
 			SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
+			simboloVariable.setValor("0");
 			sTable.addSymbol(nombre, simboloVariable);
-			
 			SymbolIF fetch = sTable.getSymbol(nombre);
 			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
 			Parametro parametro = new Parametro(simboloVariable);
@@ -604,7 +611,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 		SymbolIF symbol = scopeManager.searchSymbol(identificador);
 
 		// Get instance of symbol
-		System.out.println(symbol.getClass());
+		//System.out.println(symbol.getClass());
 
 		String numero = "";
 
@@ -715,21 +722,73 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			expr.setValor((Integer.parseInt(expra.getValor()) == 1 && Integer.parseInt(exprb.getValor()) == 1)?"1":"0");		// MEJORA: debería poner todos estos como enteros y al terminar pasarlo a String (y ni siquiera)
 			System.out.println("EX&&> " + expra.getValor() + "AND" + exprb.getValor() + "=" + expr.getValor());
 			RESULT = expr; :}
- 	|  accesoVector {: System.out.println("READ> expresion = accesoVector"); RESULT = null; :}
- 	|  llamadaFuncion {: System.out.println("READ> expresion = llamadaFuncion"); RESULT = null; :};
+ 	|  accesoVector:expr {: System.out.println("READ> expresion = accesoVector"); RESULT = expr; :}		// Lo mismo falta algo que escribir por aquí.
+ 	|  llamadaFuncion:expr {: System.out.println("READ> expresion = llamadaFuncion"); RESULT = expr; :};
 
 accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: System.out.println("READ> accesoVector");
-		System.out.println("READ> accesoVector");
 
-		RESULT = null;
+		Expresion expr = (Expresion) exp;
+		String identificador = id.getLexema(); 
+		System.out.println(identificador);
+		Expresion exprN = new Expresion();
+		if(!(scopeManager.containsSymbol(identificador))) {
+			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
+		}
+		
+		SymbolIF symbol = scopeManager.searchSymbol(identificador);
+
+		// Get instance of symbol
+		//System.out.println(symbol.getClass());
+
+		String numero = "";
+
+		if (symbol instanceof SymbolVariable) {
+			SymbolVariable variable = (SymbolVariable) symbol;
+			if (!(variable.getType() instanceof TypeArray)) {
+				semanticErrorManager.semanticFatalError("La variable " + identificador + " no es un vector.");
+			}
+			if (variable.getType().getSize() < Integer.parseInt(expr.getValor())) {
+				semanticErrorManager.semanticFatalError("La variable " + identificador + " no tiene tantos elementos. Equivalente a un IndexOutOfBoundsException.");
+			}
+			numero = variable.getValor().split(",")[Integer.parseInt(expr.getValor())];
+		} else {
+			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable.");
+		}
+
+		System.out.println("READ> expresion = accesoVector "+ symbol.getName() +" @pos"+ expr.getValor() +" = " + numero + " " + symbol.getType() + " ");
+
+		exprN.setTipo(scopeManager.searchType("ENTERO"));	// Debería retirar el atributo de tipo. No se llega a utilizar.
+		exprN.setValor(numero);
+		exprN.setIndice(Integer.parseInt(expr.getValor()));
+		exprN.setNombreVector(identificador);
+
+		RESULT = exprN;
 		 :};
 
 // DUDA: es necesario poner aquí ámbito?
 // IDEA: para los parámetros crear variables del tipo nombreFunción+Parametro+nombreParámetro o bien, crear en el no terminal un booleano que compruebe si es parámetro y su posición en la función.
-llamadaFuncion ::= IDENTIFICADOR OPEN_KEY parametros CLOSE_KEY {: System.out.println("READ> llamadaFuncion = conParametros"); RESULT = null; :}
-	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros"); RESULT = null; :};
-parametros ::= expresion {: System.out.println("READ> parametros = expresion"); RESULT = null; :}
- | expresion COLON parametros {: System.out.println("READ> parametros = expresion COLON parametros"); RESULT = null; :};
+llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: System.out.println("READ> llamadaFuncion = conParametros");
+		SymbolFunction funcion = (SymbolFunction) scopeManager.searchSymbol(ident.getLexema());
+		ArrayList<SymbolIF> listaParametros = (ArrayList<SymbolIF>) funcion.getParameters();
+		ArrayList<String> parametros = (ArrayList<String>) params;
+		if (listaParametros.size() != parametros.size()) {
+			semanticErrorManager.semanticFatalError("La funciÃ³n " + ident.getLexema() + " requiere " + listaParametros.size() + " parámetros");
+		}
+		
+		Expresion expr = new Expresion();
+		expr.setValor("9999");
+		expr.setTipo(scopeManager.searchType("ENTERO"));
+		RESULT = expr; :}
+	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros");
+	 	RESULT = null; :};
+parametros ::= expresion:exp {: System.out.println("READ> parametros = expresion"); 
+		ArrayList<String> params = new ArrayList<String>();
+		params.add(0, ((String)( (Expresion) exp).getValor()));
+		 RESULT = params; :}
+ | expresion:exp COLON parametros:paramsEntrada {: System.out.println("READ> parametros = expresion COLON parametros"); 
+		ArrayList<String> params = (ArrayList<String>) paramsEntrada;
+		params.add(0, ((String)( (Expresion) exp).getValor()));
+ 		 RESULT = params; :};
 
 //  SENTENCIAS
 
@@ -775,25 +834,59 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.
 
 		System.out.println("SN++> " + vari.getName() + " = " + vari.getValor());
 		
-		RESULT = null; :};
+		RESULT = null;
+		
+		 :};
 
 sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.println("READ> sentenciaAsignacion"); 
 
 		Expresion expr = (Expresion) exp;
-		SymbolIF sym = (SymbolIF) ref;
 
-		if(sym.getType() instanceof TypeArray) {
-			TypeArray vector = (TypeArray) sym.getType();
-			String salida = Integer.toString(vector.getElement(Integer.parseInt(expr.getValor())));
-			System.out.println("ASIG> no asignado correctamente");
-		} else {
+		// dividir en instancias de expresión o símbolo
+
+		if (ref instanceof SymbolIF) {			// código del identificadores
+			SymbolIF sym = (SymbolIF) ref;
+			if (!(sym instanceof SymbolVariable)) {
+				semanticErrorManager.semanticFatalError("No se puede asignar un valor a una variable de tipo " + sym.getType().getName());
+			}
+
+			if (sym.getType() != scopeManager.searchType("ENTERO")) {
+				semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+			}
+
+			SymbolVariable vari = (SymbolVariable) sym;
+
 			if (sym.getType() != expr.getTipo()) {
 				semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
 			}
-			SymbolVariable vari = (SymbolVariable) sym;
 			vari.setValor(expr.getValor());
 			System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
-		}
+
+		} else if (ref instanceof Expresion) {			// código del vector
+			Expresion refexpr = (Expresion) ref;
+			SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(refexpr.getNombreVector());
+			if(sym.getType() instanceof TypeArray) {
+				SymbolVariable variable = (SymbolVariable) sym;
+				int indice = refexpr.getIndice();
+				if (variable.getType().getSize() < indice) {
+					semanticErrorManager.semanticFatalError("La variable " + refexpr.getNombreVector() + " no tiene tantos elementos. Equivalente a un IndexOutOfBoundsException.");
+				}
+
+				String[] vector = variable.getValor().split(",");
+				String valorAGuardar = expr.getValor();
+				vector[indice] = valorAGuardar;
+				String nuevoVector = String.join(",", vector);
+				System.out.println(nuevoVector);
+
+				variable.setValor(nuevoVector);
+
+				System.out.println("ASIG> vector " + variable.getName() + "[" + indice + "] = " + valorAGuardar);
+			} else {
+				semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto.");
+			}
+
+		} else { semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto."); }
+
 		RESULT = null; 
 		:};
 ref ::= IDENTIFICADOR:ident {: System.out.println("READ> ref"); 
@@ -802,28 +895,57 @@ ref ::= IDENTIFICADOR:ident {: System.out.println("READ> ref");
 		}
 		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
 		RESULT = symbol; :}
- | accesoVector:id {: 
- 
+ | accesoVector:exp {: 
+		RESULT = exp;	// Paso directamente la expresión
  		 :};
 
 sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma");
 		Expresion expr = (Expresion) exp;
-		SymbolIF sym = (SymbolIF) ref;
-		SymbolVariable vari = (SymbolVariable) sym;
 
+		// dividir en instancias de expresión o símbolo
 
-		if (sym.getType() != expr.getTipo()) {
-			semanticErrorManager.semanticFatalError("No se puede incrementar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
-		}
+		if (ref instanceof SymbolIF) {			// código del identificadores
+			SymbolIF sym = (SymbolIF) ref;
+			if (!(sym instanceof SymbolVariable)) {
+				semanticErrorManager.semanticFatalError("No se puede asignar un valor a una variable de tipo " + sym.getType().getName());
+			}
 
-		if (sym.getType() != scopeManager.searchType("ENTERO")) {
-			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
-		}
+			if (sym.getType() != scopeManager.searchType("ENTERO")) {
+				semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+			}
 
-		String valor = vari.getValor();
-		vari.setValor(Integer.toString((Integer.parseInt(valor) + Integer.parseInt(expr.getValor()))));
+			SymbolVariable vari = (SymbolVariable) sym;
 
-		System.out.println("ASI+> " + vari.getName() + " =+ " + expr.getValor() + " = " + vari.getValor());
+			if (sym.getType() != expr.getTipo()) {
+				semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+			}
+			vari.setValor(expr.getValor());
+			System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
+
+		} else if (ref instanceof Expresion) {			// código del vector
+			Expresion refexpr = (Expresion) ref;
+			SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(refexpr.getNombreVector());
+			if(sym.getType() instanceof TypeArray) {
+				SymbolVariable variable = (SymbolVariable) sym;
+				int indice = refexpr.getIndice();
+				if (variable.getType().getSize() < indice) {
+					semanticErrorManager.semanticFatalError("La variable " + refexpr.getNombreVector() + " no tiene tantos elementos. Equivalente a un IndexOutOfBoundsException.");
+				}
+
+				String[] vector = variable.getValor().split(",");
+				String valorAGuardar = Integer.toString(Integer.parseInt(expr.getValor())+Integer.parseInt(refexpr.getValor()));
+				vector[indice] = valorAGuardar;
+				String nuevoVector = String.join(",", vector);
+				System.out.println(nuevoVector);
+
+				variable.setValor(nuevoVector);
+
+				System.out.println("ASIG> vector " + variable.getName() + "[" + indice + "] = " + valorAGuardar);
+			} else {
+				semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto.");
+			}
+
+		} else { semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto."); }
 
 		RESULT = null;  :};
 
