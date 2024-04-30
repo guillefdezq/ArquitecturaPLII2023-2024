@@ -365,6 +365,9 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
 
+			IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+
+
 		ArrayList<Id> identificadores = ((Listadoids) ids).getObjetos();
 
 		for (Id id : identificadores) {
@@ -374,7 +377,12 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 			} else {
 				TypeIF tipo = scopeManager.searchType("ENTERO");
 				SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-				if (id.getValor() != null) { simboloVariable.setValor(id.getValor()); }
+				if (id.getValor() != null) { 
+					Value value = new Value(Integer.parseInt(id.getValor()));
+					simboloVariable.setValor(id.getValor()); 
+					Variable variable = new Variable(((SymbolVariable)simboloVariable).getName(), ((SymbolVariable)simboloVariable).getScope());
+					intermediateCodeBuilder.addQuadruple("MV", variable, value);
+				}
 				sTable.addSymbol(nombre, simboloVariable);
 				
 				SymbolIF fetch = sTable.getSymbol(nombre);
@@ -382,6 +390,8 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 			}
 		}
 
+			declVar.setIntermediateCode(intermediateCodeBuilder.create());
+			System.out.println("     QUAD>" + declVar.getIntermediateCode());  
 		RESULT = declVar;		//RESULT = ids; 
  :}
                       | IDENTIFICADOR:ident listadoIDs:ids SEMI_COLON {:
@@ -478,6 +488,26 @@ seccionFunciones ::= funcion seccionFunciones {: System.out.println("READ> secci
                       | funcionPrincipal {: System.out.println("READ> seccionFunciones = funcion principal"); RESULT = null; :};
                       
 funcion ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParametros:params CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = vacio"); 
+
+/* ED
+		ScopeIF scope = scopeManager.getCurrentScope();
+		TypeTableIF typeTable = scope.getTypeTable ();
+		SymbolTableIF sTable = scope.getSymbolTable();
+
+		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getParentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("VACIO"));
+		simboloProcedimiento.setParameters((ArrayList<SymbolIF>) params);
+
+		// DUDA: Qué hace esta línea?
+		// Funcionprincipal funcionPrincipal = new Funcionprincipal (symbolProcedure, g, null, h);
+
+
+		// cerrar ámbito
+		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		scopeManager.closeScope();
+		sTable.addSymbol(identificador.getLexema(), simboloProcedimiento);
+*/
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
@@ -1112,15 +1142,35 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 		RESULT = null;  :};
 
 // ATENTO! No hace falta poner aquí ninguna apertura o cierre de ámbito, ya lo hace sentencia con bloque.
-sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia SINO sentencia {: System.out.println("READ> sentenciaSi + SINO"); 
-		Sentenciasi sentSi = new Sentenciasi();
+sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO sentencia:sentsino {: System.out.println("READ> sentenciaSi + SINO"); 
 		Expresion expr = (Expresion) exp;
+		Sentencia sentenciasi = (Sentencia) sentsi;
+		Sentencia sentenciasino = (Sentencia) sentsino;
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
 			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
 		
-		RESULT = sentSi; :}
+		ScopeIF scope=scopeManager.getCurrentScope();
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFinal=labelFactory.create();
+		LabelIF labelElse=labelFactory.create();
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelElse);
+		/// No terminado de declarar bien las sentencias de entremedias.
+		//intermediateCodeBuilder.addQuadruples(sentenciasi.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("BR", labelFinal); //me salgo del if
+		intermediateCodeBuilder.addQuadruple("INL", labelElse);
+		//intermediateCodeBuilder.addQuadruples(sentenciasino.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
+
+		Sentenciasi sentenciaSi=new Sentenciasi(expr, sentenciasi, sentenciasino);
+		sentenciaSi.setIntermediateCode(intermediateCodeBuilder.create());
+		System.out.println("     QUAD>" + sentenciaSi.getIntermediateCode());  
+
+		RESULT = sentenciasi; :}
 	 | SI OPEN_KEY expresion:exp CLOSE_KEY sentencia {: System.out.println("READ> sentenciaSi");
 		Sentenciasi sentSi = new Sentenciasi();
 		Expresion expr = (Expresion) exp;

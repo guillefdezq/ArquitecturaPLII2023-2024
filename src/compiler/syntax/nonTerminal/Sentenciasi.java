@@ -7,8 +7,19 @@
 
   public class Sentenciasi extends Sentencia {
 
+    Expresion expresion = new Expresion();
+    Sentencia sentenciasi = new Sentencia();
+    Sentencia sentenciasino = new Sentencia();
+
     public Sentenciasi() {
       super();
+    }
+
+    public Sentenciasi(Expresion expresion, Sentencia sentenciasi, Sentencia sentenciasino) {
+      super();
+      this.expresion = expresion;
+      this.sentenciasi = sentenciasi;
+      this.sentenciasino = sentenciasino;
     }
 
     public Sentenciasi(SymbolVariable symbolVariableIdentificador) {

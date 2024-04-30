@@ -1,0 +1,18 @@
+#constante NUM 5;
+
+vacio principal ()
+{
+    entero a=30;
+
+    si (a == a)
+    {
+        a=37;
+    }
+    sino
+    {
+        a=57;
+    }
+    
+    devuelve;
+}
+
