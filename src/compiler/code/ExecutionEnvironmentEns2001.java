@@ -3,11 +3,16 @@ package compiler.code;
 import java.util.Arrays;
 import java.util.List;
 
+import compiler.intermediate.Label;
+import compiler.intermediate.Temporal;
+import compiler.intermediate.Value;
+import compiler.intermediate.Variable;
 import compiler.semantic.type.TypeSimple;
 
 import es.uned.lsi.compiler.code.ExecutionEnvironmentIF;
 import es.uned.lsi.compiler.code.MemoryDescriptorIF;
 import es.uned.lsi.compiler.code.RegisterDescriptorIF;
+import es.uned.lsi.compiler.intermediate.OperandIF;
 import es.uned.lsi.compiler.intermediate.QuadrupleIF;
 
 /**
@@ -94,6 +99,45 @@ public class ExecutionEnvironmentEns2001
     public final String translate (QuadrupleIF quadruple)
     {      
         //TODO: Student work
+        if (quadruple.getOperation().equals("MV")) {
+            StringBuffer b = new StringBuffer();
+            String o1 = operacion(quadruple.getFirstOperand());
+            String r = operacion(quadruple.getResult());
+            b.append(";" + quadruple.toString() + "\n");
+            b.append("MOVE " + o1 + ", " + r);
+            return b.toString();
+        } else if (quadruple.getOperation().equals("ADD")) {
+            StringBuffer b = new StringBuffer();
+            String o1 = operacion(quadruple.getFirstOperand());
+            String o2 = operacion(quadruple.getSecondOperand());
+            String r = operacion(quadruple.getResult());
+            b.append(";" + quadruple.toString() + "\n");
+            b.append("ADD " + o1 + ", " + o2 + "\n");
+            b.append("MOVE " + ".A " + ", " + r);
+            return b.toString();
+        } else if (quadruple.getOperation().equals("PRINCIPAL")) {
+            StringBuffer b = new StringBuffer();
+            b.append("MOVE .SP, .IX"+ " ;guarda el valor de SP en IX\n");
+            b.append("PUSH #-1"+ " ;valor de retorno\n");
+            b.append("PUSH .IX"+ " ;enlace de control\n");
+            b.append("PUSH .SR"+ " ;estado máquina\n");
+            b.append("PUSH .IX"+ " ;enlace de acceso\n");
+            return b.toString();
+        }
         return quadruple.toString(); 
+    }
+
+    private String operacion(OperandIF o) {
+        if (o instanceof Variable) {
+            if (((Variable) o).getScope().getLevel() == 0) 
+                return "/" + ((Variable) o).getAddress() + "";
+            else return "#-" + ((Variable) o).getAddress() + "[.IX]";
+        } else if (o instanceof Value) {
+            return "#" + ((Value) o).getValue() + "";
+        } else if (o instanceof Temporal) {
+            return "#-" + ((Temporal) o).getAddress() + "[.IX]";
+        } else if (o instanceof Label) {
+            return "" + ((Label) o).getName() + "";
+        } return null;
     }
 }
