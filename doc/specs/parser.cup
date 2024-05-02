@@ -678,16 +678,18 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				/*
-				((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
-				direccion += symbol.getType().getSize();
-				*/
+				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				if (symbol instanceof SymbolVariable) {
+					/*
+					((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
+					direccion += symbol.getType().getSize();
+					*/
+				}
 			}
 		}
 
-		TemporalIF temporal;
 		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
-			temporal = scope.getTemporalTable().getTemporals().get(i);
+			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
 			if (temporal instanceof Temporal) {
 				/*
 				((Temporal) temporal).setAddress(0);
@@ -699,7 +701,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
-				temporal = tempScope.getTemporalTable().getTemporals().get(i);
+				TemporalIF temporal = tempScope.getTemporalTable().getTemporals().get(i);
 				if (temporal instanceof Temporal) {
 					/*
 					((Temporal) temporal).setAddress(direccion);
@@ -767,9 +769,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}
 		}
 
-		TemporalIF temporal;
 		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
-			temporal = scope.getTemporalTable().getTemporals().get(i);
+			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
 			if (temporal instanceof Temporal) {
 				/*
 				((Temporal) temporal).setAddress(0);
@@ -781,7 +782,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
-				temporal = tempScope.getTemporalTable().getTemporals().get(i);
+				TemporalIF temporal = tempScope.getTemporalTable().getTemporals().get(i);
 				if (temporal instanceof Temporal) {
 					/*
 					((Temporal) temporal).setAddress(direccion);
@@ -811,6 +812,11 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 				}
 			}
 		}
+
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
+		
+		intermediateCodeBuilder.addQuadruple("PUNTEROFINAL", temporal, direccion);
 
 		System.out.println(intermediateCodeBuilder.create());
 
