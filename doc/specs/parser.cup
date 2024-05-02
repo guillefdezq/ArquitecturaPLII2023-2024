@@ -270,10 +270,59 @@ cerrarAmbito ::= {:
 		scopeManager.closeScope();
 :}; 
 
-axiom ::=  seccionConstantes seccionTipos  axiom1 {: System.out.println("READ> axiom = constantes y tipos"); RESULT = null; :} ;
+axiom ::=  seccionConstantes seccionTipos  axiom1 {: 
+		System.out.println("READ> axiom = constantes y tipos"); 
+		
+		ScopeIF scope = scopeManager.getCurrentScope();
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-axiom1 ::= seccionVariables seccionFunciones {: System.out.println("READ> axiom1 = variables y funciones"); RESULT = null; :}
-  | seccionFunciones {: System.out.println("READ> axiom1 = solo funciones"); RESULT = null; :};
+		intermediateCodeBuilder.addQuadruple("AXIOM");
+
+		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
+			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+			if (symbol instanceof SymbolConstant) {
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				intermediateCodeBuilder.addQuadruple("VARGLOBAL", variable, 0);
+			}
+		}
+
+		System.out.println(intermediateCodeBuilder.create());
+
+		RESULT = null; 
+		:} ;
+
+axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {: 
+		System.out.println("READ> axiom1 = variables y funciones");
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+
+		int direccion=10000;
+		SymbolIF symbol;
+		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
+			symbol=scope.getSymbolTable().getSymbols().get(i);
+			if(symbol instanceof SymbolVariable) {
+				/// ((SymbolVariable)symbol).setDireccion(direccion); /// Falla .setDireccion
+				//Actualizamos el valor de direccion para el próximo símbolo 
+				direccion = direccion + symbol.getType().getSize();
+			}
+		}
+
+		TemporalIF temporal;
+		for(int i=0;i<scope.getTemporalTable().getTemporals().size();i++) {
+			temporal=scope.getTemporalTable().getTemporals().get(i);
+			if(temporal instanceof Temporal) {
+				((Temporal)temporal).setAddress(direccion);
+				//Actualizamos el valor de direccion para el próximo símbolo 
+				/// direccion = direccion + ((Temporal)temporal).getSize();	/// Falla .getSize
+			}
+		}
+
+		RESULT = null; 
+		:}
+  | seccionFunciones {: 
+  		System.out.println("READ> axiom1 = solo funciones");
+		RESULT = null; 
+		:};
 
 seccionConstantes ::= declaracionConstante seccionConstantes {: System.out.println("READ> seccionConstantes + recursion"); RESULT = null; :}
                       | epsilon {: System.out.println("READ> seccionConstantes = ya está"); RESULT = null; :};
@@ -612,6 +661,77 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador, (TypeIF) scopeManager.searchType("VACIO"));
 
 		sTable.addSymbol(identificador, simboloProcedimiento);
+
+		int direccion = 4;
+		SymbolIF symbol;
+		for (int i = 0; i < sTable.getSymbols().size(); i++) {
+			symbol = sTable.getSymbols().get(i);
+			if (symbol instanceof SymbolVariable) {
+				/*
+				((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
+				direccion += symbol.getType().getSize();
+				*/
+			}			
+		}
+
+		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();  /// No funciona???
+
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
+				/*
+				((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
+				direccion += symbol.getType().getSize();
+				*/
+			}
+		}
+
+		TemporalIF temporal;
+		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+			temporal = scope.getTemporalTable().getTemporals().get(i);
+			if (temporal instanceof Temporal) {
+				/*
+				((Temporal) temporal).setAddress(0);
+				direccion += temporal.getType().getSize();
+				*/
+			}
+		}
+
+		
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
+				temporal = tempScope.getTemporalTable().getTemporals().get(i);
+				if (temporal instanceof Temporal) {
+					/*
+					((Temporal) temporal).setAddress(direccion);
+					direccion += ((Temporal) temporal).getSize();
+					*/
+				}
+			}
+		}
+		
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
+		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
+			symbol = scope.getSymbolTable().getSymbols().get(i);
+			if (symbol instanceof SymbolVariable) {
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+			}
+		}
+
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
+				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				if (symbol instanceof SymbolVariable) {
+					Variable variable = new Variable(symbol.getName(), symbol.getScope());
+					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+				}
+			}
+		}
+
+		System.out.println(intermediateCodeBuilder.create());
+
 		RESULT = null; :}
 				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
@@ -623,7 +743,78 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador, (TypeIF) scopeManager.searchType("VACIO"));
 
 		sTable.addSymbol(identificador, simboloProcedimiento);
-		RESULT = null; :};
+
+		int direccion = 4;
+		SymbolIF symbol;
+		for (int i = 0; i < sTable.getSymbols().size(); i++) {
+			symbol = sTable.getSymbols().get(i);
+			if (symbol instanceof SymbolVariable) {
+				/*
+				((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
+				direccion += symbol.getType().getSize();
+				*/
+			}			
+		}
+
+		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();  /// No funciona???
+
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
+				/*
+				((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
+				direccion += symbol.getType().getSize();
+				*/
+			}
+		}
+
+		TemporalIF temporal;
+		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+			temporal = scope.getTemporalTable().getTemporals().get(i);
+			if (temporal instanceof Temporal) {
+				/*
+				((Temporal) temporal).setAddress(0);
+				direccion += temporal.getType().getSize();
+				*/
+			}
+		}
+
+		
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
+				temporal = tempScope.getTemporalTable().getTemporals().get(i);
+				if (temporal instanceof Temporal) {
+					/*
+					((Temporal) temporal).setAddress(direccion);
+					direccion += ((Temporal) temporal).getSize();
+					*/
+				}
+			}
+		}
+		
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
+		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
+			symbol = scope.getSymbolTable().getSymbols().get(i);
+			if (symbol instanceof SymbolVariable) {
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+			}
+		}
+
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
+				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				if (symbol instanceof SymbolVariable) {
+					Variable variable = new Variable(symbol.getName(), symbol.getScope());
+					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+				}
+			}
+		}
+
+		System.out.println(intermediateCodeBuilder.create());
+
+		RESULT = null;  :};
 
 
 
