@@ -127,4 +127,8 @@ public class Temporal
     {        
         return name;
     }
+
+    public int getSize() {
+        return 1;
+    }
 }

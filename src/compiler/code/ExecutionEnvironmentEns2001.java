@@ -103,7 +103,7 @@ public class ExecutionEnvironmentEns2001
             StringBuffer b = new StringBuffer();
             String o1 = operacion(quadruple.getFirstOperand());
             String r = operacion(quadruple.getResult());
-            b.append(";" + quadruple.toString() + "\n");
+            // b.append(";" + quadruple.toString() + "\n");
             b.append("MOVE " + o1 + ", " + r);
             return b.toString();
         } else if (quadruple.getOperation().equals("ADD")) {
@@ -111,12 +111,13 @@ public class ExecutionEnvironmentEns2001
             String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
             String r = operacion(quadruple.getResult());
-            b.append(";" + quadruple.toString() + "\n");
+            // b.append(";" + quadruple.toString() + "\n");
             b.append("ADD " + o1 + ", " + o2 + "\n");
-            b.append("MOVE " + ".A " + ", " + r);
+            b.append("MOVE .A , " + r);
             return b.toString();
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {
             StringBuffer b = new StringBuffer();
+            // b.append(";" + quadruple.toString() + "\n");
             b.append("MOVE .SP, .IX"+ " ;guarda el valor de SP en IX\n");
             b.append("PUSH #-1"+ " ;valor de retorno\n");
             b.append("PUSH .IX"+ " ;enlace de control\n");

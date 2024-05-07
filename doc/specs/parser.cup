@@ -301,7 +301,7 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
 			symbol=scope.getSymbolTable().getSymbols().get(i);
 			if(symbol instanceof SymbolVariable) {
-				/// ((SymbolVariable)symbol).setDireccion(direccion); /// Falla .setDireccion
+				((SymbolVariable)symbol).setAddress(direccion);
 				//Actualizamos el valor de direccion para el próximo símbolo 
 				direccion = direccion + symbol.getType().getSize();
 			}
@@ -313,7 +313,7 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 			if(temporal instanceof Temporal) {
 				((Temporal)temporal).setAddress(direccion);
 				//Actualizamos el valor de direccion para el próximo símbolo 
-				/// direccion = direccion + ((Temporal)temporal).getSize();	/// Falla .getSize
+				direccion += ((Temporal)temporal).getSize();
 			}
 		}
 
@@ -667,23 +667,21 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		for (int i = 0; i < sTable.getSymbols().size(); i++) {
 			symbol = sTable.getSymbols().get(i);
 			if (symbol instanceof SymbolVariable) {
-				/*
-				((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
+				((SymbolVariable) symbol).setAddress(direccion);
 				direccion += symbol.getType().getSize();
-				*/
 			}			
 		}
 
-		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();  /// No funciona???
+		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
+
+
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
 				symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
-					/*
-					((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
+					((SymbolVariable) symbol).setAddress(direccion);
 					direccion += symbol.getType().getSize();
-					*/
 				}
 			}
 		}
@@ -691,10 +689,9 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
 			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
 			if (temporal instanceof Temporal) {
-				/*
-				((Temporal) temporal).setAddress(0);
-				direccion += temporal.getType().getSize();
-				*/
+				((Temporal) temporal).setAddress(direccion);
+				//direccion += temporal.getType().getSize();
+				direccion += ((Temporal) temporal).getSize();
 			}
 		}
 
@@ -703,10 +700,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
 				TemporalIF temporal = tempScope.getTemporalTable().getTemporals().get(i);
 				if (temporal instanceof Temporal) {
-					/*
 					((Temporal) temporal).setAddress(direccion);
 					direccion += ((Temporal) temporal).getSize();
-					*/
 				}
 			}
 		}
@@ -751,31 +746,31 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		for (int i = 0; i < sTable.getSymbols().size(); i++) {
 			symbol = sTable.getSymbols().get(i);
 			if (symbol instanceof SymbolVariable) {
-				/*
-				((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
+				((SymbolVariable) symbol).setAddress(direccion);
 				direccion += symbol.getType().getSize();
-				*/
 			}			
 		}
 
-		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();  /// No funciona???
+		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes(); 
+
+
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				/*
-				((SymbolVariable) symbol).setAddress(direccion); /// Puede fallar
-				direccion += symbol.getType().getSize();
-				*/
+				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				if (symbol instanceof SymbolVariable) {
+					((SymbolVariable) symbol).setAddress(direccion);
+					direccion += symbol.getType().getSize();
+				}
 			}
 		}
 
 		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
 			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
 			if (temporal instanceof Temporal) {
-				/*
-				((Temporal) temporal).setAddress(0);
-				direccion += temporal.getType().getSize();
-				*/
+				((Temporal) temporal).setAddress(direccion);
+				//direccion += temporal.getType().getSize();
+				direccion += ((Temporal) temporal).getSize();
 			}
 		}
 
@@ -784,10 +779,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
 				TemporalIF temporal = tempScope.getTemporalTable().getTemporals().get(i);
 				if (temporal instanceof Temporal) {
-					/*
 					((Temporal) temporal).setAddress(direccion);
 					direccion += ((Temporal) temporal).getSize();
-					*/
 				}
 			}
 		}
@@ -809,7 +802,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 				if (symbol instanceof SymbolVariable) {
 					Variable variable = new Variable(symbol.getName(), symbol.getScope());
 					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
-				}
+				}	
 			}
 		}
 
@@ -867,12 +860,12 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 		if (symbol instanceof SymbolVariable) {
 			SymbolVariable vari = (SymbolVariable) symbol;
 			Variable variable = new Variable(((SymbolVariable)vari).getName(), symbol.getScope());
-			intermediateCodeBuilder.addQuadruple("MV", temporal, variable);		/// En curso de modificación
+			intermediateCodeBuilder.addQuadruple("MV", temporal, variable);
 			numero = vari.getValor();
 		} else if (symbol instanceof SymbolConstant) {
 			SymbolConstant constant = (SymbolConstant) symbol;
 			Value value = new Value(Integer.parseInt(((SymbolConstant) symbol).getValor()));
-			intermediateCodeBuilder.addQuadruple("MV", temporal, value);		/// En curso de modificación
+			intermediateCodeBuilder.addQuadruple("MV", temporal, value);
 			numero = constant.getValor();
 		} else {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable o constante");
@@ -907,7 +900,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 
-			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	
 			intermediateCodeBuilder.addQuadruples(exprb.getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("ADD", temporal, expra.getTemporal(), exprb.getTemporal());
 
@@ -937,7 +930,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 
-			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	
 			intermediateCodeBuilder.addQuadruples(exprb.getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("MUL", temporal, expra.getTemporal(), exprb.getTemporal());
 
@@ -962,7 +955,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 		TemporalFactory temporalFactory = new TemporalFactory(scope);
 		TemporalIF temporal = temporalFactory.create();
 
-		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	/// En proceso de modificación
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 		intermediateCodeBuilder.addQuadruple("INC", temporal, expr.getTemporal());
 
 		expr.setTemporal(temporal);
@@ -986,7 +979,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 
-			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 			intermediateCodeBuilder.addQuadruple("NEG", temporal, expr.getTemporal());  /// Duda: es esta?
 
 			expr.setTemporal(temporal);
@@ -1010,7 +1003,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 
-			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	
 			intermediateCodeBuilder.addQuadruples(exprb.getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("LS", temporal, expra.getTemporal(), exprb.getTemporal());
 
@@ -1035,7 +1028,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 
-			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	
 			intermediateCodeBuilder.addQuadruples(exprb.getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("EQ", temporal, expra.getTemporal(), exprb.getTemporal());
 
@@ -1061,7 +1054,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 
-			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expra.getIntermediateCode());	
 			intermediateCodeBuilder.addQuadruples(exprb.getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("AND", temporal, expra.getTemporal(), exprb.getTemporal());
 
@@ -1081,7 +1074,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 
-			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 			Variable variable = new Variable(expr.getNombreVector(), expr.getSymbolVariableIdentificador().getScope());
 			intermediateCodeBuilder.addQuadruple("MVP", temporal, variable, expr.getIndice());
 
@@ -1102,7 +1095,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 
-			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 
 			/* WTF
 			if (expr.getTipo() != null) {  /// Esto no se siente correcto
@@ -1301,7 +1294,7 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 			}
 			
 			Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
-			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	/// En proceso de modificación
+			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 			intermediateCodeBuilder.addQuadruple("MV", variable, expr.getTemporal());
 
 			vari.setValor(expr.getValor());
@@ -1327,7 +1320,7 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 
 				Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
 				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
-				intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	/// En proceso de modificación
+				intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getIndice());		/// Puede estar mal construida
 
 				System.out.println("ASIG> vector " + vari.getName() + "[" + indice + "] = " + valorAGuardar);

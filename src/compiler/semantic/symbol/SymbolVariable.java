@@ -16,7 +16,16 @@ public class SymbolVariable
 {  
    
 	private String valor;
+    private int address;
 	
+    public int getAddress() {
+        return address;
+    }
+
+    public void setAddress(int address) {
+        this.address = address;
+    }
+
     public String getValor() {
 		return valor;
 	}
