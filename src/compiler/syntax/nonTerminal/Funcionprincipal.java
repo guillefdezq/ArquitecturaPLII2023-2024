@@ -1,3 +1,5 @@
+// Es MUY probable que borre esta clase
+
 
   package compiler.syntax.nonTerminal;
 
