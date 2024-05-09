@@ -96,6 +96,7 @@ terminal Token STRING;
 non terminal Program	 			program;
 non terminal Axiom		axiom;
 non terminal axiom1,listadoIDs1,id1,funcion1;
+non terminal funcion0;
 non terminal              			funcionPrincipal;
 // non terminal FuncionPrincipal  			funcionPrincipal;
 // non terminal            		    epsilon;
@@ -579,8 +580,37 @@ seccionFunciones ::= funcion:fun seccionFunciones:secFun {:
 		System.out.println("     QUAD>" + sf.getIntermediateCode());
 		RESULT = sf; 
 	:};
-                      
-funcion ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParametros:params CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = vacio"); 
+
+funcion0 ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParametros:params CLOSE_KEY OPEN_PARENTHESIS 
+		{:
+			System.out.println("READ> funcion = vacio"); 
+			ScopeIF scope = scopeManager.getCurrentScope();
+			SymbolTableIF sTable = scope.getSymbolTable();
+
+			SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("VACIO"));
+			simboloProcedimiento.setParameters((ArrayList<SymbolIF>) params);
+
+			sTable.addSymbol(identificador.getLexema(), simboloProcedimiento);
+
+			RESULT = simboloProcedimiento;
+
+		:} | ENTERO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParametros:params CLOSE_KEY OPEN_PARENTHESIS
+		{:
+			System.out.println("READ> funcion = entero"); 
+
+			ScopeIF scope = scopeManager.getCurrentScope();
+			SymbolTableIF sTable = scope.getSymbolTable();
+
+			SymbolFunction simboloFuncion = new SymbolFunction(scopeManager.getCurrentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("ENTERO"));
+			simboloFuncion.setParameters((ArrayList<SymbolIF>) params);
+
+			sTable.addSymbol(identificador.getLexema(), simboloFuncion);
+
+			RESULT = simboloFuncion;
+		:};
+
+
+funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {: 
 
 /* ED
 		ScopeIF scope = scopeManager.getCurrentScope();
@@ -602,28 +632,51 @@ funcion ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParame
 		sTable.addSymbol(identificador.getLexema(), simboloProcedimiento);
 */
 
-		ScopeIF scope = scopeManager.getCurrentScope();
-		TypeTableIF typeTable = scope.getTypeTable ();
-		SymbolTableIF sTable = scope.getSymbolTable();
-
-		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("VACIO"));
-		simboloProcedimiento.setParameters((ArrayList<SymbolIF>) params);
-
-		sTable.addSymbol(identificador.getLexema(), simboloProcedimiento);
-
-		RESULT = null; :}
-            | ENTERO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParametros:params CLOSE_KEY OPEN_PARENTHESIS seccionTipos funcion1 {: System.out.println("READ> funcion = entero"); 
+		SymbolIF simboloFuncion = (SymbolIF) func0;
+		String identificador = simboloFuncion.getName();
+		ArrayList<SymbolIF> params = ((SymbolProcedure)simboloFuncion).getParameters();
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		SymbolFunction simboloFuncion = new SymbolFunction(scopeManager.getCurrentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("ENTERO"));
-		simboloFuncion.setParameters((ArrayList<SymbolIF>) params);
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF label = labelFactory.create(identificador);
+		intermediateCodeBuilder.addQuadruple("FUNCION", simboloFuncion);
 
-		sTable.addSymbol(identificador.getLexema(), simboloFuncion);
+		for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
+			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+			if (symbol instanceof SymbolParameter) {
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				intermediateCodeBuilder.addQuadruple("PARAM", variable);
+			}
+		}
 
-		RESULT = null; :};
+		//// añado variables locales y PUNTEROFINAL como en funcPrin
+		
+		//gestionar el valor a devolver
+		///intermediateCodeBuilder.addQuadruple(secTip.getIntermediateCode());
+		///intermediateCodeBuilder.addQuadruple(fun1.getIntermediateCode());
+		label = labelFactory.create("FIN_"+identificador);
+
+		// 4*regAct+param+1=posicion
+		int posicion = 4 + ((ArrayList<SymbolIF>) params).size() + 1;
+		Value value = new Value(posicion);
+		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", label, value);
+
+		List<QuadrupleIF> list2 = intermediateCodeBuilder.create();
+		for (int i = 0; i<list2.size(); i++) {
+			if(list2.get(i).getOperation().equals("DEVUELVE")) {
+				list2.get(i).setFirstOperand(value);
+			}
+		}
+
+		Funcion funcion = new Funcion();
+		funcion.setSymbolProcedure((SymbolProcedure) simboloFuncion);
+		funcion.setIntermediateCode(list2);
+
+		RESULT = funcion; :};
                      
          
 funcion1 ::= listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
@@ -1257,10 +1310,31 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		
 		Expresion expr = new Expresion();
 		expr.setValor("9999");		// Este valor sirve únicamente de referencia, no devuelve valor real.
-		expr.setTipo(scopeManager.searchType("ENTERO"));
+		//expr.setTipo(scopeManager.searchType("ENTERO"));
+		expr.setTipo(((SymbolIF) funcion).getType());
 		RESULT = expr; :}
-	| IDENTIFICADOR OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros");
-	 	RESULT = null; :};
+	| IDENTIFICADOR:ident OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros");
+	 	ScopeIF scope = scopeManager.getCurrentScope();
+		SymbolProcedure funcion = (SymbolProcedure) scopeManager.searchSymbol(ident.getLexema());
+		
+		if (!(funcion instanceof SymbolFunction || funcion instanceof SymbolProcedure)) {
+			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no es una función o procedimiento.");
+		}
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+
+		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
+
+		intermediateCodeBuilder.addQuadruple("INICIA_FUNCION", procedure);
+
+		intermediateCodeBuilder.addQuadruple("LLAMA_FUNCION", procedure);
+
+		/// Falta codigo de devolución del resultado.
+		
+		Expresion expr = new Expresion();
+		expr.setValor("9999");		// Este valor sirve únicamente de referencia, no devuelve valor real.
+		expr.setTipo(scopeManager.searchType("ENTERO"));
+		RESULT = expr; :};
 parametros ::= expresion:exp {: System.out.println("READ> parametros = expresion"); 
 		ArrayList<String> params = new ArrayList<String>();
 		params.add(0, ((String)( (Expresion) exp).getValor()));
