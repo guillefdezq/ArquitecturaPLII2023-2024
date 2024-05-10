@@ -243,9 +243,12 @@ program ::=
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
 		scopeManager.closeScope();
 
+		System.out.println("\n\n\n");
 		semanticErrorManager.semanticDebug("           [[[ C O D I G O   G E N E R A D O ]]]");
-		semanticErrorManager.semanticDebug("Todavía no habilitado, se requiere que se termine de pasar los tokens hasta el axioma.");
-		//semanticErrorManager.semanticDebug(ax.getIntermediateCode());
+		for (QuadrupleIF cuadrupla : ax.getIntermediateCode()) {
+			semanticErrorManager.semanticDebug(cuadrupla.toString());
+		}
+		System.out.println("\n\n\n");
 
   		syntaxErrorManager.syntaxInfo ("Parsing process ended.");
   		
@@ -287,11 +290,8 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 			}
 		}
 
-		/// Axiom ax = new Axiom(); /// No puedo declarar un abstracto, así que...
-		 Program ax = new Program(); // Usaré esto (muy poco elegante...).
-		/// Hablando con el "experto" (o sea, conmigo): creo que tienes que mirar la
-			// documentación, puede haber un método que devuelva algún objeto similar
-			// a "AXIOM"...?
+		// Axiom ax = new Axiom(); // No puedo declarar un abstracto, así que haré una subclase
+		AxiomaCompilador ax = new AxiomaCompilador();
 
 
 		Program ax1 = (Program) axi1;
@@ -305,8 +305,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		System.out.print("IMPRIMIENDO CONTENIDOS DE AXIOMA: ");
 		System.out.println(ax.getIntermediateCode());
 
-		/// RESULT = axiom; /// No puedo devolverlo
-		RESULT = null;
+		RESULT = (Axiom) ax; // No puedo devolverlo
 		:} ;
 
 axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {: 
@@ -667,7 +666,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		List<QuadrupleIF> list2 = intermediateCodeBuilder.create();
 		for (int i = 0; i<list2.size(); i++) {
-			if(list2.get(i).getOperation().equals("DEVUELVE")) {
+			if(list2.get(i).getOperation().equals("DEVUELTO")) {
 				list2.get(i).setFirstOperand(value);
 			}
 		}
