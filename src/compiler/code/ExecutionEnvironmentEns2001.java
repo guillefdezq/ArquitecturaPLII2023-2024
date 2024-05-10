@@ -101,16 +101,16 @@ public class ExecutionEnvironmentEns2001
         //TODO: Student work
         if (quadruple.getOperation().equals("MV")) {
             StringBuffer b = new StringBuffer();
-            String o1 = operacion(quadruple.getFirstOperand());
             String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
             // b.append(";" + quadruple.toString() + "\n");
             b.append("MOVE " + o1 + ", " + r);
             return b.toString();
         } else if (quadruple.getOperation().equals("ADD")) {
             StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
-            String r = operacion(quadruple.getResult());
             // b.append(";" + quadruple.toString() + "\n");
             b.append("ADD " + o1 + ", " + o2 + "\n");
             b.append("MOVE .A , " + r);
@@ -135,12 +135,12 @@ public class ExecutionEnvironmentEns2001
             return b.toString();
         } else if (quadruple.getOperation().equals("PARAM")) {
             StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getFirstOperand());
+            String r = operacion(quadruple.getResult());
             b.append("PUSH " + r);
             return b.toString();
         } else if (quadruple.getOperation().equals("LLAMA_FUNCION")) {
             StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getFirstOperand());
+            String r = operacion(quadruple.getResult());
             b.append("MOVE .R0, .IX ;inicio registro activación llamada\n");
             b.append("CALL /"+r+" ;guarda el contador de programa en la pila\n");
             b.append("MOVE .IX, .SP ;recuperar el SP\n");
@@ -150,7 +150,7 @@ public class ExecutionEnvironmentEns2001
             return b.toString();
         } else if (quadruple.getOperation().equals("DEVUELTO")) {
             StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getFirstOperand());
+            String r = operacion(quadruple.getResult());
             b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n");
             return b.toString();
         } else if (quadruple.getOperation().equals("FUNCION")) {
@@ -164,21 +164,25 @@ public class ExecutionEnvironmentEns2001
             return b.toString();
         } else if (quadruple.getOperation().equals("PUNTEROFINAL")) {
             StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
+            /// FALTA USAR R, temporal
             b.append("SUB .IX, " + o1+ "\n");
             b.append("MOVE .A, .SP\n");
             return b.toString();
         } else if (quadruple.getOperation().equals("FIN_FUNCION")) {
             StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
+            /// FALTA USAR R, LABEL
             b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
             b.append("MOVE .A, .SP\n");
             b.append("RET ;rescata de la pila el contenido del contador de programa\n\n\n\n");
             return b.toString();
-        } else if (quadruple.getOperation().equals("DEVUELVE")) {
+        } else if (quadruple.getOperation().equals("DEVUELTO")) {
             StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getFirstOperand());
-            String o1 = operacion(quadruple.getSecondOperand());
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());  /// En qué situación se usa esto?
             if(r!=null)
                 b.append("MOVE " + r + ", #-0[.IX]\n");
             //una función cualquiera
