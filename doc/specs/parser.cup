@@ -293,14 +293,13 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		// Axiom ax = new Axiom(); // No puedo declarar un abstracto, así que haré una subclase
 		AxiomaCompilador ax = new AxiomaCompilador();
 
+		/// Falta añadir tipos
 
 		Program ax1 = (Program) axi1;
 
 		List<QuadrupleIF> intermediateCode = intermediateCodeBuilder.create();
-		intermediateCode = ax1.getIntermediateCode();
-
+		intermediateCode.addAll(ax1.getIntermediateCode());
 		ax.setIntermediateCode(intermediateCode);
-		/// Estancado
 
 		System.out.print("IMPRIMIENDO CONTENIDOS DE AXIOMA: ");
 		System.out.println(ax.getIntermediateCode());
@@ -412,9 +411,9 @@ declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_
 :};
 
 tamTipo ::= NUMERO:numero {: 
-System.out.println("READ> tamTipo = NUMERO = " + numero.getLexema()); 
-if (!(Integer.parseInt(numero.getLexema()) > 0)) { semanticErrorManager.semanticFatalError("Tamaño de vector debe ser positivo"); }
-RESULT = numero.getLexema(); :}
+		System.out.println("READ> tamTipo = NUMERO = " + numero.getLexema()); 
+		if (!(Integer.parseInt(numero.getLexema()) > 0)) { semanticErrorManager.semanticFatalError("Tamaño de vector debe ser positivo"); }
+		RESULT = numero.getLexema(); :}
  | IDENTIFICADOR:id {: 
 		String cadena = id.getLexema();
 		SymbolIF symbol = (SymbolIF) scopeManager.searchSymbol(cadena);
@@ -611,7 +610,7 @@ funcion0 ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParam
 
 funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {: 
 
-/* ED
+	/* ED
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
@@ -629,7 +628,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
 		scopeManager.closeScope();
 		sTable.addSymbol(identificador.getLexema(), simboloProcedimiento);
-*/
+	*/
 
 		SymbolIF simboloFuncion = (SymbolIF) func0;
 		String identificador = simboloFuncion.getName();
@@ -1379,6 +1378,19 @@ sentencia ::= sentenciaDevuelve {: System.out.println("READ> sentencia = sentenc
 	| sentenciaSalida {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = null; :}
 	| bloque {: System.out.println("READ> sentencia = bloque"); RESULT = null; :};
 
+/*
+sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT =sen; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
+	| sentenciaIncremento:sen {: System.out.println("READ> sentencia = sentenciaIncremento"); RESULT =sen; :}
+	| sentenciaAsignacion:sen {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT =sen; :}
+	| sentenciaAsignacionSuma:sen {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT=sen; :}
+	| sentenciaSi:sen {: System.out.println("READ> sentencia = sentenciaSi"); RESULT =sen; :}
+	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT =sen; :}
+	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT =sen; :}
+	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT=sen; :}
+	| sentenciaSalida:sen {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT =sen; :}
+	| bloque:sen {: System.out.println("READ> sentencia = bloque"); RESULT = sen; :};
+*/
+
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve = vacío"); 
 		Sentenciadevuelve dev = new Sentenciadevuelve();
 		RESULT = dev; :}
@@ -1398,9 +1410,44 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.
 		if (sym.getType() != scopeManager.searchType("ENTERO")) {
 			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
 		}
+		if (!(sym instanceof SymbolVariable)) {
+			semanticErrorManager.semanticFatalError("Sólamente se pueden incrementar variables, no constantes u otro tipo.");
+		}
 
 		String valor = vari.getValor();
 		vari.setValor(Integer.toString((Integer.parseInt(valor) + 1)));
+
+
+		// Código intermedio
+		ScopeIF scope = scopeManager.getCurrentScope();
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
+
+		// Lo que debería hacer:
+		// obtener valor
+		Variable variable = new Variable(((SymbolVariable)vari).getName(), sym.getScope());
+
+		// En vez de esto...
+		/*
+			intermediateCodeBuilder.addQuadruple("MV", temporal, variable);
+
+			// incrementar
+			intermediateCodeBuilder.addQuadruple("INC", temporal, variable);
+
+			// reasignar
+			intermediateCodeBuilder.addQuadruple("MV", variable, temporal);
+			
+			
+			sentencia.setTemporal(temporal);
+		*/
+
+		// ¿No se podría hacer esto?
+		intermediateCodeBuilder.addQuadruple("INC", variable, variable);
+
+		Sentencia sentencia = new Sentencia();
+		sentencia.setIntermediateCode(intermediateCodeBuilder.create());
+
 
 		System.out.println("SN++> " + vari.getName() + " = " + vari.getValor());
 		
@@ -1611,15 +1658,28 @@ sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("REA
 sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		Sentencia sen = new Sentencia();
 		String salida = (String) expr;
+		
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
+		Value value = new Value(salida + '\0');
+		intermediateCodeBuilder.addQuadruple("WRSTR", value);
+		sen.setIntermediateCode(intermediateCodeBuilder.create());
+
 		System.out.println("READ> sentenciaSalida = ESCRIBE");
 		System.out.println("PRNT> " + salida); 
-		RESULT = null;
+		RESULT = sen;
  :}
 	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:expr CLOSE_KEY SEMI_COLON {: 
+		Sentencia sen = new Sentencia();
 		String salida = (String) expr;
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
+		Value value = new Value(salida + '\0');
+		intermediateCodeBuilder.addQuadruple("WRSTR", value);
+		sen.setIntermediateCode(intermediateCodeBuilder.create());
+
 		System.out.println("READ> sentenciaSalida = ESCRIBE_ENT"); 
 		System.out.println("PRNT> " + salida); 
-		RESULT = null;
+		RESULT = sen;
  :};
 opcionesEscribe ::= epsilon {:
 		System.out.println("READ> opcionesEscribe = epsilon");
