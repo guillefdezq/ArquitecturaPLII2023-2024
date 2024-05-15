@@ -51,13 +51,14 @@ vacio principal ()
     tipo entero vector3[4];
     vector3 lista3;
 
-    /*
     entero a;
+    /*
     a=lista3+3;
     */
 
+    a = incrementa(a);  /* debería funcionar */
     /*
-    incrementa(a, a);
+    incrementa(a, a);  /* no debería funcionar, parametro extra */
     */
 
     devuelve;
