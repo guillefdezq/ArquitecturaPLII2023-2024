@@ -22,6 +22,12 @@
       this.sentenciasino = sentenciasino;
     }
 
+    public Sentenciasi(Expresion expresion, Sentencia sentenciasi) {
+      super();
+      this.expresion = expresion;
+      this.sentenciasi = sentenciasi;
+    }
+
     public Sentenciasi(SymbolVariable symbolVariableIdentificador) {
       this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
