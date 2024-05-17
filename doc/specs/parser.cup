@@ -1359,21 +1359,17 @@ bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias:sen c
 listadoSentencias ::= listadoSentencias:listSent sentencia:sent {: System.out.println("READ> listadoSentencias = listadoSentencias sentencia"); 
 		/// FALTA IMPLEMENTAR LAS SENTENCIAS
 		
-		/*
 		Sentencia ls = (Sentencia) listSent;
 		Sentencia s = (Sentencia) sent;
 		List<QuadrupleIF> intermediateCode = ls.getIntermediateCode();
 		intermediateCode.addAll(s.getIntermediateCode());
 		s.setIntermediateCode(intermediateCode);
 
-		RESULT = s
-		*/
-		; :}
+		RESULT = s;
+		:}
  | sentencia:sent {: System.out.println("READ> listadoSentencias = sentencia"); 
-		/*
 		Sentencia s = (Sentencia) sent;
 		RESULT = s; 
-		*/
 		:};
 
 sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = sen; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
@@ -1621,28 +1617,47 @@ sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO senten
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
-		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelElse);
+		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelElse);		// Ir al else si no coincide
 		/// No terminado de declarar bien las sentencias de entremedias.
-		//intermediateCodeBuilder.addQuadruples(sentenciasi.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruples(sentenciasi.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BR", labelFinal); //me salgo del if
 		intermediateCodeBuilder.addQuadruple("INL", labelElse);
-		//intermediateCodeBuilder.addQuadruples(sentenciasino.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruples(sentenciasino.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
 
-		Sentenciasi sentenciaSi=new Sentenciasi(expr, sentenciasi, sentenciasino);
-		sentenciaSi.setIntermediateCode(intermediateCodeBuilder.create());
-		System.out.println("     QUAD>" + sentenciaSi.getIntermediateCode());  
+		Sentenciasi sentenciasSi =new Sentenciasi(expr, sentenciasi, sentenciasino);
+		sentenciasSi.setIntermediateCode(intermediateCodeBuilder.create());
+		System.out.println("     QUAD>" + sentenciasSi.getIntermediateCode());  
 
-		RESULT = sentenciasi; :}
-	 | SI OPEN_KEY expresion:exp CLOSE_KEY sentencia {: System.out.println("READ> sentenciaSi");
-		Sentenciasi sentSi = new Sentenciasi();
+		RESULT = sentenciasSi; :}
+	 | SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi {: System.out.println("READ> sentenciaSi");
 		Expresion expr = (Expresion) exp;
+		Sentencia sentenciasi = (Sentencia) sentsi;
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
 			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
 
-		RESULT = sentSi; :};
+		ScopeIF scope=scopeManager.getCurrentScope();
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFinal=labelFactory.create();
+		LabelIF labelElse=labelFactory.create();
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelFinal);	// Salir si no coincide
+		/// No terminado de declarar bien las sentencias de entremedias.
+		intermediateCodeBuilder.addQuadruples(sentenciasi.getIntermediateCode());
+		//intermediateCodeBuilder.addQuadruple("BR", labelFinal); //me salgo del if
+		//intermediateCodeBuilder.addQuadruple("INL", labelElse);
+		//intermediateCodeBuilder.addQuadruples(sentenciasino.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
+
+		Sentenciasi sentenciasSi =new Sentenciasi(expr, sentenciasi);
+		sentenciasSi.setIntermediateCode(intermediateCodeBuilder.create());
+		System.out.println("     QUAD>" + sentenciasSi.getIntermediateCode());  
+
+		RESULT = sentenciasSi; :};
 	
 // 'Ergo', aquí tampoco hace falta, al usar bloque directamente.
 sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: System.out.println("READ> sentenciaAlternativas"); 

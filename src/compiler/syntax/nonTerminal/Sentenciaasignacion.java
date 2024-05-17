@@ -5,7 +5,7 @@
   import compiler.semantic.symbol.SymbolVariable;
   import es.uned.lsi.compiler.semantic.type.TypeIF;
 
-  public class Sentenciaasignacion extends NonTerminal {
+  public class Sentenciaasignacion extends Sentencia {
 
     protected SymbolVariable symbolVariableIdentificador;
     protected Temporal temporal;
