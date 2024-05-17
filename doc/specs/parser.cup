@@ -1353,8 +1353,8 @@ parametros ::= expresion:exp {: System.out.println("READ> parametros = expresion
 
 //  SENTENCIAS
 
-bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :}
- 	|  OPEN_PARENTHESIS abrirAmbito listadoSentencias cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = null; :};
+bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias:sen cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS"); RESULT = sen; :}
+ 	|  OPEN_PARENTHESIS abrirAmbito listadoSentencias:sen cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = sen; :};
 
 listadoSentencias ::= listadoSentencias:listSent sentencia:sent {: System.out.println("READ> listadoSentencias = listadoSentencias sentencia"); 
 		/// FALTA IMPLEMENTAR LAS SENTENCIAS
@@ -1376,38 +1376,31 @@ listadoSentencias ::= listadoSentencias:listSent sentencia:sent {: System.out.pr
 		*/
 		:};
 
-sentencia ::= sentenciaDevuelve {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = null; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
-	| sentenciaIncremento {: System.out.println("READ> sentencia = sentenciaIncremento"); RESULT = null; :}
-	| sentenciaAsignacion {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = null; :}
-	| sentenciaAsignacionSuma {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = null; :}
-	| sentenciaSi {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = null; :}
-	| sentenciaAlternativas {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = null; :}
-	| sentenciaMientras {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = null; :}
-	| sentenciaLlamadaFuncion {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
-	| sentenciaSalida {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = null; :}
-	| bloque {: System.out.println("READ> sentencia = bloque"); RESULT = null; :};
-
-/*
-sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT =sen; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
-	| sentenciaIncremento:sen {: System.out.println("READ> sentencia = sentenciaIncremento"); RESULT =sen; :}
-	| sentenciaAsignacion:sen {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT =sen; :}
-	| sentenciaAsignacionSuma:sen {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT=sen; :}
-	| sentenciaSi:sen {: System.out.println("READ> sentencia = sentenciaSi"); RESULT =sen; :}
-	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT =sen; :}
-	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT =sen; :}
-	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT=sen; :}
-	| sentenciaSalida:sen {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT =sen; :}
+sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = sen; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
+	| sentenciaIncremento:sen {: System.out.println("READ> sentencia = sentenciaIncremento"); RESULT = sen; :}
+	| sentenciaAsignacion:sen {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = sen; :}
+	| sentenciaAsignacionSuma:sen {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = sen; :}
+	| sentenciaSi:sen {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = sen; :}
+	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = null; :}
+	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = null; :}
+	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
+	| sentenciaSalida:sen {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = sen; :}
 	| bloque:sen {: System.out.println("READ> sentencia = bloque"); RESULT = sen; :};
-*/
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve = vacío"); 
-		Sentenciadevuelve dev = new Sentenciadevuelve();
-		RESULT = dev; :}
+		Sentencia sen = new Sentenciadevuelve();
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
+		intermediateCodeBuilder.addQuadruple("DEVUELVE");
+		sen.setIntermediateCode(intermediateCodeBuilder.create());
+		RESULT = sen; :}
 	| DEVUELVE expresion:exp SEMI_COLON {: 
 		Expresion expr = (Expresion) exp;
-		Sentenciadevuelve dev = new Sentenciadevuelve(expr.getValor());
+		Sentencia sen = new Sentenciadevuelve(expr.getValor());
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
+		intermediateCodeBuilder.addQuadruple("DEVUELVE", expr.getTemporal());
+		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		System.out.println("READ> sentenciaDevuelve + expresion = " + expr.getValor()); 
-		RESULT = dev; :};
+		RESULT = sen; :};
 
 sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.out.println("READ> sentenciaIncremento"); 
 		
@@ -1451,7 +1444,7 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.
 			sentencia.setTemporal(temporal);
 		*/
 
-		// ¿No se podría hacer esto?
+		// Se puede hacer esto, INC varía directamente el valor en la memoria
 		intermediateCodeBuilder.addQuadruple("INC", variable, variable);
 
 		Sentencia sentencia = new Sentencia();
@@ -1547,6 +1540,8 @@ ref ::= IDENTIFICADOR:ident {: System.out.println("READ> ref");
 
 sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: System.out.println("READ> sentenciaAsignacionSuma");
 		Expresion expr = (Expresion) exp;
+		Sentencia sen = new Sentencia();
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 
 		// dividir en instancias de expresión o símbolo
 
@@ -1566,25 +1561,38 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 				semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
 			}
 			vari.setValor(expr.getValor());
+
+			Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
+			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
+			intermediateCodeBuilder.addQuadruple("ADD", variable, variable, expr.getTemporal());
+			intermediateCodeBuilder.addQuadruple("MV", variable, expr.getTemporal());		// Modificar
+
 			System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
 
 		} else if (ref instanceof Expresion) {			// código del vector
 			Expresion refexpr = (Expresion) ref;
 			SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(refexpr.getNombreVector());
 			if(sym.getType() instanceof TypeArray) {
-				SymbolVariable variable = (SymbolVariable) sym;
+				SymbolVariable vari = (SymbolVariable) sym;
 				int indice = refexpr.getIndice();
-				if (variable.getType().getSize() < indice) {
+				if (vari.getType().getSize() < indice) {
 					semanticErrorManager.semanticFatalError("La variable " + refexpr.getNombreVector() + " no tiene tantos elementos. Equivalente a un IndexOutOfBoundsException.");
 				}
 
-				String[] vector = variable.getValor().split(",");
+				String[] vector = vari.getValor().split(",");
 				String valorAGuardar = Integer.toString(Integer.parseInt(expr.getValor())+Integer.parseInt(refexpr.getValor()));
 				vector[indice] = valorAGuardar;
 				String nuevoVector = String.join(",", vector);
 				System.out.println(nuevoVector);
 
-				variable.setValor(nuevoVector);
+				vari.setValor(nuevoVector);
+
+				Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
+				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
+				intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
+				intermediateCodeBuilder.addQuadruple("ADD", variable, variable, expr.getTemporal());
+				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getIndice());		/// Puede estar mal construida
+
 
 				System.out.println("ASIG> vector " + variable.getName() + "[" + indice + "] = " + valorAGuardar);
 			} else {
@@ -1593,7 +1601,8 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 
 		} else { semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto."); }
 
-		RESULT = null;  :};
+		sen.setIntermediateCode(intermediateCodeBuilder.create());
+		RESULT = sen; :};
 
 // ATENTO! No hace falta poner aquí ninguna apertura o cierre de ámbito, ya lo hace sentencia con bloque.
 sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO sentencia:sentsino {: System.out.println("READ> sentenciaSi + SINO"); 
