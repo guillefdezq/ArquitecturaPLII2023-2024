@@ -148,11 +148,6 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE #-3[.IX], .R0 ;recuperar dirección enlace acceso\n");
             b.append("MOVE .R0, .IX ; restaurar enlace acceso\n");
             return b.toString();
-        } else if (quadruple.getOperation().equals("DEVUELTO")) {
-            StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getResult());
-            b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n");
-            return b.toString();
         } else if (quadruple.getOperation().equals("FUNCION")) {
             StringBuffer b = new StringBuffer();
             String r = operacion(quadruple.getResult());
@@ -179,7 +174,12 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE .A, .SP\n");
             b.append("RET ;rescata de la pila el contenido del contador de programa\n\n\n\n");
             return b.toString();
-        } else if (quadruple.getOperation().equals("DEVUELTO")) {
+        } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Conflicto con el de abajo
+            StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
+            b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n");
+            return b.toString();
+        } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto
             StringBuffer b = new StringBuffer();
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());  /// En qué situación se usa esto?
