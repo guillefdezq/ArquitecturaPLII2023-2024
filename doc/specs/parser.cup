@@ -681,8 +681,8 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		RESULT = funcion; :};
                      
          
-funcion1 ::= listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
-                      | seccionVariables listadoSentencias  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
+funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
+                      | seccionVariables listadoSentencias:listsent  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
 
 
  
@@ -828,15 +828,17 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		Funcion fp = new Funcion();
 
+		// Añadir listado de sentencias
+		Sentencia lt = (Sentencia) listSent;
+
+		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
+
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
 
-		/// Añadir listado de sentencias
-		//Sentencia lt = (Sentencia) listSent;
-
-		System.out.println(fp.getIntermediateCode());
+		System.out.println("     QUAD>" + fp.getIntermediateCode());
 
 		RESULT = fp; :}
-				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); 
+				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
@@ -915,13 +917,18 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		TemporalFactory temporalFactory = new TemporalFactory(scope);
 		TemporalIF temporal = temporalFactory.create();
 		
-		intermediateCodeBuilder.addQuadruple("PUNTEROFINAL", temporal, direccion);
-
 		Funcion fp = new Funcion();
+
+		// Añadir listado de sentencias
+		Sentencia lt = (Sentencia) listsent;
+
+		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
+
+		intermediateCodeBuilder.addQuadruple("PUNTEROFINAL", temporal, direccion);
 
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
 
-		System.out.println(fp.getIntermediateCode());
+		System.out.println("     QUAD>" + fp.getIntermediateCode());
 
 		RESULT = fp;  :};
 
@@ -1365,10 +1372,13 @@ listadoSentencias ::= listadoSentencias:listSent sentencia:sent {: System.out.pr
 		intermediateCode.addAll(s.getIntermediateCode());
 		s.setIntermediateCode(intermediateCode);
 
+		System.out.println("     QUAD>" + s.getIntermediateCode());
+
 		RESULT = s;
 		:}
  | sentencia:sent {: System.out.println("READ> listadoSentencias = sentencia"); 
 		Sentencia s = (Sentencia) sent;
+		System.out.println("     QUAD>" + s.getIntermediateCode());
 		RESULT = s; 
 		:};
 
