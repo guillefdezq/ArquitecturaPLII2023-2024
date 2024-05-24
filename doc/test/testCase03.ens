@@ -1,0 +1,25 @@
+
+; Quadruple - [VARGLOBAL VERDADERO, 0, null]
+; Quadruple - [VARGLOBAL FALSO, 0, null]
+PRINCIPAL: 
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+PUSH #-1       ;valor de retorno
+PUSH .IX       ;enlace de control
+PUSH .SR       ;estado mÃ¡quina
+PUSH .IX       ;enlace de acceso
+
+WRSTR /L_0 
+
+MOVE #1, #-5[.IX]
+WRINT #-5[.IX] 
+WRCHAR #10 
+
+WRSTR /L_2 
+
+MOVE #0, #-8[.IX]
+WRINT #-8[.IX] 
+WRCHAR #10 
+
+HALT 
+L_0: DATA "verdadero\n"
+L_2: DATA "falso\n"
