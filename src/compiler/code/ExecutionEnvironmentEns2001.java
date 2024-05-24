@@ -99,6 +99,9 @@ public class ExecutionEnvironmentEns2001
     public final String translate (QuadrupleIF quadruple)
     {      
         //TODO: Student work
+
+        // Usar un switch capaz sea más limpio
+
         if (quadruple.getOperation().equals("MV")) {
             StringBuffer b = new StringBuffer();
             String r = operacion(quadruple.getResult());
@@ -115,9 +118,20 @@ public class ExecutionEnvironmentEns2001
             b.append("ADD " + o1 + ", " + o2 + "\n");
             b.append("MOVE .A , " + r);
             return b.toString();
+        } else if (quadruple.getOperation().equals("AXIOM")) {
+            StringBuffer b = new StringBuffer();
+            //b.append("AXIOM: NOP");
+            return b.toString();
+        } else if (quadruple.getOperation().equals("CADENA")) {
+                StringBuffer b = new StringBuffer();
+                String r = operacion(quadruple.getResult());
+                String o1 = operacion(quadruple.getFirstOperand());
+                b.append(o1 + ": DATA \""+ r +"\"");
+                return b.toString();
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {
             StringBuffer b = new StringBuffer();
             // b.append(";" + quadruple.toString() + "\n");
+            b.append("PRINCIPAL: \n");
             b.append("MOVE .SP, .IX  ;guarda el valor de SP en IX\n");
             b.append("PUSH #-1       ;valor de retorno\n");
             b.append("PUSH .IX       ;enlace de control\n");
@@ -174,15 +188,11 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE .A, .SP\n");
             b.append("RET ;rescata de la pila el contenido del contador de programa\n\n\n\n");
             return b.toString();
-        } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Conflicto con el de abajo
-            StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getResult());
-            b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n");
-            return b.toString();
         } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto
             StringBuffer b = new StringBuffer();
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());  /// En qué situación se usa esto?
+            // b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n"); // En qué línea va esto?
             if(r!=null)
                 b.append("MOVE " + r + ", #-0[.IX]\n");
             //una función cualquiera
@@ -198,8 +208,24 @@ public class ExecutionEnvironmentEns2001
             }
 
             return b.toString();
+        } else if (quadruple.getOperation().equals("WRSTR")) {       /// Este es el conflicto
+            StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            b.append("WRSTR /" + o1 + " \n");
+            return b.toString();
+        } else if (quadruple.getOperation().equals("WRINT")) {       /// Este es el conflicto
+            StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
+            b.append("WRINT " + r + " \n");
+            b.append("WRCHAR #10 \n");
+            return b.toString();
+        } else {
+            StringBuffer b = new StringBuffer();
+            b.append("; " + quadruple.toString());
+            return b.toString();
         }
-        return quadruple.toString(); 
+        // return quadruple.toString(); 
     }
 
     private String operacion(OperandIF o) {

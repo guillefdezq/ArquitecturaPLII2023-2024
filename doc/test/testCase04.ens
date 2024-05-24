@@ -1,0 +1,21 @@
+
+PRINCIPAL: 
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+PUSH #-1       ;valor de retorno
+PUSH .IX       ;enlace de control
+PUSH .SR       ;estado mÃ¡quina
+PUSH .IX       ;enlace de acceso
+
+;Quadruple - [VARLOCAL a, 0, null]
+MOVE #6, #-5[.IX]
+; Quadruple - [antes null, null, null]
+MOVE #-5[.IX], #-0[.IX]
+; Quadruple - [despues null, null, null]
+MOVE #-0[.IX], #-6[.IX]
+WRINT #-6[.IX] 
+WRCHAR #10 
+
+HALT 
+SUB .IX, #8
+MOVE .A, .SP
+

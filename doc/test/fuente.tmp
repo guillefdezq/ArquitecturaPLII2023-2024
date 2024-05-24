@@ -1,0 +1,58 @@
+
+PRINCIPAL: 
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+PUSH #-1       ;valor de retorno
+PUSH .IX       ;enlace de control
+PUSH .SR       ;estado mÃ¡quina
+PUSH .IX       ;enlace de acceso
+
+;Quadruple - [VARLOCAL a, 0, null]
+;Quadruple - [VARLOCAL b, 0, null]
+;Quadruple - [VARLOCAL c, 0, null]
+MOVE #6, #-7[.IX]
+;MOVE #-7[.IX], #-0[.IX]
+MOVE #3, #-8[.IX]
+;MOVE #-8[.IX], #-0[.IX]
+MOVE #-0[.IX], #-9[.IX]
+MOVE #-0[.IX], #-10[.IX]
+ADD #-9[.IX], #-10[.IX]
+MOVE .A , #-11[.IX]
+MOVE #-11[.IX], #-0[.IX]
+MOVE #-0[.IX], #-12[.IX]
+WRINT #-12[.IX] 
+WRCHAR #10 
+
+MOVE #-0[.IX], #-14[.IX]
+WRINT #-14[.IX] 
+WRCHAR #10 
+
+MOVE #-0[.IX], #-16[.IX]
+WRINT #-16[.IX] 
+WRCHAR #10 
+
+WRSTR /L_3 
+
+MOVE #-0[.IX], #-19[.IX]
+WRINT #-19[.IX] 
+WRCHAR #10 
+
+WRSTR /L_5 
+
+MOVE #-0[.IX], #-22[.IX]
+WRINT #-22[.IX] 
+WRCHAR #10 
+
+WRSTR /L_7 
+
+MOVE #-0[.IX], #-25[.IX]
+WRINT #-25[.IX] 
+WRCHAR #10 
+
+HALT 
+SUB .IX, #27
+MOVE .A, .SP
+
+L_3: DATA "c es 9\n"
+L_5: DATA "c es 10\n"
+L_7: DATA "c es 11\n"
+

@@ -32,6 +32,9 @@ action code {:
 	ScopeManagerIF       scopeManager         = CompilerContext.getScopeManager ();
 	FinalCodeFactoryIF   finalCodeFactory     = CompilerContext.getFinalCodeFactory ();
 
+	// Listado para las cadenas
+	List<QuadrupleIF> listaCadenas = new ArrayList<QuadrupleIF>();
+
 :}	
 
 parser code {:
@@ -229,8 +232,9 @@ program ::=
   {:   		
   		// No modificar esta estructura, aunque se pueden añadir más acciones semánticas
   		
-  		//List intermediateCode = ax.getIntermediateCode ();
-  		//finalCodeFactory.create (intermediateCode);
+  		List intermediateCode = ax.getIntermediateCode ();
+		finalCodeFactory.setEnvironment(CompilerContext.getExecutionEnvironment());
+  		finalCodeFactory.create (intermediateCode);
 
   		// En caso de no comentarse las dos sentencias anteriores se puede generar una excepcion
   		// en las llamadas a cupTest si el compilador no está completo. Esto es debido a que 
@@ -299,6 +303,13 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 
 		List<QuadrupleIF> intermediateCode = intermediateCodeBuilder.create();
 		intermediateCode.addAll(ax1.getIntermediateCode());
+
+		if (scope.getLevel() == 0) {
+			for (int i = 0; i < listaCadenas.size(); i++) {
+				intermediateCodeBuilder.addQuadruple(listaCadenas.get(i));
+			}
+		}
+
 		ax.setIntermediateCode(intermediateCode);
 
 		System.out.print("IMPRIMIENDO CONTENIDOS DE AXIOMA: ");
@@ -1396,7 +1407,7 @@ sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sen
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve = vacío"); 
 		Sentencia sen = new Sentenciadevuelve();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		intermediateCodeBuilder.addQuadruple("DEVUELVE");
+		intermediateCodeBuilder.addQuadruple("DEVUELTO");
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		RESULT = sen; :}
 	| DEVUELVE expresion:exp SEMI_COLON {: 
@@ -1494,8 +1505,10 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 			}
 			
 			Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
-			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
+			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+			intermediateCodeBuilder.addQuadruple("antes");
 			intermediateCodeBuilder.addQuadruple("MV", variable, expr.getTemporal());
+			intermediateCodeBuilder.addQuadruple("despues");
 
 			vari.setValor(expr.getValor());
 			System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
@@ -1701,23 +1714,42 @@ sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("REA
 sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		Sentencia sen = new Sentencia();
 		String salida = (String) expr;
-		
+		salida = salida.substring(1, salida.length() - 1) + "\\n";
+
+		TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());		
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		Value value = new Value(salida + '\0');
-		intermediateCodeBuilder.addQuadruple("WRSTR", value);
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF label = labelFactory.create();
+		TemporalIF temp = temporalFactory.create();
+
+		Value value = new Value(salida);
+		intermediateCodeBuilder.addQuadruple("WRSTR", temp, label);
+
+		listaCadenas.add(new Quadruple("CADENA", new Label(salida), label));
+
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 
 		System.out.println("READ> sentenciaSalida = ESCRIBE");
 		System.out.println("PRNT> " + salida); 
 		RESULT = sen;
  :}
-	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:expr CLOSE_KEY SEMI_COLON {: 
+	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:exp CLOSE_KEY SEMI_COLON {: 
 		Sentencia sen = new Sentencia();
-		String salida = (String) expr;
-
+		Expresion expr = (Expresion) exp;
+		String salida = expr.getValor() + "\\n";
+		TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());		
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		Value value = new Value(salida + '\0');
-		intermediateCodeBuilder.addQuadruple("WRSTR", value);
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF label = labelFactory.create();
+		TemporalIF temp = temporalFactory.create();
+
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+
+		//Value value = new Value(salida);
+		intermediateCodeBuilder.addQuadruple("WRINT", expr.getTemporal());  /// Debería usar WRINT
+
+		// Está tomando la salida del propio parser, no del código intermedio.
+
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 
 		System.out.println("READ> sentenciaSalida = ESCRIBE_ENT"); 
@@ -1745,5 +1777,5 @@ opcionesEscribeEnt ::= epsilon {:
 
 		String salida = expresion.getValor();
 		System.out.println("READ> opcionesEscribeEnt = expresion = " + salida);
-		RESULT = salida;
+		RESULT = expresion;
  :};
