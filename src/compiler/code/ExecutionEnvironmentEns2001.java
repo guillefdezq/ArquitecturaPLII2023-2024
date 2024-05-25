@@ -173,7 +173,7 @@ public class ExecutionEnvironmentEns2001
             return b.toString();
         } else if (quadruple.getOperation().equals("PUNTEROFINAL")) {
             StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getResult());
+            // String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             /// FALTA USAR R, temporal
             b.append("SUB .IX, " + o1+ "\n");
@@ -181,7 +181,7 @@ public class ExecutionEnvironmentEns2001
             return b.toString();
         } else if (quadruple.getOperation().equals("FIN_FUNCION")) {
             StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getResult());
+            // String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             /// FALTA USAR R, LABEL
             b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
@@ -208,13 +208,13 @@ public class ExecutionEnvironmentEns2001
             }
 
             return b.toString();
-        } else if (quadruple.getOperation().equals("WRSTR")) {       /// Este es el conflicto
+        } else if (quadruple.getOperation().equals("WRSTR")) {
             StringBuffer b = new StringBuffer();
-            String r = operacion(quadruple.getResult());
+            // String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("WRSTR /" + o1 + " \n");
             return b.toString();
-        } else if (quadruple.getOperation().equals("WRINT")) {       /// Este es el conflicto
+        } else if (quadruple.getOperation().equals("WRINT")) {
             StringBuffer b = new StringBuffer();
             String r = operacion(quadruple.getResult());
             b.append("WRINT " + r + " \n");
