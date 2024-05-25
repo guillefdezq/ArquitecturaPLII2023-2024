@@ -221,7 +221,7 @@ program ::=
 			typeTable.addType("VACIO",tsVacio);
 
 		/*
-		// Este no hace falta, sólo lo tengo como referencia.
+		// Este no hace falta, sólo lo tengo como referencia para uso posterior.
 		TypeArray tsVector = new TypeArray(scope);
 			tsVector.setName("VECTORexp");
 			typeTable.addType("VECTORexp",tsVector);
@@ -233,7 +233,7 @@ program ::=
   		// No modificar esta estructura, aunque se pueden añadir más acciones semánticas
   		
   		List intermediateCode = ax.getIntermediateCode ();
-		finalCodeFactory.setEnvironment(CompilerContext.getExecutionEnvironment());
+		finalCodeFactory.setEnvironment(CompilerContext.getExecutionEnvironment());		// instrucción introducida por vídeo Gamboa
   		finalCodeFactory.create (intermediateCode);
 
   		// En caso de no comentarse las dos sentencias anteriores se puede generar una excepcion
@@ -248,7 +248,7 @@ program ::=
 		scopeManager.closeScope();
 
 		System.out.println("\n\n\n");
-		semanticErrorManager.semanticDebug("           [[[ C O D I G O   G E N E R A D O ]]]");
+		semanticErrorManager.semanticDebug("           [[[ C O D I G O   I N T E R M E D I O ]]]");
 		for (QuadrupleIF cuadrupla : ax.getIntermediateCode()) {
 			semanticErrorManager.semanticDebug(cuadrupla.toString());
 		}
@@ -284,7 +284,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		ScopeIF scope = scopeManager.getCurrentScope();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		intermediateCodeBuilder.addQuadruple("AXIOM");
+		intermediateCodeBuilder.addQuadruple("AXIOM");		/// Puede ser que esto no sea necesario
 
 		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
 			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
@@ -297,7 +297,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		// Axiom ax = new Axiom(); // No puedo declarar un abstracto, así que haré una subclase
 		AxiomaCompilador ax = new AxiomaCompilador();
 
-		/// Falta añadir tipos
+		/// Falta añadir tipos?
 
 		Program ax1 = (Program) axi1;
 
@@ -312,10 +312,12 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 
 		ax.setIntermediateCode(intermediateCode);
 
+		/*
 		System.out.print("IMPRIMIENDO CONTENIDOS DE AXIOMA: ");
 		System.out.println(ax.getIntermediateCode());
+		*/
 
-		RESULT = (Axiom) ax; // No puedo devolverlo
+		RESULT = (Axiom) ax;
 		:} ;
 
 axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {: 
@@ -323,7 +325,7 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 
-		int direccion=10000;
+		int direccion=10000;		//// Las variables deberían colocarse desde aquí, pero por alguna razón no lo termina de hacer?
 		SymbolIF symbol;
 		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
 			symbol=scope.getSymbolTable().getSymbols().get(i);
@@ -355,6 +357,29 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
   | seccionFunciones:secFun {: 
   		System.out.println("READ> axiom1 = solo funciones");
 		/// Duplicado de lo de arriba
+
+		ScopeIF scope = scopeManager.getCurrentScope();
+
+		int direccion=10000;		//// Las variables deberían colocarse desde aquí, pero por alguna razón no lo termina de hacer?
+		SymbolIF symbol;
+		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
+			symbol=scope.getSymbolTable().getSymbols().get(i);
+			if(symbol instanceof SymbolVariable) {
+				((SymbolVariable)symbol).setAddress(direccion);
+				//Actualizamos el valor de direccion para el próximo símbolo 
+				direccion = direccion + symbol.getType().getSize();
+			}
+		}
+
+		TemporalIF temporal;
+		for(int i=0;i<scope.getTemporalTable().getTemporals().size();i++) {
+			temporal=scope.getTemporalTable().getTemporals().get(i);
+			if(temporal instanceof Temporal) {
+				((Temporal)temporal).setAddress(direccion);
+				//Actualizamos el valor de direccion para el próximo símbolo 
+				direccion += ((Temporal)temporal).getSize();
+			}
+		}
 
 		Program ax1 = new Program();
 		Seccionfunciones sf = (Seccionfunciones) secFun;
@@ -1011,7 +1036,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
  :}	|  OPEN_KEY expresion:exp CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY");
  		Expresion expr = (Expresion) exp;
 		System.out.println("(EX)> (" + expr.getValor() + ")");
-		RESULT = expr; :}  // DUDA: Debería crear un ámbito aquí?
+		RESULT = expr; :}  /// DUDA: Debería crear un ámbito aquí?
  	|  expresion:a PLUS expresion:b {: System.out.println("READ> expresion = PLUS"); 
 			Expresion expr = new Expresion();
 			Expresion expra = (Expresion) a;
@@ -1070,7 +1095,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			System.out.println("EXP*> " + expra.getValor() + "*" + exprb.getValor() + "=" + expr.getValor());
 			System.out.println("     QUAD>" + expr.getIntermediateCode());  
 			RESULT = expr; :}
- 	|  expresion:exp AUTO_INCREMENTO {: System.out.println("READ> expresion = AUTO_INCREMENTO"); 
+ 	|  expresion:exp AUTO_INCREMENTO {: System.out.println("READ> expresion = AUTO_INCREMENTO"); /// Puede estar fallando esto...
 		
 		Expresion expr = (Expresion) exp;
 
@@ -1375,8 +1400,6 @@ bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias:sen c
  	|  OPEN_PARENTHESIS abrirAmbito listadoSentencias:sen cerrarAmbito CLOSE_PARENTHESIS {: System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = sen; :};
 
 listadoSentencias ::= listadoSentencias:listSent sentencia:sent {: System.out.println("READ> listadoSentencias = listadoSentencias sentencia"); 
-		/// FALTA IMPLEMENTAR LAS SENTENCIAS
-		
 		Sentencia ls = (Sentencia) listSent;
 		Sentencia s = (Sentencia) sent;
 		List<QuadrupleIF> intermediateCode = ls.getIntermediateCode();
@@ -1506,9 +1529,7 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 			
 			Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
-			intermediateCodeBuilder.addQuadruple("antes");
 			intermediateCodeBuilder.addQuadruple("MV", variable, expr.getTemporal());
-			intermediateCodeBuilder.addQuadruple("despues");
 
 			vari.setValor(expr.getValor());
 			System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
