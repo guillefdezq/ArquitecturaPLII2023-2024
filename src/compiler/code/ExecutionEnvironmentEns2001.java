@@ -100,7 +100,7 @@ public class ExecutionEnvironmentEns2001
     {      
         //TODO: Student work
 
-        // Usar un switch capaz sea más limpio
+        // Usar un switch puede que sea más limpio
 
         if (quadruple.getOperation().equals("MV")) {
             StringBuffer b = new StringBuffer();
@@ -131,12 +131,13 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {
             StringBuffer b = new StringBuffer();
             // b.append(";" + quadruple.toString() + "\n");
-            b.append("PRINCIPAL: \n");
-            b.append("MOVE .SP, .IX  ;guarda el valor de SP en IX\n");
-            b.append("PUSH #-1       ;valor de retorno\n");
-            b.append("PUSH .IX       ;enlace de control\n");
-            b.append("PUSH .SR       ;estado máquina\n");
-            b.append("PUSH .IX       ;enlace de acceso\n");
+            b.append("PRINCIPAL: NOP\n");
+            b.append("; Por implementar correctamente, relacionado con subprogramas");
+            b.append(";MOVE .SP, .IX  ;guarda el valor de SP en IX\n");
+            b.append(";PUSH #-1       ;valor de retorno\n");
+            b.append(";PUSH .IX       ;enlace de control\n");
+            b.append(";PUSH .SR       ;estado máquina\n");
+            b.append(";PUSH .IX       ;enlace de acceso\n");
             return b.toString();
         } else if (quadruple.getOperation().equals("INICIA_FUNCION")) {
             StringBuffer b = new StringBuffer();
