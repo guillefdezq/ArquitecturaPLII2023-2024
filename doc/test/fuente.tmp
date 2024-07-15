@@ -1,27 +1,66 @@
 
-PRINCIPAL: 
-MOVE .SP, .IX  ;guarda el valor de SP en IX
-PUSH #-1       ;valor de retorno
-PUSH .IX       ;enlace de control
-PUSH .SR       ;estado mÃ¡quina
-PUSH .IX       ;enlace de acceso
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado máquina
+;PUSH .IX       ;enlace de acceso
 
 ;Quadruple - [VARLOCAL a, 0, null]
 ;Quadruple - [VARLOCAL b, 0, null]
-MOVE #6, #-6[.IX]
-; Quadruple - [antes null, null, null]
-MOVE #-6[.IX], #-0[.IX]
-; Quadruple - [despues null, null, null]
-MOVE #3, #-7[.IX]
-; Quadruple - [antes null, null, null]
-MOVE #-7[.IX], #-0[.IX]
-; Quadruple - [despues null, null, null]
-MOVE #-0[.IX], #-8[.IX]
-WRINT #-8[.IX] 
+;Quadruple - [VARLOCAL c, 0, null]
+MOVE #6, #-7[.IX]
+MOVE #-7[.IX], #-4[.IX]
+MOVE #3, #-8[.IX]
+MOVE #-8[.IX], #-5[.IX]
+MOVE #-4[.IX], #-9[.IX]
+MOVE #-5[.IX], #-10[.IX]
+ADD #-9[.IX], #-10[.IX]
+MOVE .A , #-11[.IX]
+MOVE #-11[.IX], #-6[.IX]
+MOVE #-4[.IX], #-12[.IX]
+WRINT #-12[.IX] 
+WRCHAR #10 
+
+MOVE #-5[.IX], #-14[.IX]
+WRINT #-14[.IX] 
+WRCHAR #10 
+
+MOVE #-6[.IX], #-16[.IX]
+WRINT #-16[.IX] 
+WRCHAR #10 
+
+WRSTR /L_3 
+
+MOVE #-6[.IX], #-19[.IX]
+WRINT #-19[.IX] 
+WRCHAR #10 
+
+MOVE #1, #-21[.IX]
+ADD #-6[.IX], #-21[.IX]
+MOVE .A , #-6[.IX]
+MOVE #-21[.IX], #-6[.IX]
+WRSTR /L_5 
+
+MOVE #-6[.IX], #-23[.IX]
+WRINT #-23[.IX] 
+WRCHAR #10 
+
+MOVE #1, #-25[.IX]
+ADD #-6[.IX], #-25[.IX]
+MOVE .A , #-6[.IX]
+MOVE #-25[.IX], #-6[.IX]
+WRSTR /L_7 
+
+MOVE #-6[.IX], #-27[.IX]
+WRINT #-27[.IX] 
 WRCHAR #10 
 
 HALT 
-SUB .IX, #10
+SUB .IX, #29
 MOVE .A, .SP
 
+L_3: DATA "c es 9\n"
+L_5: DATA "c es 10\n"
+L_7: DATA "c es 11\n"
 
