@@ -36,10 +36,8 @@ MOVE #-6[.IX], #-19[.IX]
 WRINT #-19[.IX] 
 WRCHAR #10 
 
-MOVE #1, #-21[.IX]
-ADD #-6[.IX], #-21[.IX]
+ADD #-6[.IX], #1
 MOVE .A , #-6[.IX]
-MOVE #-21[.IX], #-6[.IX]
 WRSTR /L_5 
 
 MOVE #-6[.IX], #-23[.IX]
@@ -49,7 +47,6 @@ WRCHAR #10
 MOVE #1, #-25[.IX]
 ADD #-6[.IX], #-25[.IX]
 MOVE .A , #-6[.IX]
-MOVE #-25[.IX], #-6[.IX]
 WRSTR /L_7 
 
 MOVE #-6[.IX], #-27[.IX]

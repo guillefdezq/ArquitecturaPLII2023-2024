@@ -1448,7 +1448,6 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.
 		SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(nombre);
 		SymbolVariable vari = (SymbolVariable) sym;
 
-
 		if (sym.getType() != scopeManager.searchType("ENTERO")) {
 			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
 		}
@@ -1465,35 +1464,24 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		TemporalFactory temporalFactory = new TemporalFactory(scope);
 		TemporalIF temporal = temporalFactory.create();
+		
+		Sentencia sentencia = new Sentencia();
 
 		// Lo que debería hacer:
 		// obtener valor
 		Variable variable = new Variable(((SymbolVariable)vari).getName(), sym.getScope());
+		Value value = new Value(Integer.parseInt("1"));
 
-		// En vez de esto...
-		/*
-			intermediateCodeBuilder.addQuadruple("MV", temporal, variable);
-
-			// incrementar
-			intermediateCodeBuilder.addQuadruple("INC", temporal, variable);
-
-			// reasignar
-			intermediateCodeBuilder.addQuadruple("MV", variable, temporal);
+		// Pueda que se pueda hacer más simple todavía con una línea, pero Keep It Stupid Simple...
+			intermediateCodeBuilder.addQuadruple("ADD", variable, variable, value);
 			
-			
-			sentencia.setTemporal(temporal);
-		*/
 
-		// Se puede hacer esto, INC varía directamente el valor en la memoria
-		intermediateCodeBuilder.addQuadruple("INC", variable, variable);
-
-		Sentencia sentencia = new Sentencia();
 		sentencia.setIntermediateCode(intermediateCodeBuilder.create());
 
 
 		System.out.println("SN++> " + vari.getName() + " = " + vari.getValor());
 		
-		RESULT = null;
+		RESULT = sentencia;
 		
 		 :};
 
@@ -1605,7 +1593,7 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 			Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 			intermediateCodeBuilder.addQuadruple("ADD", variable, variable, expr.getTemporal());
-			intermediateCodeBuilder.addQuadruple("MV", variable, expr.getTemporal());		// Modificar
+			//intermediateCodeBuilder.addQuadruple("MV", variable, expr.getTemporal());		// Modificar
 
 			System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
 

@@ -17,23 +17,15 @@ escribeEnt(c);
 escribe("c es 9");
 escribeEnt(c);
 
-
-/*
 c++;
-*/
-
-
-c+=1;
 
 escribe("c es 10");
 escribeEnt(c);
-
 
 c+=1;
 
 escribe("c es 11");
 escribeEnt(c);
-
 
 devuelve;
 
