@@ -1,0 +1,53 @@
+
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado mÃ¡quina
+;PUSH .IX       ;enlace de acceso
+
+;Quadruple - [VARLOCAL a, 0, null]
+;Quadruple - [VARLOCAL b, 0, null]
+MOVE #19, #-6[.IX]
+MOVE #-6[.IX], #-5[.IX]
+MOVE #-5[.IX], #-7[.IX]
+ADD #-7[.IX], #1
+MOVE .A , #-8[.IX]
+MOVE #-8[.IX], #-4[.IX]
+MOVE #-4[.IX], #-9[.IX]
+MOVE #1, #-10[.IX]
+ADD #-9[.IX], #-10[.IX]
+MOVE .A , #-11[.IX]
+MOVE #6, #-12[.IX]
+MOVE #2, #-13[.IX]
+MUL #-12[.IX], #-13[.IX]
+MOVE .A , #-14[.IX]
+ADD #-11[.IX], #-14[.IX]
+MOVE .A , #-15[.IX]
+MOVE #-15[.IX], #-4[.IX]
+WRSTR /L_0 
+
+MOVE #-4[.IX], #-17[.IX]
+WRINT #-17[.IX] 
+WRCHAR #10 
+
+MOVE #3, #-19[.IX]
+MOVE #3, #-20[.IX]
+ADD #-19[.IX], #-20[.IX]
+MOVE .A , #-21[.IX]
+MOVE #2, #-22[.IX]
+MUL #-21[.IX], #-22[.IX]
+MOVE .A , #-23[.IX]
+MOVE #-23[.IX], #-4[.IX]
+WRSTR /L_2 
+
+MOVE #-4[.IX], #-25[.IX]
+WRINT #-25[.IX] 
+WRCHAR #10 
+
+HALT 
+SUB .IX, #27
+MOVE .A, .SP
+
+L_0: DATA "a\n"
+L_2: DATA "asociacion parentesis\n"

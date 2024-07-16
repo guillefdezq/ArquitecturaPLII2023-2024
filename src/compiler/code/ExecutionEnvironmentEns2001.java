@@ -118,6 +118,15 @@ public class ExecutionEnvironmentEns2001
             b.append("ADD " + o1 + ", " + o2 + "\n");
             b.append("MOVE .A , " + r);
             return b.toString();
+        } else if (quadruple.getOperation().equals("MUL")) {
+            StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            String o2 = operacion(quadruple.getSecondOperand());
+            // b.append(";" + quadruple.toString() + "\n");
+            b.append("MUL " + o1 + ", " + o2 + "\n");
+            b.append("MOVE .A , " + r);
+            return b.toString();
         } else if (quadruple.getOperation().equals("AXIOM")) {
             StringBuffer b = new StringBuffer();
             //b.append("AXIOM: NOP");
