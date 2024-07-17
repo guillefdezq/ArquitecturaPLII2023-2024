@@ -1,0 +1,34 @@
+/* MI CASO DE PRUEBA EXPERIMENTAL */
+
+#constante nice 69;
+
+vacio principal () {
+
+entero highnoon;
+
+highnoon = nice;
+
+escribe("nice");
+escribeEnt(nice);
+
+escribe("highnoon");
+escribeEnt(highnoon);
+
+highnoon = nice == highnoon;
+
+escribe("es igual?");
+escribeEnt(highnoon);
+
+si (highnoon) {
+
+    escribe("si bien");
+
+} sino {
+
+    escribe("si mal");
+
+}
+
+devuelve;
+
+}
