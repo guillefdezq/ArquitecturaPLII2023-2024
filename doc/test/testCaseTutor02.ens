@@ -1,0 +1,25 @@
+
+; Quadruple - [VARGLOBAL NUM, 0, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado mÃ¡quina
+;PUSH .IX       ;enlace de acceso
+
+;Quadruple - [VARLOCAL a, 0, null]
+MOVE #-4[.IX], #-5[.IX]
+MOVE #-4[.IX], #-6[.IX]
+; Quadruple - [EQ T_2, T_0, T_1]
+; Quadruple - [BRF T_2, L_1, null]
+MOVE #37, #-8[.IX]
+MOVE #-8[.IX], #-4[.IX]
+; Quadruple - [BR L_0, null, null]
+; Quadruple - [INL L_1, null, null]
+MOVE #57, #-9[.IX]
+MOVE #-9[.IX], #-4[.IX]
+; Quadruple - [INL L_0, null, null]
+HALT 
+SUB .IX, #10
+MOVE .A, .SP
+

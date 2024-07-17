@@ -1,0 +1,34 @@
+
+; Quadruple - [VARGLOBAL TAM, 0, null]
+null: NOP
+SUB .IX, #6;posiciona el puntero de pila SP para recuperar el contador del programa
+MOVE .A, .SP
+RET ;rescata de la pila el contenido del contador de programa
+
+
+
+
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado mÃ¡quina
+;PUSH .IX       ;enlace de acceso
+
+;Quadruple - [VARLOCAL lista1, 0, null]
+;Quadruple - [VARLOCAL lista1, 0, null]
+;Quadruple - [VARLOCAL a, 0, null]
+;Quadruple - [VARLOCAL lista2, 0, null]
+;Quadruple - [VARLOCAL x, 0, null]
+;Quadruple - [VARLOCAL lista3, 0, null]
+;Quadruple - [VARLOCAL c, 0, null]
+;Quadruple - [VARLOCAL a, 0, null]
+;Quadruple - [VARLOCAL lista3, 0, null]
+MOVE #-38[.IX], #-0[.IX]
+HALT 
+MOVE #-38[.IX], #-27[.IX]
+HALT 
+SUB .IX, #39
+MOVE .A, .SP
+
+L_0: DATA "c\n"
