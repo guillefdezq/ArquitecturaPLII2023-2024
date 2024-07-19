@@ -1,0 +1,27 @@
+
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado máquina
+;PUSH .IX       ;enlace de acceso
+
+;Quadruple - [VARLOCAL c, 0, null]
+;Quadruple - [VARLOCAL v1, 0, null]
+MOVE #7, #-9[.IX]
+; Quadruple - [STP v1, T_1, 1]
+WRSTR /L_0 
+
+; Quadruple - [MVP T_4, v1, 1]
+WRINT #-12[.IX] 
+WRCHAR #10 
+
+MOVE #-4[.IX], #-14[.IX]
+WRINT #-14[.IX] 
+WRCHAR #10 
+
+HALT 
+SUB .IX, #16
+MOVE .A, .SP
+
+L_0: DATA "v1\n"

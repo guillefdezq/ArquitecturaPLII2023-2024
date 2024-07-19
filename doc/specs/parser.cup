@@ -1444,7 +1444,7 @@ sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentencia
 		Expresion expr = (Expresion) exp;
 		Sentencia sen = new Sentenciadevuelve(expr.getValor());
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		intermediateCodeBuilder.addQuadruple("DEVUELVE", expr.getTemporal());
+		intermediateCodeBuilder.addQuadruple("DEVUELVE", expr.getTemporal()); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		System.out.println("READ> sentenciaDevuelve + expresion = " + expr.getValor()); 
 		RESULT = sen; :};
