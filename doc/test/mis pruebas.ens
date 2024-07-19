@@ -13,41 +13,47 @@ PRINCIPAL: NOP
 ;Quadruple - [VARLOCAL c, 0, null]
 ;Quadruple - [VARLOCAL test1, 0, null]
 MOVE #1, #-9[.IX]
+MOVE #-9[.IX], #-4[.IX]
 MOVE #1, #-10[.IX]
-CMP #-9[.IX], #-10[.IX]
+MOVE #-10[.IX], #-5[.IX]
+MOVE #2, #-11[.IX]
+MOVE #-11[.IX], #-7[.IX]
+MOVE #-4[.IX], #-12[.IX]
+MOVE #-5[.IX], #-13[.IX]
+CMP #-12[.IX], #-13[.IX]
 BZ /L_4
 BNZ /L_5
-L_4: MOVE #1, #-11[.IX]
+L_4: MOVE #1, #-14[.IX]
 BR /L_6
-L_5: MOVE #0, #-11[.IX]
+L_5: MOVE #0, #-14[.IX]
 L_6: NOP
 
-MOVE #-11[.IX], #-8[.IX]
-MOVE #1, #-12[.IX]
-MOVE #2, #-13[.IX]
-CMP #-12[.IX], #-13[.IX]
+MOVE #-14[.IX], #-8[.IX]
+MOVE #-4[.IX], #-15[.IX]
+MOVE #-7[.IX], #-16[.IX]
+CMP #-15[.IX], #-16[.IX]
 BZ /L_7
 BNZ /L_8
-L_7: MOVE #1, #-14[.IX]
+L_7: MOVE #1, #-17[.IX]
 BR /L_9
-L_8: MOVE #0, #-14[.IX]
+L_8: MOVE #0, #-17[.IX]
 L_9: NOP
 
-MOVE #-14[.IX], #-6[.IX]
+MOVE #-17[.IX], #-6[.IX]
 WRSTR /L_0 
 
-MOVE #-8[.IX], #-16[.IX]
-WRINT #-16[.IX] 
+MOVE #-8[.IX], #-19[.IX]
+WRINT #-19[.IX] 
 WRCHAR #10 
 
 WRSTR /L_2 
 
-MOVE #-6[.IX], #-19[.IX]
-WRINT #-19[.IX] 
+MOVE #-6[.IX], #-22[.IX]
+WRINT #-22[.IX] 
 WRCHAR #10 
 
 HALT 
-SUB .IX, #21
+SUB .IX, #24
 MOVE .A, .SP
 
 L_0: DATA "debe salir 1:\n"

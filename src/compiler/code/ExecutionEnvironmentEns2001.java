@@ -272,7 +272,7 @@ public class ExecutionEnvironmentEns2001
         } else if (o instanceof Temporal) {
             return "#-" + ((Temporal) o).getAddress() + "[.IX]";
         } else if (o instanceof Label) {
-            return "" + ((Label) o).getName() + "";
+            return "" + ((Label) o).getName() + "";  // tendría que ponerle / para que no tenga que repetirlo... algo en esta función está mal
         } return null;
     }
 }
