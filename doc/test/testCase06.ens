@@ -1,0 +1,33 @@
+
+null: NOP
+SUB .IX, #6;posiciona el puntero de pila SP para recuperar el contador del programa
+MOVE .A, .SP
+RET ;rescata de la pila el contenido del contador de programa
+
+
+
+
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado máquina
+;PUSH .IX       ;enlace de acceso
+
+;Quadruple - [VARLOCAL c, 0, null]
+;Quadruple - [VARLOCAL x, 0, null]
+;Quadruple - [VARLOCAL a, 0, null]
+;Quadruple - [VARLOCAL b, 0, null]
+MOVE #2, #-13[.IX]
+MOVE #-13[.IX], #-6[.IX]
+MOVE #-15[.IX], #-0[.IX]
+HALT 
+MOVE #-15[.IX], #-7[.IX]
+MOVE #-7[.IX], #-16[.IX]
+WRINT #-16[.IX] 
+WRCHAR #10 
+
+HALT 
+SUB .IX, #18
+MOVE .A, .SP
+

@@ -1,0 +1,54 @@
+
+; Quadruple - [VARGLOBAL nice, 0, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado mÃ¡quina
+;PUSH .IX       ;enlace de acceso
+
+;Quadruple - [VARLOCAL a, 0, null]
+;Quadruple - [VARLOCAL b, 0, null]
+;Quadruple - [VARLOCAL test2, 0, null]
+;Quadruple - [VARLOCAL c, 0, null]
+;Quadruple - [VARLOCAL test1, 0, null]
+MOVE #1, #-9[.IX]
+MOVE #1, #-10[.IX]
+CMP #-9[.IX], #-10[.IX]
+BZ /L_4
+BNZ /L_5
+L_4: MOVE #1, #-11[.IX]
+BR /L_6
+L_5: MOVE #0, #-11[.IX]
+L_6: NOP
+
+MOVE #-11[.IX], #-8[.IX]
+MOVE #1, #-12[.IX]
+MOVE #2, #-13[.IX]
+CMP #-12[.IX], #-13[.IX]
+BZ /L_7
+BNZ /L_8
+L_7: MOVE #1, #-14[.IX]
+BR /L_9
+L_8: MOVE #0, #-14[.IX]
+L_9: NOP
+
+MOVE #-14[.IX], #-6[.IX]
+WRSTR /L_0 
+
+MOVE #-8[.IX], #-16[.IX]
+WRINT #-16[.IX] 
+WRCHAR #10 
+
+WRSTR /L_2 
+
+MOVE #-6[.IX], #-19[.IX]
+WRINT #-19[.IX] 
+WRCHAR #10 
+
+HALT 
+SUB .IX, #21
+MOVE .A, .SP
+
+L_0: DATA "debe salir 1:\n"
+L_2: DATA "debe salir 0:\n"

@@ -1,4 +1,5 @@
 
+; Quadruple - [VARGLOBAL nice, 0, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
@@ -8,47 +9,47 @@ PRINCIPAL: NOP
 
 ;Quadruple - [VARLOCAL a, 0, null]
 ;Quadruple - [VARLOCAL b, 0, null]
-MOVE #19, #-6[.IX]
-MOVE #-6[.IX], #-5[.IX]
-MOVE #-5[.IX], #-7[.IX]
-ADD #-7[.IX], #1
-MOVE .A , #-8[.IX]
-MOVE #-8[.IX], #-4[.IX]
-MOVE #-4[.IX], #-9[.IX]
+;Quadruple - [VARLOCAL test2, 0, null]
+;Quadruple - [VARLOCAL c, 0, null]
+;Quadruple - [VARLOCAL test1, 0, null]
+MOVE #1, #-9[.IX]
 MOVE #1, #-10[.IX]
-ADD #-9[.IX], #-10[.IX]
-MOVE .A , #-11[.IX]
-MOVE #6, #-12[.IX]
+CMP #-9[.IX], #-10[.IX]
+BZ /L_4
+BNZ /L_5
+L_4: MOVE #1, #-11[.IX]
+BR /L_6
+L_5: MOVE #0, #-11[.IX]
+L_6: NOP
+
+MOVE #-11[.IX], #-8[.IX]
+MOVE #1, #-12[.IX]
 MOVE #2, #-13[.IX]
-MUL #-12[.IX], #-13[.IX]
-MOVE .A , #-14[.IX]
-ADD #-11[.IX], #-14[.IX]
-MOVE .A , #-15[.IX]
-MOVE #-15[.IX], #-4[.IX]
+CMP #-12[.IX], #-13[.IX]
+BZ /L_7
+BNZ /L_8
+L_7: MOVE #1, #-14[.IX]
+BR /L_9
+L_8: MOVE #0, #-14[.IX]
+L_9: NOP
+
+MOVE #-14[.IX], #-6[.IX]
 WRSTR /L_0 
 
-MOVE #-4[.IX], #-17[.IX]
-WRINT #-17[.IX] 
+MOVE #-8[.IX], #-16[.IX]
+WRINT #-16[.IX] 
 WRCHAR #10 
 
-MOVE #3, #-19[.IX]
-MOVE #3, #-20[.IX]
-ADD #-19[.IX], #-20[.IX]
-MOVE .A , #-21[.IX]
-MOVE #2, #-22[.IX]
-MUL #-21[.IX], #-22[.IX]
-MOVE .A , #-23[.IX]
-MOVE #-23[.IX], #-4[.IX]
 WRSTR /L_2 
 
-MOVE #-4[.IX], #-25[.IX]
-WRINT #-25[.IX] 
+MOVE #-6[.IX], #-19[.IX]
+WRINT #-19[.IX] 
 WRCHAR #10 
 
 HALT 
-SUB .IX, #27
+SUB .IX, #21
 MOVE .A, .SP
 
-L_0: DATA "a\n"
-L_2: DATA "asociacion parentesis\n"
+L_0: DATA "debe salir 1:\n"
+L_2: DATA "debe salir 0:\n"
 

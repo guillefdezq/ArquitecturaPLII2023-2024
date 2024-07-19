@@ -1,33 +1,22 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
-#constante nice 69;
+#constante nice 22222;
 
 vacio principal () {
 
-entero highnoon;
+entero a = 1;
+entero b = 1;
+entero c = 2;
 
-highnoon = nice;
+entero test1;
+entero test2;
+test1 = 1 == 1;
+test2 = 1 == 2;
 
-escribe("nice");
-escribeEnt(nice);
-
-escribe("highnoon");
-escribeEnt(highnoon);
-
-highnoon = nice == highnoon;
-
-escribe("es igual?");
-escribeEnt(highnoon);
-
-si (highnoon) {
-
-    escribe("si bien");
-
-} sino {
-
-    escribe("si mal");
-
-}
+escribe("debe salir 1:");
+escribeEnt(test1);
+escribe("debe salir 0:");
+escribeEnt(test2);
 
 devuelve;
 

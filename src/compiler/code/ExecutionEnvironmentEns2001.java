@@ -12,6 +12,8 @@ import compiler.semantic.type.TypeSimple;
 import es.uned.lsi.compiler.code.ExecutionEnvironmentIF;
 import es.uned.lsi.compiler.code.MemoryDescriptorIF;
 import es.uned.lsi.compiler.code.RegisterDescriptorIF;
+import es.uned.lsi.compiler.intermediate.LabelFactory;
+import es.uned.lsi.compiler.intermediate.LabelIF;
 import es.uned.lsi.compiler.intermediate.OperandIF;
 import es.uned.lsi.compiler.intermediate.QuadrupleIF;
 
@@ -127,6 +129,28 @@ public class ExecutionEnvironmentEns2001
             b.append("MUL " + o1 + ", " + o2 + "\n");
             b.append("MOVE .A , " + r);
             return b.toString();
+        } else if (quadruple.getOperation().equals("EQ")) {
+            StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            String o2 = operacion(quadruple.getSecondOperand());
+
+            LabelFactory labelFactory = new LabelFactory();
+			LabelIF labelVerdad = labelFactory.create();
+			LabelIF labelFalso = labelFactory.create();
+            LabelIF labelFin = labelFactory.create();
+
+            // b.append(";" + quadruple.toString() + "\n");
+            b.append("CMP " + o1 + ", " + o2 + "\n");
+            b.append("BZ /" + labelVerdad.toString() + "\n");
+            b.append("BNZ /" + labelFalso.toString() + "\n");
+            b.append(labelVerdad.toString() + ": MOVE #1, " + r + "\n");
+            b.append("BR /" + labelFin.toString() + "\n");
+            b.append(labelFalso.toString() + ": MOVE #0, " + r + "\n");
+            b.append(labelFin.toString() + ": NOP\n");
+            return b.toString();
+
+
         } else if (quadruple.getOperation().equals("AXIOM")) {
             StringBuffer b = new StringBuffer();
             //b.append("AXIOM: NOP");
