@@ -1,8 +1,11 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
-
+/*
 #constante nice 22222;
+*/
 
 vacio principal () {
+/*
+entero magico = 69;
 
 entero a;
 entero b;
@@ -20,6 +23,22 @@ escribe("debe salir 1:");
 escribeEnt(test1);
 escribe("debe salir 0:");
 escribeEnt(test2);
+
+escribe("nice");
+escribeEnt(nice);
+*/
+
+si (1) {
+    escribe("verdad");
+} sino {
+    escribe("falso");
+}
+
+si (0) {
+    escribe("verdad");
+} sino {
+    escribe("falso");
+}
 
 devuelve;
 

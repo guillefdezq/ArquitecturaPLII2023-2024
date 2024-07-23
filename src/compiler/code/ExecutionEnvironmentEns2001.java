@@ -222,6 +222,23 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE .A, .SP\n");
             b.append("RET ;rescata de la pila el contenido del contador de programa\n\n\n\n");
             return b.toString();
+        } else if (quadruple.getOperation().equals("INL")) {
+            StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
+            b.append(r.toString() + ": NOP\n");
+            return b.toString();
+        } else if (quadruple.getOperation().equals("BR")) {
+            StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
+            b.append("BR /" + r.toString() + "\n");
+            return b.toString();
+        } else if (quadruple.getOperation().equals("BRF")) {
+            StringBuffer b = new StringBuffer();
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            b.append("CMP " + r + ", #0\n");   /// CUIDADO, me da la sensación de que faltan ciertos parámetros para que sea exacto.
+            b.append("BZ /" + o1.toString() + "\n");
+            return b.toString();
         } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto
             StringBuffer b = new StringBuffer();
             String r = operacion(quadruple.getResult());
