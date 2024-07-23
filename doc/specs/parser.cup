@@ -960,7 +960,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
 
-		intermediateCodeBuilder.addQuadruple("PUNTEROFINAL", temporal, direccion);
+		//intermediateCodeBuilder.addQuadruple("PUNTEROFINAL", temporal, direccion);
 
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
 

@@ -1,9 +1,14 @@
+; Quadruple - [AXIOM null, null, null]
 
+; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
-; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+; Por implementar correctamente, relacionado con subprogramas
+;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
 ;PUSH .SR       ;estado mÃ¡quina
 ;PUSH .IX       ;enlace de acceso
 
-HALT 
+; Quadruple - [DEVUELTO null, null, null]
+HALT
+
