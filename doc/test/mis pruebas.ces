@@ -5,18 +5,40 @@
 
 vacio principal () {
 
-entero menor;
-entero mayor;
-
-menor = 17;
-mayor = 19;
-
-si (menor < mayor) {
-    escribe("tautologia");
+si (1&&1) {
+    escribe("TT=T pasado");
+} sino {
+    escribe("TT=T error");
 }
 
-si (mayor < menor) {
-    escribe("contradiccion");
+si (1&&0) {
+    escribe("TF=F error");
+} sino {
+    escribe("TF=F pasado");
+}
+
+si (0&&1) {
+    escribe("FT=T error");
+} sino {
+    escribe("FT=T pasado");
+}
+
+si (0&&0) {
+    escribe("FF=F error");
+} sino {
+    escribe("FF=F pasado");
+}
+
+si (5&&2) {
+    escribe("tautologia especial pasada");
+} sino {
+    escribe("tautologia especial error");
+}
+
+si (3&&0) {
+    escribe("contradiccion especial error");
+} sino {
+    escribe("contradiccion especial pasada");
 }
 
 devuelve;

@@ -16,6 +16,7 @@ import es.uned.lsi.compiler.intermediate.LabelFactory;
 import es.uned.lsi.compiler.intermediate.LabelIF;
 import es.uned.lsi.compiler.intermediate.OperandIF;
 import es.uned.lsi.compiler.intermediate.QuadrupleIF;
+import es.uned.lsi.compiler.intermediate.TemporalFactory;
 
 /**
  * Class for the ENS2001 Execution environment.
@@ -178,6 +179,58 @@ public class ExecutionEnvironmentEns2001
 
             b.append("BZ /" + labelFalso.toString() + "\n");
             b.append("BP /" + labelFalso.toString() + "\n");
+            b.append(labelVerdad.toString() + ": MOVE #1, " + r + "\n");
+            b.append("BR /" + labelFin.toString() + "\n");
+            b.append(labelFalso.toString() + ": MOVE #0, " + r + "\n");
+            b.append(labelFin.toString() + ": NOP\n");
+
+        } else if (quadruple.getOperation().equals("AND")) {
+            
+            //("LS", temporal, expra.getTemporal(), exprb.getTemporal());
+
+            String r = operacion(quadruple.getResult());  // Temporal
+            String o1 = operacion(quadruple.getFirstOperand());
+            String o2 = operacion(quadruple.getSecondOperand());
+
+            LabelFactory labelFactory = new LabelFactory();
+			
+            LabelIF labelVerdadA = labelFactory.create();
+			LabelIF labelFalsoA = labelFactory.create();
+            LabelIF labelFinA = labelFactory.create();
+            
+            LabelIF labelVerdadB = labelFactory.create();
+            LabelIF labelFalsoB = labelFactory.create();
+            LabelIF labelFinB = labelFactory.create();
+
+            LabelIF labelVerdad = labelFactory.create();
+			LabelIF labelFalso = labelFactory.create();
+            LabelIF labelFin = labelFactory.create();
+
+            // Voy a utilizar registros para este caso, pero no sé si puedo realmente utilizarlo.
+
+            // conversion a logica binaria interna A
+            b.append("CMP " + o1 + ", #0\n");
+            b.append("BZ /" + labelFalsoA.toString() + "\n");
+            b.append("BNZ /" + labelVerdadA.toString() + "\n");
+            b.append(labelVerdadA.toString() + ": MOVE #1, .R0\n");
+            b.append("BR /" + labelFinA.toString() + "\n");
+            b.append(labelFalsoA.toString() + ": MOVE #0, .R0\n");
+            b.append(labelFinA.toString() + ": NOP\n");
+
+            // conversion a logica binaria interna B
+            b.append("CMP " + o2 + ", #0\n");
+            b.append("BZ /" + labelFalsoB.toString() + "\n");
+            b.append("BNZ /" + labelVerdadB.toString() + "\n");
+            b.append(labelVerdadB.toString() + ": MOVE #1, .R1\n");
+            b.append("BR /" + labelFinB.toString() + "\n");
+            b.append(labelFalsoB.toString() + ": MOVE #0, .R1\n");
+            b.append(labelFinB.toString() + ": NOP\n");
+
+            b.append("AND .R0, .R1\n");
+
+            b.append("CMP .A, #1\n");
+            b.append("BZ /" + labelVerdad.toString() + "\n");
+            b.append("BNZ /" + labelFalso.toString() + "\n");
             b.append(labelVerdad.toString() + ": MOVE #1, " + r + "\n");
             b.append("BR /" + labelFin.toString() + "\n");
             b.append(labelFalso.toString() + ": MOVE #0, " + r + "\n");
