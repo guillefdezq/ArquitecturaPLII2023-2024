@@ -1,5 +1,9 @@
+; Quadruple - [AXIOM null, null, null]
 
+; Quadruple - [FUNCION null, null, null]
 null: NOP
+
+; Quadruple - [FIN_FUNCION L_FIN_incrementa, 6, null]
 SUB .IX, #6;posiciona el puntero de pila SP para recuperar el contador del programa
 MOVE .A, .SP
 RET ;rescata de la pila el contenido del contador de programa
@@ -7,27 +11,43 @@ RET ;rescata de la pila el contenido del contador de programa
 
 
 
+; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
-; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+; Por implementar correctamente, relacionado con subprogramas
+;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado máquina
+;PUSH .SR       ;estado mÃ¡quina
 ;PUSH .IX       ;enlace de acceso
 
-;Quadruple - [VARLOCAL c, 0, null]
-;Quadruple - [VARLOCAL x, 0, null]
-;Quadruple - [VARLOCAL a, 0, null]
-;Quadruple - [VARLOCAL b, 0, null]
+; Quadruple - [VARLOCAL c, 0, null]
+; sin declarar
+
+; Quadruple - [VARLOCAL x, 0, null]
+; sin declarar
+
+; Quadruple - [VARLOCAL a, 0, null]
+; sin declarar
+
+; Quadruple - [VARLOCAL b, 0, null]
+; sin declarar
+
+; Quadruple - [MV T_0, 2, null]
 MOVE #2, #-13[.IX]
+; Quadruple - [MV a, T_0, null]
 MOVE #-13[.IX], #-6[.IX]
+; Quadruple - [DEVUELTO T_2, null, null]
 MOVE #-15[.IX], #-0[.IX]
-HALT 
+HALT
+
+; Quadruple - [MV b, T_2, null]
 MOVE #-15[.IX], #-7[.IX]
+; Quadruple - [MV T_3, b, null]
 MOVE #-7[.IX], #-16[.IX]
+; Quadruple - [WRINT T_3, null, null]
 WRINT #-16[.IX] 
 WRCHAR #10 
 
-HALT 
-SUB .IX, #18
-MOVE .A, .SP
+; Quadruple - [DEVUELTO null, null, null]
+HALT
 

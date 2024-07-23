@@ -1,50 +1,44 @@
+; Quadruple - [AXIOM null, null, null]
 
-; Quadruple - [VARGLOBAL verano, 0, null]
+; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
-; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+; Por implementar correctamente, relacionado con subprogramas
+;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
 ;PUSH .SR       ;estado mÃ¡quina
 ;PUSH .IX       ;enlace de acceso
 
-;Quadruple - [VARLOCAL estacion, 0, null]
-MOVE #1, #-5[.IX]
-MOVE #-5[.IX], #-4[.IX]
+; Quadruple - [VARLOCAL c, 0, null]
+; sin declarar
+
+; Quadruple - [VARLOCAL v1, 0, null]
+; sin declarar
+
+; Quadruple - [MV T_1, 7, null]
+MOVE #7, #-9[.IX]
+; Quadruple - [STP v1, T_1, 1]
+; sin declarar?
+
+; Quadruple - [WRSTR T_2, L_0, null]
 WRSTR /L_0 
 
-MOVE #1, #-7[.IX]
-ADD #-4[.IX], #-7[.IX]
-MOVE .A , #-4[.IX]
-WRSTR /L_1 
+; Quadruple - [MVP T_4, v1, 1]
+; sin declarar?
 
-MOVE #1, #-9[.IX]
-ADD #-4[.IX], #-9[.IX]
-MOVE .A , #-4[.IX]
-MOVE #-4[.IX], #-10[.IX]
-MOVE #3, #-11[.IX]
-CMP #-10[.IX], #-11[.IX]
-BZ /L_6
-BNZ /L_7
-L_6: MOVE #1, #-12[.IX]
-BR /L_8
-L_7: MOVE #0, #-12[.IX]
-L_8: NOP
+; Quadruple - [WRINT T_4, null, null]
+WRINT #-12[.IX] 
+WRCHAR #10 
 
-CMP #-12[.IX], #0
-BZ /L_4
+; Quadruple - [MV T_6, c, null]
+MOVE #-4[.IX], #-14[.IX]
+; Quadruple - [WRINT T_6, null, null]
+WRINT #-14[.IX] 
+WRCHAR #10 
 
-WRSTR /L_2 
+; Quadruple - [DEVUELTO null, null, null]
+HALT
 
-WRSTR /L_3 
-
-L_4: NOP
-
-HALT 
-SUB .IX, #15
-MOVE .A, .SP
-
-L_0: DATA "Que lo que?\n"
-L_1: DATA "Estamos a rulay\n"
-L_2: DATA "Empezo el verano!\n"
-L_3: DATA "FUEEGOO!!!\n"
+; Quadruple - [CADENA v1\n, L_0, null]
+L_0: DATA "v1\n"
 

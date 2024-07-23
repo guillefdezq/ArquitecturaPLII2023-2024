@@ -1,62 +1,102 @@
+; Quadruple - [AXIOM null, null, null]
 
+; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
-; Por implementar correctamente, relacionado con subprogramas;MOVE .SP, .IX  ;guarda el valor de SP en IX
+; Por implementar correctamente, relacionado con subprogramas
+;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado máquina
+;PUSH .SR       ;estado mÃ¡quina
 ;PUSH .IX       ;enlace de acceso
 
-;Quadruple - [VARLOCAL a, 0, null]
-;Quadruple - [VARLOCAL b, 0, null]
-;Quadruple - [VARLOCAL c, 0, null]
+; Quadruple - [VARLOCAL a, 0, null]
+; sin declarar
+
+; Quadruple - [VARLOCAL b, 0, null]
+; sin declarar
+
+; Quadruple - [VARLOCAL c, 0, null]
+; sin declarar
+
+; Quadruple - [MV T_0, 6, null]
 MOVE #6, #-7[.IX]
+; Quadruple - [MV a, T_0, null]
 MOVE #-7[.IX], #-4[.IX]
+; Quadruple - [MV T_1, 3, null]
 MOVE #3, #-8[.IX]
+; Quadruple - [MV b, T_1, null]
 MOVE #-8[.IX], #-5[.IX]
+; Quadruple - [MV T_2, a, null]
 MOVE #-4[.IX], #-9[.IX]
+; Quadruple - [MV T_3, b, null]
 MOVE #-5[.IX], #-10[.IX]
+; Quadruple - [ADD T_4, T_2, T_3]
 ADD #-9[.IX], #-10[.IX]
 MOVE .A , #-11[.IX]
+
+; Quadruple - [MV c, T_4, null]
 MOVE #-11[.IX], #-6[.IX]
+; Quadruple - [MV T_5, a, null]
 MOVE #-4[.IX], #-12[.IX]
+; Quadruple - [WRINT T_5, null, null]
 WRINT #-12[.IX] 
 WRCHAR #10 
 
+; Quadruple - [MV T_7, b, null]
 MOVE #-5[.IX], #-14[.IX]
+; Quadruple - [WRINT T_7, null, null]
 WRINT #-14[.IX] 
 WRCHAR #10 
 
+; Quadruple - [MV T_9, c, null]
 MOVE #-6[.IX], #-16[.IX]
+; Quadruple - [WRINT T_9, null, null]
 WRINT #-16[.IX] 
 WRCHAR #10 
 
+; Quadruple - [WRSTR T_11, L_3, null]
 WRSTR /L_3 
 
+; Quadruple - [MV T_12, c, null]
 MOVE #-6[.IX], #-19[.IX]
+; Quadruple - [WRINT T_12, null, null]
 WRINT #-19[.IX] 
 WRCHAR #10 
 
+; Quadruple - [ADD c, c, 1]
 ADD #-6[.IX], #1
 MOVE .A , #-6[.IX]
+
+; Quadruple - [WRSTR T_15, L_5, null]
 WRSTR /L_5 
 
+; Quadruple - [MV T_16, c, null]
 MOVE #-6[.IX], #-23[.IX]
+; Quadruple - [WRINT T_16, null, null]
 WRINT #-23[.IX] 
 WRCHAR #10 
 
+; Quadruple - [MV T_18, 1, null]
 MOVE #1, #-25[.IX]
+; Quadruple - [ADD c, c, T_18]
 ADD #-6[.IX], #-25[.IX]
 MOVE .A , #-6[.IX]
+
+; Quadruple - [WRSTR T_19, L_7, null]
 WRSTR /L_7 
 
+; Quadruple - [MV T_20, c, null]
 MOVE #-6[.IX], #-27[.IX]
+; Quadruple - [WRINT T_20, null, null]
 WRINT #-27[.IX] 
 WRCHAR #10 
 
-HALT 
-SUB .IX, #29
-MOVE .A, .SP
+; Quadruple - [DEVUELTO null, null, null]
+HALT
 
+; Quadruple - [CADENA c es 9\n, L_3, null]
 L_3: DATA "c es 9\n"
+; Quadruple - [CADENA c es 10\n, L_5, null]
 L_5: DATA "c es 10\n"
+; Quadruple - [CADENA c es 11\n, L_7, null]
 L_7: DATA "c es 11\n"
