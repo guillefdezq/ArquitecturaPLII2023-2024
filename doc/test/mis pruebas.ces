@@ -5,17 +5,18 @@
 
 vacio principal () {
 
-entero estacion;
-estacion = 1;
+entero menor;
+entero mayor;
 
-escribe("Que lo que?");
-estacion += 1;
-escribe("Estamos a rulay");
-estacion += 1;
+menor = 17;
+mayor = 19;
 
-si (estacion == verano) {
-    escribe("Empezo el verano!");
-    escribe("FUEEGOO!!!");
+si (menor < mayor) {
+    escribe("tautologia");
+}
+
+si (mayor < menor) {
+    escribe("contradiccion");
 }
 
 devuelve;
