@@ -1,43 +1,21 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
-/*
-#constante nice 22222;
-*/
+
+#constante verano 3;
+
 
 vacio principal () {
-/*
-entero magico = 69;
 
-entero a;
-entero b;
-entero c;
-entero test1;
-entero test2;
-a = 1;
-b = 1;
-c = 2;
+entero estacion;
+estacion = 1;
 
-test1 = a == b;
-test2 = a == c;
+escribe("Que lo que?");
+estacion += 1;
+escribe("Estamos a rulay");
+estacion += 1;
 
-escribe("debe salir 1:");
-escribeEnt(test1);
-escribe("debe salir 0:");
-escribeEnt(test2);
-
-escribe("nice");
-escribeEnt(nice);
-*/
-
-si (1) {
-    escribe("verdad");
-} sino {
-    escribe("falso");
-}
-
-si (0) {
-    escribe("verdad");
-} sino {
-    escribe("falso");
+si (estacion == verano) {
+    escribe("Empezo el verano!");
+    escribe("FUEEGOO!!!");
 }
 
 devuelve;
