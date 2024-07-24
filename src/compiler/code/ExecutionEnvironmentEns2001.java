@@ -271,6 +271,10 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("FUNCION")) {
             String r = operacion(quadruple.getResult());
             b.append(r + ": NOP\n");
+        } else if (quadruple.getOperation().equals("VARLOCAL")) {
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            b.append("MOVE " + o1 + ", " + r);        
         } else if (quadruple.getOperation().equals("VARLOCAL") || quadruple.getOperation().equals("PARAM")) {
             b.append("; sin declarar\n");
         } else if (quadruple.getOperation().equals("PUNTEROFINAL")) {
