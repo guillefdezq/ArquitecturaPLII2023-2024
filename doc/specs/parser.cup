@@ -945,7 +945,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 				symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					Variable variable = new Variable(symbol.getName(), symbol.getScope());
-					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+					int valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
 				}	
 			}
 		}
