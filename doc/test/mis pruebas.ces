@@ -1,13 +1,15 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
-#constante verano 3;
-
-
 vacio principal () {
-    
-    entero adios=69, hola=420;
 
-    escribeEnt(adios);
+entero test;
+
+test = 0;
+
+mientras (test < 5) {
+    escribeEnt(test);
+    test++;
+}
 
 devuelve;
 
