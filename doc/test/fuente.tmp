@@ -1,8 +1,5 @@
 ; Quadruple - [AXIOM null, null, null]
 
-; Quadruple - [VARGLOBAL verano, 0, null]
-; sin declarar?
-
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
@@ -12,313 +9,52 @@ PRINCIPAL: NOP
 ;PUSH .SR       ;estado mÃ¡quina
 ;PUSH .IX       ;enlace de acceso
 
-; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-4[.IX]
-; Quadruple - [MV T_1, 1, null]
-MOVE #1, #-5[.IX]
-; Quadruple - [AND T_2, T_0, T_1]
-CMP #-4[.IX], #0
-BZ /L_25
-BNZ /L_24
-L_24: MOVE #1, .R0
-BR /L_26
-L_25: MOVE #0, .R0
-L_26: NOP
-CMP #-5[.IX], #0
-BZ /L_28
-BNZ /L_27
-L_27: MOVE #1, .R1
-BR /L_29
-L_28: MOVE #0, .R1
-L_29: NOP
-AND .R0, .R1
-CMP .A, #1
-BZ /L_30
-BNZ /L_31
-L_30: MOVE #1, #-6[.IX]
-BR /L_32
-L_31: MOVE #0, #-6[.IX]
-L_32: NOP
+; Quadruple - [VARLOCAL test, 0, null]
+; sin declarar
 
-; Quadruple - [BRF T_2, L_3, null]
-CMP #-6[.IX], #0
-BZ /L_3
+; Quadruple - [MV T_0, 0, null]
+MOVE #0, #-5[.IX]
+; Quadruple - [MV test, T_0, null]
+MOVE #-5[.IX], #-4[.IX]
+; Quadruple - [INL L_1, null, null]
+L_1: NOP
 
-; Quadruple - [WRSTR T_0, L_0, null]
-WRSTR /L_0 
+; Quadruple - [MV T_1, test, null]
+MOVE #-4[.IX], #-6[.IX]
+; Quadruple - [MV T_2, 5, null]
+MOVE #5, #-7[.IX]
+; Quadruple - [LS T_3, T_1, T_2]
+CMP #-6[.IX], #-7[.IX]
+BNZ /L_3
+BN /L_3
+BZ /L_4
+BP /L_4
+L_3: MOVE #1, #-8[.IX]
+BR /L_5
+L_4: MOVE #0, #-8[.IX]
+L_5: NOP
 
-; Quadruple - [BR L_2, null, null]
-BR /L_2
+; Quadruple - [BRF T_3, L_2, null]
+CMP #-8[.IX], #0
+BZ /L_2
 
-; Quadruple - [INL L_3, null, null]
-L_3: NOP
+; Quadruple - [MV T_0, test, null]
+MOVE #-4[.IX], #-9[.IX]
+; Quadruple - [WRINT T_0, null, null]
+WRINT #-9[.IX] 
+WRCHAR #10 
 
-; Quadruple - [WRSTR T_0, L_1, null]
-WRSTR /L_1 
+; Quadruple - [ADD test, test, 1]
+ADD #-4[.IX], #1
+MOVE .A , #-4[.IX]
+
+; Quadruple - [BR L_1, null, null]
+BR /L_1
 
 ; Quadruple - [INL L_2, null, null]
 L_2: NOP
 
-; Quadruple - [MV T_3, 1, null]
-MOVE #1, #-7[.IX]
-; Quadruple - [MV T_4, 0, null]
-MOVE #0, #-8[.IX]
-; Quadruple - [AND T_5, T_3, T_4]
-CMP #-7[.IX], #0
-BZ /L_34
-BNZ /L_33
-L_33: MOVE #1, .R0
-BR /L_35
-L_34: MOVE #0, .R0
-L_35: NOP
-CMP #-8[.IX], #0
-BZ /L_37
-BNZ /L_36
-L_36: MOVE #1, .R1
-BR /L_38
-L_37: MOVE #0, .R1
-L_38: NOP
-AND .R0, .R1
-CMP .A, #1
-BZ /L_39
-BNZ /L_40
-L_39: MOVE #1, #-9[.IX]
-BR /L_41
-L_40: MOVE #0, #-9[.IX]
-L_41: NOP
-
-; Quadruple - [BRF T_5, L_7, null]
-CMP #-9[.IX], #0
-BZ /L_7
-
-; Quadruple - [WRSTR T_0, L_4, null]
-WRSTR /L_4 
-
-; Quadruple - [BR L_6, null, null]
-BR /L_6
-
-; Quadruple - [INL L_7, null, null]
-L_7: NOP
-
-; Quadruple - [WRSTR T_0, L_5, null]
-WRSTR /L_5 
-
-; Quadruple - [INL L_6, null, null]
-L_6: NOP
-
-; Quadruple - [MV T_6, 0, null]
-MOVE #0, #-10[.IX]
-; Quadruple - [MV T_7, 1, null]
-MOVE #1, #-11[.IX]
-; Quadruple - [AND T_8, T_6, T_7]
-CMP #-10[.IX], #0
-BZ /L_43
-BNZ /L_42
-L_42: MOVE #1, .R0
-BR /L_44
-L_43: MOVE #0, .R0
-L_44: NOP
-CMP #-11[.IX], #0
-BZ /L_46
-BNZ /L_45
-L_45: MOVE #1, .R1
-BR /L_47
-L_46: MOVE #0, .R1
-L_47: NOP
-AND .R0, .R1
-CMP .A, #1
-BZ /L_48
-BNZ /L_49
-L_48: MOVE #1, #-12[.IX]
-BR /L_50
-L_49: MOVE #0, #-12[.IX]
-L_50: NOP
-
-; Quadruple - [BRF T_8, L_11, null]
-CMP #-12[.IX], #0
-BZ /L_11
-
-; Quadruple - [WRSTR T_0, L_8, null]
-WRSTR /L_8 
-
-; Quadruple - [BR L_10, null, null]
-BR /L_10
-
-; Quadruple - [INL L_11, null, null]
-L_11: NOP
-
-; Quadruple - [WRSTR T_0, L_9, null]
-WRSTR /L_9 
-
-; Quadruple - [INL L_10, null, null]
-L_10: NOP
-
-; Quadruple - [MV T_9, 0, null]
-MOVE #0, #-13[.IX]
-; Quadruple - [MV T_10, 0, null]
-MOVE #0, #-14[.IX]
-; Quadruple - [AND T_11, T_9, T_10]
-CMP #-13[.IX], #0
-BZ /L_52
-BNZ /L_51
-L_51: MOVE #1, .R0
-BR /L_53
-L_52: MOVE #0, .R0
-L_53: NOP
-CMP #-14[.IX], #0
-BZ /L_55
-BNZ /L_54
-L_54: MOVE #1, .R1
-BR /L_56
-L_55: MOVE #0, .R1
-L_56: NOP
-AND .R0, .R1
-CMP .A, #1
-BZ /L_57
-BNZ /L_58
-L_57: MOVE #1, #-15[.IX]
-BR /L_59
-L_58: MOVE #0, #-15[.IX]
-L_59: NOP
-
-; Quadruple - [BRF T_11, L_15, null]
-CMP #-15[.IX], #0
-BZ /L_15
-
-; Quadruple - [WRSTR T_0, L_12, null]
-WRSTR /L_12 
-
-; Quadruple - [BR L_14, null, null]
-BR /L_14
-
-; Quadruple - [INL L_15, null, null]
-L_15: NOP
-
-; Quadruple - [WRSTR T_0, L_13, null]
-WRSTR /L_13 
-
-; Quadruple - [INL L_14, null, null]
-L_14: NOP
-
-; Quadruple - [MV T_12, 5, null]
-MOVE #5, #-16[.IX]
-; Quadruple - [MV T_13, 2, null]
-MOVE #2, #-17[.IX]
-; Quadruple - [AND T_14, T_12, T_13]
-CMP #-16[.IX], #0
-BZ /L_61
-BNZ /L_60
-L_60: MOVE #1, .R0
-BR /L_62
-L_61: MOVE #0, .R0
-L_62: NOP
-CMP #-17[.IX], #0
-BZ /L_64
-BNZ /L_63
-L_63: MOVE #1, .R1
-BR /L_65
-L_64: MOVE #0, .R1
-L_65: NOP
-AND .R0, .R1
-CMP .A, #1
-BZ /L_66
-BNZ /L_67
-L_66: MOVE #1, #-18[.IX]
-BR /L_68
-L_67: MOVE #0, #-18[.IX]
-L_68: NOP
-
-; Quadruple - [BRF T_14, L_19, null]
-CMP #-18[.IX], #0
-BZ /L_19
-
-; Quadruple - [WRSTR T_0, L_16, null]
-WRSTR /L_16 
-
-; Quadruple - [BR L_18, null, null]
-BR /L_18
-
-; Quadruple - [INL L_19, null, null]
-L_19: NOP
-
-; Quadruple - [WRSTR T_0, L_17, null]
-WRSTR /L_17 
-
-; Quadruple - [INL L_18, null, null]
-L_18: NOP
-
-; Quadruple - [MV T_15, 3, null]
-MOVE #3, #-19[.IX]
-; Quadruple - [MV T_16, 0, null]
-MOVE #0, #-20[.IX]
-; Quadruple - [AND T_17, T_15, T_16]
-CMP #-19[.IX], #0
-BZ /L_70
-BNZ /L_69
-L_69: MOVE #1, .R0
-BR /L_71
-L_70: MOVE #0, .R0
-L_71: NOP
-CMP #-20[.IX], #0
-BZ /L_73
-BNZ /L_72
-L_72: MOVE #1, .R1
-BR /L_74
-L_73: MOVE #0, .R1
-L_74: NOP
-AND .R0, .R1
-CMP .A, #1
-BZ /L_75
-BNZ /L_76
-L_75: MOVE #1, #-21[.IX]
-BR /L_77
-L_76: MOVE #0, #-21[.IX]
-L_77: NOP
-
-; Quadruple - [BRF T_17, L_23, null]
-CMP #-21[.IX], #0
-BZ /L_23
-
-; Quadruple - [WRSTR T_0, L_20, null]
-WRSTR /L_20 
-
-; Quadruple - [BR L_22, null, null]
-BR /L_22
-
-; Quadruple - [INL L_23, null, null]
-L_23: NOP
-
-; Quadruple - [WRSTR T_0, L_21, null]
-WRSTR /L_21 
-
-; Quadruple - [INL L_22, null, null]
-L_22: NOP
-
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
 
-; Quadruple - [CADENA TT=T pasado\n, L_0, null]
-L_0: DATA "TT=T pasado\n"
-; Quadruple - [CADENA TT=T error\n, L_1, null]
-L_1: DATA "TT=T error\n"
-; Quadruple - [CADENA TF=F error\n, L_4, null]
-L_4: DATA "TF=F error\n"
-; Quadruple - [CADENA TF=F pasado\n, L_5, null]
-L_5: DATA "TF=F pasado\n"
-; Quadruple - [CADENA FT=T error\n, L_8, null]
-L_8: DATA "FT=T error\n"
-; Quadruple - [CADENA FT=T pasado\n, L_9, null]
-L_9: DATA "FT=T pasado\n"
-; Quadruple - [CADENA FF=F error\n, L_12, null]
-L_12: DATA "FF=F error\n"
-; Quadruple - [CADENA FF=F pasado\n, L_13, null]
-L_13: DATA "FF=F pasado\n"
-; Quadruple - [CADENA tautologia especial pasada\n, L_16, null]
-L_16: DATA "tautologia especial pasada\n"
-; Quadruple - [CADENA tautologia especial error\n, L_17, null]
-L_17: DATA "tautologia especial error\n"
-; Quadruple - [CADENA contradiccion especial error\n, L_20, null]
-L_20: DATA "contradiccion especial error\n"
-; Quadruple - [CADENA contradiccion especial pasada\n, L_21, null]
-L_21: DATA "contradiccion especial pasada\n"
 

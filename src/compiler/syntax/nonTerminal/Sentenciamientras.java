@@ -5,17 +5,23 @@
   import compiler.semantic.symbol.SymbolVariable;
   import es.uned.lsi.compiler.semantic.type.TypeIF;
 
-  public class Sentenciamientras extends NonTerminal {
+  public class Sentenciamientras extends Sentencia {
 
-    protected SymbolVariable symbolVariableIdentificador;
-    protected Temporal temporal;
+    Expresion expresion = new Expresion();
+    Sentencia sentenciamientras = new Sentencia();
 
     public Sentenciamientras() {
       super();
     }
 
+    public Sentenciamientras(Expresion expresion, Sentencia sentenciamientras) {
+      super();
+      this.expresion = expresion;
+      this.sentenciamientras = sentenciamientras;
+    }
+
     public Sentenciamientras(SymbolVariable symbolVariableIdentificador) {
-      this();
+      super();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }
 

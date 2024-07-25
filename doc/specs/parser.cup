@@ -1429,7 +1429,7 @@ sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sen
 	| sentenciaAsignacionSuma:sen {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = sen; :}
 	| sentenciaSi:sen {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = sen; :}
 	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = null; :}
-	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = null; :}
+	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = sen; :}
 	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
 	| sentenciaSalida:sen {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = sen; :}
 	| bloque:sen {: System.out.println("READ> sentencia = bloque"); RESULT = sen; :};
@@ -1680,7 +1680,7 @@ sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO senten
 		ScopeIF scope=scopeManager.getCurrentScope();
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF labelFinal=labelFactory.create();
-		LabelIF labelElse=labelFactory.create();
+		//LabelIF labelElse=labelFactory.create();
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
@@ -1715,15 +1715,34 @@ casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println
 porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> porDefecto = PORDEFECTO"); RESULT = null; :}
  | epsilon {: System.out.println("READ> porDefecto = epsilon"); RESULT = null; :};
 
-sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia {: System.out.println("READ> sentenciaMientras"); 
-		Sentenciamientras sentMientras = new Sentenciamientras();
+sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentmien {: System.out.println("READ> sentenciaMientras");   // En teoría es la misma estructura que 'si'
 		Expresion expr = (Expresion) exp;
+		Sentencia sentenciasmientras = (Sentencia) sentmien;
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
 			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
-		
-		RESULT = sentMientras; :};
+
+		ScopeIF scope=scopeManager.getCurrentScope();
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelInicio=labelFactory.create();
+		LabelIF labelFinal=labelFactory.create();
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelFinal);	// Salir si no coincide
+		intermediateCodeBuilder.addQuadruples(sentenciasmientras.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("BR", labelInicio); //me salgo del if
+		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
+
+		Sentenciamientras sentenciaMientras =new Sentenciamientras(expr, sentenciasmientras);
+		sentenciaMientras.setIntermediateCode(intermediateCodeBuilder.create());
+		System.out.println("     QUAD>" + sentenciaMientras.getIntermediateCode());  
+
+		RESULT = sentenciaMientras;
+
+		:};
 
 sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
 
