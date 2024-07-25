@@ -2,9 +2,7 @@
 
 vacio principal () {
 
-entero test;
-
-test = 0;
+entero test = 1;
 
 mientras (test < 5) {
     escribeEnt(test);

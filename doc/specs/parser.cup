@@ -1463,8 +1463,8 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.
 			semanticErrorManager.semanticFatalError("Sólamente se pueden incrementar variables, no constantes u otro tipo.");
 		}
 
-		String valor = vari.getValor();
-		vari.setValor(Integer.toString((Integer.parseInt(valor) + 1)));
+		String valor = vari.getValor() + 1;
+		// vari.setValor(Integer.toString((Integer.parseInt(valor) + 1)));   // Linea deshabilitada porque causa conflictos a la hora de funcionar
 
 
 		// Código intermedio
@@ -1487,7 +1487,7 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: System.
 		sentencia.setIntermediateCode(intermediateCodeBuilder.create());
 
 
-		System.out.println("SN++> " + vari.getName() + " = " + vari.getValor());
+		System.out.println("SN++> " + vari.getName() + " = " + valor);
 		
 		RESULT = sentencia;
 		
@@ -1527,7 +1527,7 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("MV", variable, expr.getTemporal());
 
-			vari.setValor(expr.getValor());
+			//vari.setValor(expr.getValor());
 			System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
 
 		} else if (ref instanceof Expresion) {			// código del vector
@@ -1546,7 +1546,7 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 				String nuevoVector = String.join(",", vector);
 				System.out.println(nuevoVector);
 
-				vari.setValor(nuevoVector);
+				//vari.setValor(nuevoVector);
 
 				Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
 				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
@@ -1596,7 +1596,7 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 			if (sym.getType() != expr.getTipo()) {
 				semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
 			}
-			vari.setValor(expr.getValor());
+			//vari.setValor(expr.getValor());
 
 			Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
@@ -1621,7 +1621,7 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 				String nuevoVector = String.join(",", vector);
 				System.out.println(nuevoVector);
 
-				vari.setValor(nuevoVector);
+				//vari.setValor(nuevoVector);
 
 				Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
 				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
