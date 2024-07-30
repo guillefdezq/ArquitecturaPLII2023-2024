@@ -4,10 +4,21 @@ vacio principal () {
 
 entero test = 1;
 
-mientras (test < 5) {
-    escribeEnt(test);
-    test++;
-}
+entero gaga;
+
+
+escribe("Debe salir 1:");
+escribeEnt(test);
+
+test++;
+
+escribe("Debe salir 2:");
+escribeEnt(test);
+
+gaga = test++;
+
+escribe("Debe seguir saliendo 2:");
+escribeEnt(test);
 
 devuelve;
 
