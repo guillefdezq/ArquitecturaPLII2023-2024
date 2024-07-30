@@ -1731,6 +1731,8 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 			 */
 		}
 
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+
 		for (int i = 0; i < labels.size(); i++) {
 			if (i == labels.size()-1 && porDefecto != null) {
 			
@@ -1747,7 +1749,7 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 				 */
 
 				intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
-				intermediateCodeBuilder.addQuadruple("CMP", expr, casos.getCasos().get(i).getValor());
+				intermediateCodeBuilder.addQuadruple("CMP", expr.getTemporal(), casos.getCasos().get(i).getValor());
 				intermediateCodeBuilder.addQuadruple("BNZ", labels.get(i+1));
 				intermediateCodeBuilder.addQuadruples(casos.getCasos().get(i).getIntermediateCode());
 				intermediateCodeBuilder.addQuadruple("BR", labelFinal); 
