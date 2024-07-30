@@ -35,11 +35,13 @@ L_9: NOP
 CMP #-8[.IX], #0
 BZ /L_6
 
+; Quadruple - [MV T_0, test, null]
+MOVE #-4[.IX], #-9[.IX]
 ; Quadruple - [INL L_2, null, null]
 L_2: NOP
 
-; Quadruple - [CMP null, 0, null]
-CMP #0, null
+; Quadruple - [CMP T_0, 0, null]
+CMP #-9[.IX], #0
 
 ; Quadruple - [BNZ L_3, null, null]
 BZ /L_3
@@ -57,8 +59,8 @@ L_1: NOP
 ; Quadruple - [INL L_3, null, null]
 L_3: NOP
 
-; Quadruple - [CMP null, 1, null]
-CMP #1, null
+; Quadruple - [CMP T_0, 1, null]
+CMP #-9[.IX], #1
 
 ; Quadruple - [BNZ L_4, null, null]
 BZ /L_4

@@ -142,12 +142,12 @@ public class ExecutionEnvironmentEns2001
             b.append(labelFin.toString() + ": NOP\n");
 
         } else if (quadruple.getOperation().equals("CMP")) {
+            String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
-            String o2 = operacion(quadruple.getSecondOperand());
 
             LabelFactory labelFactory = new LabelFactory();
 
-            b.append("CMP " + o1 + ", " + o2 + "\n");
+            b.append("CMP " + r + ", " + o1 + "\n");
 
         } else if (quadruple.getOperation().equals("NEG")) {
             String r = operacion(quadruple.getResult());
