@@ -1,4 +1,4 @@
-Linea 36: ERROR[3] Instrucción no reconocida - BS
-Linea 38: ERROR[3] Instrucción no reconocida - BNS
-Linea 61: ERROR[3] Instrucción no reconocida - BS
-Linea 63: ERROR[3] Instrucción no reconocida - BNS
+Linea 42: ERROR[5] Operando 2 Incorrecto - null
+Linea 61: ERROR[5] Operando 2 Incorrecto - null
+Linea 74: ERROR[6] Etiqueta Duplicada - L_1
+Linea 84: ERROR[6] Etiqueta Duplicada - L_1

@@ -1429,7 +1429,7 @@ sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sen
 	| sentenciaAsignacion:sen {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = sen; :}
 	| sentenciaAsignacionSuma:sen {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = sen; :}
 	| sentenciaSi:sen {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = sen; :}
-	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = null; :}
+	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = sen; :}
 	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = sen; :}
 	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
 	| sentenciaSalida:sen {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = sen; :}
@@ -1704,7 +1704,10 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 		Expresion expr = (Expresion) exp;
 		Casosalternativa casos = (Casosalternativa) casosAlter;
 		ArrayList<LabelIF> labels = new ArrayList<LabelIF>();
+		
 		Pordefecto porDefecto = (Pordefecto) porD;
+
+		System.out.println(porD);
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
 			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
@@ -1770,7 +1773,7 @@ casosAlternativa ::= casosAlternativa:casos casoAlt:caso {: System.out.println("
 	casosAlternativa.addCaso((Casoalt) caso);
 	RESULT = casosAlternativa; :}
  | casoAlt:caso {: System.out.println("READ> casoAlternativa = casoAlt"); 
-	Casosalternativa casosAlternativa = (Casosalternativa) RESULT;
+	Casosalternativa casosAlternativa = new Casosalternativa();
 	casosAlternativa.addCaso((Casoalt) caso);
 	RESULT = casosAlternativa; :};
 
