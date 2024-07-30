@@ -2,23 +2,33 @@
 
 vacio principal () {
 
-entero test = 1;
+entero test = 0;
+entero prueba;
 
-entero gaga;
+mientras (test < 3) {
+    
 
+    alternativas (test) {
+        caso 0: 
+        {
+            prueba = 0;
+        }
+            corte;
+        caso 1:
+        {
+            prueba = 1;
+        }
+            corte;
+        pordefecto:
+        {
+            prueba =  69;
+        }
+            corte;
+    }
 
-escribe("Debe salir 1:");
-escribeEnt(test);
+    test++;
 
-test++;
-
-escribe("Debe salir 2:");
-escribeEnt(test);
-
-gaga = test++;
-
-escribe("Debe seguir saliendo 2:");
-escribeEnt(test);
+}
 
 devuelve;
 
