@@ -5,7 +5,7 @@
   import compiler.semantic.symbol.SymbolVariable;
   import es.uned.lsi.compiler.semantic.type.TypeIF;
 
-  public class Pordefecto extends NonTerminal {
+  public class Pordefecto extends Casoalt {
 
     protected SymbolVariable symbolVariableIdentificador;
     protected Temporal temporal;

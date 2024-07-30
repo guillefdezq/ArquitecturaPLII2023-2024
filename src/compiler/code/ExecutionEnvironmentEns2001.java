@@ -141,6 +141,14 @@ public class ExecutionEnvironmentEns2001
             b.append(labelFalso.toString() + ": MOVE #0, " + r + "\n");
             b.append(labelFin.toString() + ": NOP\n");
 
+        } else if (quadruple.getOperation().equals("CMP")) {
+            String o1 = operacion(quadruple.getFirstOperand());
+            String o2 = operacion(quadruple.getSecondOperand());
+
+            LabelFactory labelFactory = new LabelFactory();
+
+            b.append("CMP " + o1 + ", " + o2 + "\n");
+
         } else if (quadruple.getOperation().equals("NEG")) {
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
@@ -301,6 +309,9 @@ public class ExecutionEnvironmentEns2001
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("CMP " + r + ", #0\n");   /// CUIDADO, me da la sensación de que faltan ciertos parámetros para que sea exacto.
             b.append("BZ /" + o1.toString() + "\n");
+        } else if (quadruple.getOperation().equals("BNZ")) {
+            String r = operacion(quadruple.getResult());
+            b.append("BZ /" + r.toString() + "\n");
         } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());  /// En qué situación se usa esto?
