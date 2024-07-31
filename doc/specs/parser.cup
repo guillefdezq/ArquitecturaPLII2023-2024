@@ -1429,7 +1429,7 @@ sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sen
 	| sentenciaAsignacion:sen {: System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = sen; :}
 	| sentenciaAsignacionSuma:sen {: System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = sen; :}
 	| sentenciaSi:sen {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = sen; :}
-	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = null; :}
+	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = sen; :}
 	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = sen; :}
 	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
 	| sentenciaSalida:sen {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = sen; :}
@@ -1700,20 +1700,125 @@ sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO senten
 		RESULT = sentenciasSi; :};
 	
 // 'Ergo', aquí tampoco hace falta, al usar bloque directamente.
-sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARENTHESIS casosAlternativa porDefecto CLOSE_PARENTHESIS {: System.out.println("READ> sentenciaAlternativas"); 
-		Sentenciaalternativas sentAlternativas = new Sentenciaalternativas();
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARENTHESIS casosAlternativa:casosAlter porDefecto:porD CLOSE_PARENTHESIS {: System.out.println("READ> sentenciaAlternativas"); 
 		Expresion expr = (Expresion) exp;
+		Casosalternativa casos = (Casosalternativa) casosAlter;
+		ArrayList<LabelIF> labels = new ArrayList<LabelIF>();
+
+		Pordefecto porDefecto = (porD != null)? (Pordefecto) porD : null;
+
+		System.out.println((porDefecto != null)? "POR DEFECTO" : "SIN POR DEFECTO");
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
 			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
 
-		RESULT = sentAlternativas; :};
-casosAlternativa ::= casosAlternativa casoAlt {: System.out.println("READ> casosAlternativa = casoAlternativa"); RESULT = null; :}
- | casoAlt {: System.out.println("READ> casoAlternativa = casoAlt"); RESULT = null; :};
 
-casoAlt ::= CASO NUMERO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> casoAlt"); RESULT = null; :};
-porDefecto ::= PORDEFECTO TWO_POINTS bloque CORTE SEMI_COLON {: System.out.println("READ> porDefecto = PORDEFECTO"); RESULT = null; :}
+		ScopeIF scope=scopeManager.getCurrentScope();
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFinal=labelFactory.create();
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+
+		intermediateCodeBuilder.addQuadruple("DVLP", "Alternativas", "Inicio");
+
+		if (porDefecto != null) {
+			casos.addPorDefecto(porDefecto);		// No sé si esto es posible de ejecutar...
+		}		
+		
+		for (Casoalt casoalt : casos.getCasos()) {
+			labels.add(labelFactory.create());
+			/*  LabelIF label = labelFactory.create();
+			 *  labels.add(label);
+			 */
+		}
+
+		// Print labels content
+		System.out.println("LABELS " + labels);
+
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+
+		for (int i = 0; i < labels.size(); i++) {
+			if (i == labels.size()-1) {
+				if (porDefecto != null) {
+					intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
+					intermediateCodeBuilder.addQuadruples(casos.getCasos().get(i).getIntermediateCode());
+				} else {
+					intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
+					intermediateCodeBuilder.addQuadruple("CMP", expr.getTemporal(), casos.getCasos().get(i).getValor());
+					intermediateCodeBuilder.addQuadruple("BNZ", labelFinal);
+					intermediateCodeBuilder.addQuadruples(casos.getCasos().get(i).getIntermediateCode());
+					intermediateCodeBuilder.addQuadruple("BR", labelFinal); 
+				}
+				
+			} else {
+				/*  LABEL i:
+				 *  		CMP expr, casos.getCasos().get(i).getValor()
+				 * 			BRF? casos[i+1]
+				 * 			casos.getCasos().get(i).getIntermediateCode()
+				 * 			JMP Fin
+				 */
+				intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
+				intermediateCodeBuilder.addQuadruple("CMP", expr.getTemporal(), casos.getCasos().get(i).getValor());
+				intermediateCodeBuilder.addQuadruple("BNZ", labels.get(i+1));
+				intermediateCodeBuilder.addQuadruples(casos.getCasos().get(i).getIntermediateCode());
+				intermediateCodeBuilder.addQuadruple("BR", labelFinal); 
+
+			}
+		}
+		/*  LABEL fin */
+		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
+
+		intermediateCodeBuilder.addQuadruple("DVLP", "Alternativas", "Final");
+
+		Sentenciaalternativas sentAlternativas =new Sentenciaalternativas();
+		sentAlternativas.setIntermediateCode(intermediateCodeBuilder.create());
+		System.out.println("     QUAD>" + sentAlternativas.getIntermediateCode());  
+
+
+		RESULT = sentAlternativas; :};
+
+
+casosAlternativa ::= casosAlternativa:casos casoAlt:caso {: System.out.println("READ> casosAlternativa = casoAlternativa"); 
+	Casosalternativa casosAlternativa = (Casosalternativa) casos;
+	casosAlternativa.addCaso((Casoalt) caso);
+	RESULT = casosAlternativa; :}
+ | casoAlt:caso {: System.out.println("READ> casoAlternativa = casoAlt"); 
+	Casosalternativa casosAlternativa = new Casosalternativa();
+	casosAlternativa.addCaso((Casoalt) caso);
+	RESULT = casosAlternativa; :};
+
+casoAlt ::= CASO NUMERO:nume TWO_POINTS bloque:bloq CORTE SEMI_COLON {: System.out.println("READ> casoAlt"); 
+	int num = Integer.parseInt(nume.getLexema());
+	Sentencia bloque = (Sentencia) bloq;
+
+	ScopeIF scope = scopeManager.getCurrentScope();
+	
+	IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+	intermediateCodeBuilder.addQuadruples(bloque.getIntermediateCode());	// Código del bloque
+
+	Casoalt casoAlt = new Casoalt();
+	casoAlt.setIntermediateCode(intermediateCodeBuilder.create());
+	casoAlt.setValor(num);
+
+	RESULT = casoAlt; 
+	:};
+porDefecto ::= PORDEFECTO TWO_POINTS bloque:bloq CORTE SEMI_COLON {: System.out.println("READ> porDefecto = PORDEFECTO");
+
+	ScopeIF scope = scopeManager.getCurrentScope();
+	Sentencia bloque = (Sentencia) bloq;
+
+	LabelFactory labelFactory = new LabelFactory();
+	LabelIF labelPorDefecto = labelFactory.create();
+
+	IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+	intermediateCodeBuilder.addQuadruples(bloque.getIntermediateCode());
+
+	Pordefecto porDefecto = new Pordefecto();
+	porDefecto.setIntermediateCode(intermediateCodeBuilder.create());
+	System.out.println("     QUAD>" + porDefecto.getIntermediateCode());
+
+	RESULT = porDefecto; :}
  | epsilon {: System.out.println("READ> porDefecto = epsilon"); RESULT = null; :};
 
 sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentmien {: System.out.println("READ> sentenciaMientras");   // En teoría es la misma estructura que 'si'
@@ -1730,12 +1835,15 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentmi
 		LabelIF labelFinal=labelFactory.create();
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruple("DVLP", "Mientras", "Inicio");
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelFinal);	// Salir si no coincide
 		intermediateCodeBuilder.addQuadruples(sentenciasmientras.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BR", labelInicio); //me salgo del if
 		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
+
+		intermediateCodeBuilder.addQuadruple("DVLP", "Mientras", "Final");
 
 		Sentenciamientras sentenciaMientras =new Sentenciamientras(expr, sentenciasmientras);
 		sentenciaMientras.setIntermediateCode(intermediateCodeBuilder.create());
