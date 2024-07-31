@@ -14,16 +14,8 @@ mientras (test < 3) {
             prueba = 0;
         }
             corte;
-        caso 1:
-        {
-            prueba = 1;
-        }
-            corte;
-        pordefecto:
-        {
-            prueba =  69;
-        }
-            corte;
+            
+
     }
 
     test++;

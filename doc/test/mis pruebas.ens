@@ -13,8 +13,11 @@ PRINCIPAL: NOP
 MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCAL prueba, 0, null]
 MOVE #0, #-5[.IX]
-; Quadruple - [INL L_5, null, null]
-L_5: NOP
+; Quadruple - [DVLP Mientras, Inicio, null]
+; sin declarar?
+
+; Quadruple - [INL L_2, null, null]
+L_2: NOP
 
 ; Quadruple - [MV T_0, test, null]
 MOVE #-4[.IX], #-6[.IX]
@@ -22,78 +25,58 @@ MOVE #-4[.IX], #-6[.IX]
 MOVE #3, #-7[.IX]
 ; Quadruple - [LS T_2, T_0, T_1]
 CMP #-6[.IX], #-7[.IX]
-BNZ /L_7
-BN /L_7
-BZ /L_8
-BP /L_8
-L_7: MOVE #1, #-8[.IX]
-BR /L_9
-L_8: MOVE #0, #-8[.IX]
-L_9: NOP
+BNZ /L_4
+BN /L_4
+BZ /L_5
+BP /L_5
+L_4: MOVE #1, #-8[.IX]
+BR /L_6
+L_5: MOVE #0, #-8[.IX]
+L_6: NOP
 
-; Quadruple - [BRF T_2, L_6, null]
+; Quadruple - [BRF T_2, L_3, null]
 CMP #-8[.IX], #0
-BZ /L_6
+BZ /L_3
+
+; Quadruple - [DVLP Alternativas, Inicio, null]
+; sin declarar?
 
 ; Quadruple - [MV T_0, test, null]
 MOVE #-4[.IX], #-9[.IX]
-; Quadruple - [INL L_2, null, null]
-L_2: NOP
+; Quadruple - [INL L_1, null, null]
+L_1: NOP
 
 ; Quadruple - [CMP T_0, 0, null]
 CMP #-9[.IX], #0
 
-; Quadruple - [BNZ L_3, null, null]
-BZ /L_3
-
-; Quadruple - [MV T_0, 69, null]
-MOVE #69, #-13[.IX]
-; Quadruple - [MV prueba, T_0, null]
-MOVE #-13[.IX], #-5[.IX]
-; Quadruple - [BR L_1, null, null]
-BR /L_1
-
-; Quadruple - [INL L_1, null, null]
-L_1: NOP
-
-; Quadruple - [INL L_3, null, null]
-L_3: NOP
-
-; Quadruple - [CMP T_0, 1, null]
-CMP #-9[.IX], #1
-
-; Quadruple - [BNZ L_4, null, null]
-BZ /L_4
-
-; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-12[.IX]
-; Quadruple - [MV prueba, T_0, null]
-MOVE #-12[.IX], #-5[.IX]
-; Quadruple - [BR L_1, null, null]
-BR /L_1
-
-; Quadruple - [INL L_1, null, null]
-L_1: NOP
-
-; Quadruple - [INL L_4, null, null]
-L_4: NOP
+; Quadruple - [BNZ L_0, null, null]
+BZ /L_0
 
 ; Quadruple - [MV T_0, 0, null]
 MOVE #0, #-11[.IX]
 ; Quadruple - [MV prueba, T_0, null]
 MOVE #-11[.IX], #-5[.IX]
-; Quadruple - [INL L_1, null, null]
-L_1: NOP
+; Quadruple - [BR L_0, null, null]
+BR /L_0
+
+; Quadruple - [INL L_0, null, null]
+L_0: NOP
+
+; Quadruple - [DVLP Alternativas, Final, null]
+; sin declarar?
 
 ; Quadruple - [ADD test, test, 1]
 ADD #-4[.IX], #1
 MOVE .A , #-4[.IX]
 
-; Quadruple - [BR L_5, null, null]
-BR /L_5
+; Quadruple - [BR L_2, null, null]
+BR /L_2
 
-; Quadruple - [INL L_6, null, null]
-L_6: NOP
+; Quadruple - [INL L_3, null, null]
+L_3: NOP
+
+; Quadruple - [DVLP Mientras, Final, null]
+; sin declarar?
 
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
