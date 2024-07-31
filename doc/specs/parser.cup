@@ -1704,8 +1704,8 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 		Expresion expr = (Expresion) exp;
 		Casosalternativa casos = (Casosalternativa) casosAlter;
 		ArrayList<LabelIF> labels = new ArrayList<LabelIF>();
-		
-		Pordefecto porDefecto = (Pordefecto) porD;
+
+		Pordefecto porDefecto = (porD != null)? (Pordefecto) porD : null;
 
 		System.out.println(porD);
 
@@ -1720,6 +1720,8 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
+		intermediateCodeBuilder.addQuadruple("DVLP", "Alternativas", "Inicio");
+
 		if (porDefecto != null) {
 			casos.addCaso(porDefecto);		// No sé si esto es posible de ejecutar...
 		}		
@@ -1731,13 +1733,24 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 			 */
 		}
 
+		// Print labels content
+		System.out.println("LABELS " + labels);
+
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 
 		for (int i = 0; i < labels.size(); i++) {
-			if (i == labels.size()-1 && porDefecto != null) {
-			
-				intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
-				intermediateCodeBuilder.addQuadruples(casos.getCasos().get(i).getIntermediateCode());
+			System.out.println("test" + i);
+			if (i == labels.size()-1) {
+				if (porDefecto != null) {
+					intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
+					intermediateCodeBuilder.addQuadruples(casos.getCasos().get(i).getIntermediateCode());
+				} else {
+					intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
+					intermediateCodeBuilder.addQuadruple("CMP", expr.getTemporal(), casos.getCasos().get(i).getValor());
+					intermediateCodeBuilder.addQuadruple("BNZ", labelFinal);
+					intermediateCodeBuilder.addQuadruples(casos.getCasos().get(i).getIntermediateCode());
+					intermediateCodeBuilder.addQuadruple("BR", labelFinal); 
+				}
 				
 			} else {
 
@@ -1760,7 +1773,7 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 
 		}
 
-
+		intermediateCodeBuilder.addQuadruple("DVLP", "Alternativas", "Final");
 
 		Sentenciaalternativas sentAlternativas =new Sentenciaalternativas();
 		sentAlternativas.setIntermediateCode(intermediateCodeBuilder.create());
@@ -1826,12 +1839,15 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentmi
 		LabelIF labelFinal=labelFactory.create();
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruple("DVLP", "Mientras", "Inicio");
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelFinal);	// Salir si no coincide
 		intermediateCodeBuilder.addQuadruples(sentenciasmientras.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BR", labelInicio); //me salgo del if
 		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
+
+		intermediateCodeBuilder.addQuadruple("DVLP", "Mientras", "Final");
 
 		Sentenciamientras sentenciaMientras =new Sentenciamientras(expr, sentenciasmientras);
 		sentenciaMientras.setIntermediateCode(intermediateCodeBuilder.create());
