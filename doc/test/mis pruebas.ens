@@ -16,64 +16,122 @@ MOVE #0, #-5[.IX]
 ; Quadruple - [DVLP Mientras, Inicio, null]
 ; sin declarar?
 
-; Quadruple - [INL L_2, null, null]
-L_2: NOP
+; Quadruple - [INL L_9, null, null]
+L_9: NOP
 
 ; Quadruple - [MV T_0, test, null]
 MOVE #-4[.IX], #-6[.IX]
-; Quadruple - [MV T_1, 3, null]
-MOVE #3, #-7[.IX]
+; Quadruple - [MV T_1, 5, null]
+MOVE #5, #-7[.IX]
 ; Quadruple - [LS T_2, T_0, T_1]
 CMP #-6[.IX], #-7[.IX]
-BNZ /L_4
-BN /L_4
-BZ /L_5
-BP /L_5
-L_4: MOVE #1, #-8[.IX]
-BR /L_6
-L_5: MOVE #0, #-8[.IX]
-L_6: NOP
+BNZ /L_11
+BN /L_11
+BZ /L_12
+BP /L_12
+L_11: MOVE #1, #-8[.IX]
+BR /L_13
+L_12: MOVE #0, #-8[.IX]
+L_13: NOP
 
-; Quadruple - [BRF T_2, L_3, null]
+; Quadruple - [BRF T_2, L_10, null]
 CMP #-8[.IX], #0
-BZ /L_3
+BZ /L_10
+
+; Quadruple - [MV T_0, 999, null]
+MOVE #999, #-9[.IX]
+; Quadruple - [MV prueba, T_0, null]
+MOVE #-9[.IX], #-5[.IX]
+; Quadruple - [MV T_1, test, null]
+MOVE #-4[.IX], #-10[.IX]
+; Quadruple - [WRINT T_1, null, null]
+WRINT #-10[.IX] 
+WRCHAR #10 
 
 ; Quadruple - [DVLP Alternativas, Inicio, null]
 ; sin declarar?
 
-; Quadruple - [MV T_0, test, null]
-MOVE #-4[.IX], #-9[.IX]
-; Quadruple - [INL L_1, null, null]
-L_1: NOP
+; Quadruple - [MV T_3, test, null]
+MOVE #-4[.IX], #-12[.IX]
+; Quadruple - [INL L_3, null, null]
+L_3: NOP
 
-; Quadruple - [CMP T_0, 0, null]
-CMP #-9[.IX], #0
+; Quadruple - [CMP T_3, 3, null]
+CMP #-12[.IX], #3
 
-; Quadruple - [BNZ L_0, null, null]
-BZ /L_0
+; Quadruple - [BNZ L_4, null, null]
+BNZ /L_4
+
+; Quadruple - [MV T_0, 3, null]
+MOVE #3, #-19[.IX]
+; Quadruple - [MV prueba, T_0, null]
+MOVE #-19[.IX], #-5[.IX]
+; Quadruple - [BR L_2, null, null]
+BR /L_2
+
+; Quadruple - [INL L_4, null, null]
+L_4: NOP
+
+; Quadruple - [CMP T_3, 1, null]
+CMP #-12[.IX], #1
+
+; Quadruple - [BNZ L_5, null, null]
+BNZ /L_5
+
+; Quadruple - [MV T_0, 1, null]
+MOVE #1, #-18[.IX]
+; Quadruple - [MV prueba, T_0, null]
+MOVE #-18[.IX], #-5[.IX]
+; Quadruple - [BR L_2, null, null]
+BR /L_2
+
+; Quadruple - [INL L_5, null, null]
+L_5: NOP
+
+; Quadruple - [CMP T_3, 0, null]
+CMP #-12[.IX], #0
+
+; Quadruple - [BNZ L_6, null, null]
+BNZ /L_6
 
 ; Quadruple - [MV T_0, 0, null]
-MOVE #0, #-11[.IX]
+MOVE #0, #-17[.IX]
 ; Quadruple - [MV prueba, T_0, null]
-MOVE #-11[.IX], #-5[.IX]
-; Quadruple - [BR L_0, null, null]
-BR /L_0
+MOVE #-17[.IX], #-5[.IX]
+; Quadruple - [BR L_2, null, null]
+BR /L_2
 
-; Quadruple - [INL L_0, null, null]
-L_0: NOP
+; Quadruple - [INL L_6, null, null]
+L_6: NOP
+
+; Quadruple - [MV T_0, 420, null]
+MOVE #420, #-20[.IX]
+; Quadruple - [MV prueba, T_0, null]
+MOVE #-20[.IX], #-5[.IX]
+; Quadruple - [INL L_2, null, null]
+L_2: NOP
 
 ; Quadruple - [DVLP Alternativas, Final, null]
 ; sin declarar?
+
+; Quadruple - [MV T_4, prueba, null]
+MOVE #-5[.IX], #-13[.IX]
+; Quadruple - [WRINT T_4, null, null]
+WRINT #-13[.IX] 
+WRCHAR #10 
+
+; Quadruple - [WRSTR T_6, L_8, null]
+WRSTR /L_8 
 
 ; Quadruple - [ADD test, test, 1]
 ADD #-4[.IX], #1
 MOVE .A , #-4[.IX]
 
-; Quadruple - [BR L_2, null, null]
-BR /L_2
+; Quadruple - [BR L_9, null, null]
+BR /L_9
 
-; Quadruple - [INL L_3, null, null]
-L_3: NOP
+; Quadruple - [INL L_10, null, null]
+L_10: NOP
 
 ; Quadruple - [DVLP Mientras, Final, null]
 ; sin declarar?
@@ -81,3 +139,5 @@ L_3: NOP
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
 
+; Quadruple - [CADENA --\n, L_8, null]
+L_8: DATA "--\n"

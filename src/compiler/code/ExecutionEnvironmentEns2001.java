@@ -311,7 +311,7 @@ public class ExecutionEnvironmentEns2001
             b.append("BZ /" + o1.toString() + "\n");
         } else if (quadruple.getOperation().equals("BNZ")) {
             String r = operacion(quadruple.getResult());
-            b.append("BZ /" + r.toString() + "\n");
+            b.append("BNZ /" + r.toString() + "\n");
         } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());  /// En qué situación se usa esto?
