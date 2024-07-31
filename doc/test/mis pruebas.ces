@@ -5,8 +5,11 @@ vacio principal () {
 entero test = 0;
 entero prueba;
 
-mientras (test < 3) {
+mientras (test < 5) {
     
+    prueba=999;
+
+    escribeEnt(test);
 
     alternativas (test) {
         caso 0: 
@@ -14,9 +17,23 @@ mientras (test < 3) {
             prueba = 0;
         }
             corte;
+        caso 1:
+        {
+            prueba = 1;
+        }
+            corte;
+        caso 3:
+        {
+            prueba = 3;
+        }
+            corte;
+        
+        pordefecto: {prueba = 420;} corte;
             
-
     }
+
+    escribeEnt(prueba);
+    escribe("--");
 
     test++;
 

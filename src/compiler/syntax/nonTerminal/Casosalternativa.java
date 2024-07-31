@@ -27,6 +27,10 @@
       this.casos.add(0, caso);
     }
 
+    public void addPorDefecto(Casoalt caso) {
+      this.casos.add(caso);
+    }
+
     public Casosalternativa() {
       super();
     }

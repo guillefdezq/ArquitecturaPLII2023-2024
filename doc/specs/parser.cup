@@ -1707,7 +1707,7 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 
 		Pordefecto porDefecto = (porD != null)? (Pordefecto) porD : null;
 
-		System.out.println(porD);
+		System.out.println((porDefecto != null)? "POR DEFECTO" : "SIN POR DEFECTO");
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
 			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
@@ -1723,7 +1723,7 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 		intermediateCodeBuilder.addQuadruple("DVLP", "Alternativas", "Inicio");
 
 		if (porDefecto != null) {
-			casos.addCaso(porDefecto);		// No sé si esto es posible de ejecutar...
+			casos.addPorDefecto(porDefecto);		// No sé si esto es posible de ejecutar...
 		}		
 		
 		for (Casoalt casoalt : casos.getCasos()) {
@@ -1739,7 +1739,6 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 
 		for (int i = 0; i < labels.size(); i++) {
-			System.out.println("test" + i);
 			if (i == labels.size()-1) {
 				if (porDefecto != null) {
 					intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
@@ -1753,14 +1752,12 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 				}
 				
 			} else {
-
 				/*  LABEL i:
 				 *  		CMP expr, casos.getCasos().get(i).getValor()
 				 * 			BRF? casos[i+1]
 				 * 			casos.getCasos().get(i).getIntermediateCode()
 				 * 			JMP Fin
 				 */
-
 				intermediateCodeBuilder.addQuadruple("INL", labels.get(i));
 				intermediateCodeBuilder.addQuadruple("CMP", expr.getTemporal(), casos.getCasos().get(i).getValor());
 				intermediateCodeBuilder.addQuadruple("BNZ", labels.get(i+1));
@@ -1768,10 +1765,9 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 				intermediateCodeBuilder.addQuadruple("BR", labelFinal); 
 
 			}
-			/*  LABEL fin */
-				intermediateCodeBuilder.addQuadruple("INL", labelFinal);
-
 		}
+		/*  LABEL fin */
+		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
 
 		intermediateCodeBuilder.addQuadruple("DVLP", "Alternativas", "Final");
 
