@@ -9,18 +9,18 @@
 
 vacio principal () {
 
-tipo entero vector[3];
+
 entero a = 25;
 entero b = 10;
 entero c, d = 9;
-vector e;
+
 escribeEnt(a);
 
 c = d;
 c++;
 c++;
 
-si (a==0) {
+si (a==25) {
 	entero a = 50;
 	escribeEnt(b);
 	escribeEnt(a);

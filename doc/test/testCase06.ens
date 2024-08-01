@@ -17,7 +17,7 @@ PRINCIPAL: NOP
 ;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado mÃ¡quina
+;PUSH .SR       ;estado máquina
 ;PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [VARLOCAL c, 0, null]
