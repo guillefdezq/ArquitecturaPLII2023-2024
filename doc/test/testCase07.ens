@@ -6,7 +6,7 @@ PRINCIPAL: NOP
 ;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado mÃ¡quina
+;PUSH .SR       ;estado máquina
 ;PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [VARLOCAL a, 0, null]
@@ -70,8 +70,6 @@ MOVE #-4[.IX], #-13[.IX]
 MOVE #5, #-14[.IX]
 ; Quadruple - [LS T_8, T_6, T_7]
 CMP #-13[.IX], #-14[.IX]
-BNZ /L_16
-BN /L_16
 BZ /L_17
 BP /L_17
 L_16: MOVE #1, #-15[.IX]
