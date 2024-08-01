@@ -1,9 +1,13 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
+entero test = 69;
+entero aaa = 234;
+entero test2 = 345;
+
 vacio principal () {
 
-entero a = -2;
-entero b = -2;
+entero a = 2;
+entero b = 2;
 entero c;
 
 /*
@@ -23,17 +27,9 @@ mientras (a < 2) {
 }
 */
 
-escribe("1<2");
-escribeEnt(1<2);
-
-escribe("2<1");
-escribeEnt(2<1);
-
-escribe("0<1");
-escribeEnt(0<1);
-
-escribe("1<0");
-escribeEnt(1<0);
+escribeEnt(test);
+escribeEnt(test2);
+escribeEnt(aaa);
 
 devuelve;
 
