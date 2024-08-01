@@ -6,18 +6,15 @@ PRINCIPAL: NOP
 ;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado mÃ¡quina
+;PUSH .SR       ;estado máquina
 ;PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [VARLOCAL a, 0, null]
-; sin declarar
-
+MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCAL b, 0, null]
-; sin declarar
-
+MOVE #0, #-5[.IX]
 ; Quadruple - [VARLOCAL c, 0, null]
-; sin declarar
-
+MOVE #0, #-6[.IX]
 ; Quadruple - [MV T_0, 5, null]
 MOVE #5, #-7[.IX]
 ; Quadruple - [MV a, T_0, null]
@@ -31,7 +28,13 @@ MOVE #-4[.IX], #-9[.IX]
 ; Quadruple - [MV T_3, b, null]
 MOVE #-5[.IX], #-10[.IX]
 ; Quadruple - [LS T_4, T_2, T_3]
-; sin declarar?
+CMP #-9[.IX], #-10[.IX]
+BZ /L_5
+BP /L_5
+L_4: MOVE #1, #-11[.IX]
+BR /L_6
+L_5: MOVE #0, #-11[.IX]
+L_6: NOP
 
 ; Quadruple - [MV c, T_4, null]
 MOVE #-11[.IX], #-6[.IX]
@@ -50,15 +53,21 @@ MOVE #-4[.IX], #-15[.IX]
 MOVE #-4[.IX], #-16[.IX]
 ; Quadruple - [EQ T_10, T_8, T_9]
 CMP #-15[.IX], #-16[.IX]
-BZ /L_4
-BNZ /L_5
-L_4: MOVE #1, #-17[.IX]
-BR /L_6
-L_5: MOVE #0, #-17[.IX]
-L_6: NOP
+BZ /L_7
+BNZ /L_8
+L_7: MOVE #1, #-17[.IX]
+BR /L_9
+L_8: MOVE #0, #-17[.IX]
+L_9: NOP
 
 ; Quadruple - [NEG T_11, T_10, null]
-; sin declarar?
+CMP #-17[.IX], #0
+BZ /L_10
+BNZ /L_11
+L_10: MOVE #1, #-18[.IX]
+BR /L_12
+L_11: MOVE #0, #-18[.IX]
+L_12: NOP
 
 ; Quadruple - [MV c, T_11, null]
 MOVE #-18[.IX], #-6[.IX]

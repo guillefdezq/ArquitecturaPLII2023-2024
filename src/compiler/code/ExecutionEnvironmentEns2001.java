@@ -175,18 +175,17 @@ public class ExecutionEnvironmentEns2001
             String o2 = operacion(quadruple.getSecondOperand());
 
             LabelFactory labelFactory = new LabelFactory();
-			LabelIF labelVerdad = labelFactory.create();
+            LabelIF labelVerdad = labelFactory.create();
 			LabelIF labelFalso = labelFactory.create();
             LabelIF labelFin = labelFactory.create();
 
             // MENOR QUE debe resultar en un número negativo, entonces, la flag cero Z debe estar inactiva y signo S debe estar activa.
 
             b.append("CMP " + o1 + ", " + o2 + "\n");
-            b.append("BNZ /" + labelVerdad.toString() + "\n");
-            b.append("BN /" + labelVerdad.toString() + "\n");
 
             b.append("BZ /" + labelFalso.toString() + "\n");
             b.append("BP /" + labelFalso.toString() + "\n");
+
             b.append(labelVerdad.toString() + ": MOVE #1, " + r + "\n");
             b.append("BR /" + labelFin.toString() + "\n");
             b.append(labelFalso.toString() + ": MOVE #0, " + r + "\n");
@@ -194,7 +193,6 @@ public class ExecutionEnvironmentEns2001
 
         } else if (quadruple.getOperation().equals("AND")) {
             
-            //("LS", temporal, expra.getTemporal(), exprb.getTemporal());
 
             String r = operacion(quadruple.getResult());  // Temporal
             String o1 = operacion(quadruple.getFirstOperand());
