@@ -1,0 +1,50 @@
+; Quadruple - [AXIOM null, null, null]
+
+; Quadruple - [PRINCIPAL null, null, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas
+;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado máquina
+;PUSH .IX       ;enlace de acceso
+
+; Quadruple - [VARLOCAL aaa, 0, null]
+MOVE #0, /10000
+; Quadruple - [VARLOCAL test2, 0, null]
+MOVE #0, /10001
+; Quadruple - [VARLOCAL test, 0, null]
+MOVE #0, /10002
+; Quadruple - [VARLOCAL aaa, 234, null]
+MOVE #234, /10000
+; Quadruple - [VARLOCAL test2, 345, null]
+MOVE #345, /10001
+; Quadruple - [VARLOCAL test, 69, null]
+MOVE #69, /10002
+; Quadruple - [VARLOCAL a, 2, null]
+MOVE #2, #-10[.IX]
+; Quadruple - [VARLOCAL b, 2, null]
+MOVE #2, #-11[.IX]
+; Quadruple - [VARLOCAL c, 0, null]
+MOVE #0, #-12[.IX]
+; Quadruple - [MV T_0, test, null]
+MOVE /10002, #-13[.IX]
+; Quadruple - [WRINT T_0, null, null]
+WRINT #-13[.IX] 
+WRCHAR #10 
+
+; Quadruple - [MV T_2, test2, null]
+MOVE /10001, #-15[.IX]
+; Quadruple - [WRINT T_2, null, null]
+WRINT #-15[.IX] 
+WRCHAR #10 
+
+; Quadruple - [MV T_4, aaa, null]
+MOVE /10000, #-17[.IX]
+; Quadruple - [WRINT T_4, null, null]
+WRINT #-17[.IX] 
+WRCHAR #10 
+
+; Quadruple - [DEVUELTO null, null, null]
+HALT
+
