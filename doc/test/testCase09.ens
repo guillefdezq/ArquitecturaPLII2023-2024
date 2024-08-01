@@ -10,14 +10,34 @@ PRINCIPAL: NOP
 ;PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [VARLOCAL a, 0, null]
-; sin declarar
-
+MOVE #0, #-4[.IX]
 ; Quadruple - [MV T_0, 1, null]
 MOVE #1, #-5[.IX]
 ; Quadruple - [MV T_1, 0, null]
 MOVE #0, #-6[.IX]
 ; Quadruple - [AND T_2, T_0, T_1]
-; sin declarar?
+CMP #-5[.IX], #0
+BZ /L_3
+BNZ /L_2
+L_2: MOVE #1, .R0
+BR /L_4
+L_3: MOVE #0, .R0
+L_4: NOP
+CMP #-6[.IX], #0
+BZ /L_6
+BNZ /L_5
+L_5: MOVE #1, .R1
+BR /L_7
+L_6: MOVE #0, .R1
+L_7: NOP
+AND .R0, .R1
+CMP .A, #1
+BZ /L_8
+BNZ /L_9
+L_8: MOVE #1, #-7[.IX]
+BR /L_10
+L_9: MOVE #0, #-7[.IX]
+L_10: NOP
 
 ; Quadruple - [MV a, T_2, null]
 MOVE #-7[.IX], #-4[.IX]

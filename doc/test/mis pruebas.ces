@@ -2,42 +2,38 @@
 
 vacio principal () {
 
-entero test = 0;
-entero prueba;
+entero a = -2;
+entero b = -2;
+entero c;
 
-mientras (test < 5) {
-    
-    prueba=999;
-
-    escribeEnt(test);
-
-    alternativas (test) {
-        caso 0: 
-        {
-            prueba = 0;
-        }
-            corte;
-        caso 1:
-        {
-            prueba = 1;
-        }
-            corte;
-        caso 3:
-        {
-            prueba = 3;
-        }
-            corte;
-        
-        pordefecto: {prueba = 420;} corte;
-            
+/*
+mientras (a < 2) {
+    mientras (b < 2) {
+        c = a < b;
+        escribe("a");
+        escribeEnt(a);
+        escribe("b");
+        escribeEnt(b);
+        escribe("c");
+        escribeEnt(c);
+        escribe("---");
+        b++;
     }
-
-    escribeEnt(prueba);
-    escribe("--");
-
-    test++;
-
+    a++;
 }
+*/
+
+escribe("1<2");
+escribeEnt(1<2);
+
+escribe("2<1");
+escribeEnt(2<1);
+
+escribe("0<1");
+escribeEnt(0<1);
+
+escribe("1<0");
+escribeEnt(1<0);
 
 devuelve;
 

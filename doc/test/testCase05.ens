@@ -10,11 +10,9 @@ PRINCIPAL: NOP
 ;PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [VARLOCAL a, 0, null]
-; sin declarar
-
+MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCAL b, 0, null]
-; sin declarar
-
+MOVE #0, #-5[.IX]
 ; Quadruple - [MV T_0, 19, null]
 MOVE #19, #-6[.IX]
 ; Quadruple - [MV b, T_0, null]
