@@ -6,44 +6,29 @@ PRINCIPAL: NOP
 ;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado máquina
+;PUSH .SR       ;estado mÃ¡quina
 ;PUSH .IX       ;enlace de acceso
 
-; Quadruple - [VARLOCAL aaa, 0, null]
-MOVE #0, /10000
-; Quadruple - [VARLOCAL test2, 0, null]
-MOVE #0, /10001
-; Quadruple - [VARLOCAL test, 0, null]
-MOVE #0, /10002
-; Quadruple - [VARLOCAL aaa, 234, null]
-MOVE #234, /10000
-; Quadruple - [VARLOCAL test2, 345, null]
-MOVE #345, /10001
-; Quadruple - [VARLOCAL test, 69, null]
-MOVE #69, /10002
-; Quadruple - [VARLOCAL a, 2, null]
-MOVE #2, #-10[.IX]
-; Quadruple - [VARLOCAL b, 2, null]
-MOVE #2, #-11[.IX]
-; Quadruple - [VARLOCAL c, 0, null]
-MOVE #0, #-12[.IX]
-; Quadruple - [MV T_0, test, null]
-MOVE /10002, #-13[.IX]
-; Quadruple - [WRINT T_0, null, null]
-WRINT #-13[.IX] 
-WRCHAR #10 
+; Quadruple - [VARLOCALVECTOR v1, 3, null]
+; sin declarar?
 
-; Quadruple - [MV T_2, test2, null]
-MOVE /10001, #-15[.IX]
-; Quadruple - [WRINT T_2, null, null]
-WRINT #-15[.IX] 
-WRCHAR #10 
+; Quadruple - [MV T_1, 7, null]
+MOVE #7, #-8[.IX]
+; Quadruple - [STP v1, T_1, 0]
+ADD #0, #-8[.IX]
+MOVE .A, #-4[.IX]
 
-; Quadruple - [MV T_4, aaa, null]
-MOVE /10000, #-17[.IX]
-; Quadruple - [WRINT T_4, null, null]
-WRINT #-17[.IX] 
-WRCHAR #10 
+; Quadruple - [MV T_3, 7, null]
+MOVE #7, #-10[.IX]
+; Quadruple - [STP v1, T_3, 1]
+ADD #1, #-10[.IX]
+MOVE .A, #-4[.IX]
+
+; Quadruple - [MV T_5, 7, null]
+MOVE #7, #-12[.IX]
+; Quadruple - [STP v1, T_5, 2]
+ADD #2, #-12[.IX]
+MOVE .A, #-4[.IX]
 
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
