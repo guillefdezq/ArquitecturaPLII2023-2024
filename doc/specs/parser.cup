@@ -1255,7 +1255,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 			Variable variable = new Variable(expr.getNombreVector(), expr.getSymbolVariableIdentificador().getScope());
-			intermediateCodeBuilder.addQuadruple("MVP", temporal, variable, expr.getIndice());
+			//intermediateCodeBuilder.addQuadruple("MVP", temporal, variable, expr.getIndice());
 
 			expr.setTemporal(temporal);
 			expr.setIntermediateCode(intermediateCodeBuilder.create());
@@ -1300,6 +1300,8 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 
 accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: System.out.println("READ> accesoVector");
 
+		ScopeIF scope = scopeManager.getCurrentScope();
+
 		Expresion expr = (Expresion) exp;
 		String identificador = id.getLexema(); 
 		System.out.println(identificador);
@@ -1315,8 +1317,8 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 
 		String numero = "";
 
+		SymbolVariable variable = (SymbolVariable) symbol;
 		if (symbol instanceof SymbolVariable) {
-			SymbolVariable variable = (SymbolVariable) symbol;
 			if (!(variable.getType() instanceof TypeArray)) {
 				semanticErrorManager.semanticFatalError("La variable " + identificador + " no es un vector.");
 			}
@@ -1335,6 +1337,13 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 		exprN.setValor(numero);
 		exprN.setIndice(Integer.parseInt(expr.getValor()));
 		exprN.setNombreVector(identificador);
+		TemporalIF temporal = exprN.getTemporal();
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("MVP", temporal, variable, exprN.getIndice());
+
+		exprN.setIntermediateCode(intermediateCodeBuilder.create());
 
 		RESULT = exprN;
 		 :};

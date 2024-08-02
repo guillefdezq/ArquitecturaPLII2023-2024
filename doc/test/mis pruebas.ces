@@ -5,17 +5,12 @@ vacio principal () {
     tipo entero vector[3];
 
     vector v1;
-
-    v1[0] = 7;
-
+    
     v1[1] = 7;
-
-    v1[2] = 7;
-    /*
     
     escribe("v1");
     escribeEnt(v1[1]);
-    */
+    
 
 devuelve;
 
