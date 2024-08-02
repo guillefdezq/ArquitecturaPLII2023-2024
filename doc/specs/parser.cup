@@ -437,7 +437,7 @@ declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_
 		if (typeTable.containsType(nombre)) {
 			semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarado.");
 		} else {			
-			TypeArray tsVector = new TypeArray (scope, nombre, tamano);
+			TypeArray tsVector = new TypeArray (scope, nombre, tamano);	
 			typeTable.addType(nombre,tsVector);
 
 			// Mirando que tiene
@@ -538,7 +538,7 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 				sTable.addSymbol(nombre, simboloVariable);
 				
 				SymbolIF fetch = sTable.getSymbol(nombre);
-				System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
+				System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "[" + simboloVariable.getType().getSize() + "]" + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
 			}
 		}
 
@@ -947,11 +947,22 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 				symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					Variable variable = new Variable(symbol.getName(), symbol.getScope());
-					int valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
-					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
+					int valor;
+					System.out.println("     symbol.getType() = " + symbol.getType());
+					if ((symbol.getType() instanceof TypeSimple)) {
+						valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+						intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
+					} else if ((symbol.getType() instanceof TypeArray)) {
+						String valores = ((SymbolVariable)symbol).getValor();
+						int size = ((TypeArray)symbol.getType()).getSize();
+						intermediateCodeBuilder.addQuadruple("VARLOCALVECTOR", variable, size);
+					} else {
+						semanticErrorManager.semanticFatalError("Error inesperado en línea 945 en el PARSER.CUP.");
+					}
 				}	
 			}
 		}
+
 
 		TemporalFactory temporalFactory = new TemporalFactory(scope);
 		TemporalIF temporal = temporalFactory.create();

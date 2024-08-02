@@ -1,35 +1,21 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
-entero test = 69;
-entero aaa = 234;
-entero test2 = 345;
-
 vacio principal () {
 
-entero a = 2;
-entero b = 2;
-entero c;
+    tipo entero vector[3];
 
-/*
-mientras (a < 2) {
-    mientras (b < 2) {
-        c = a < b;
-        escribe("a");
-        escribeEnt(a);
-        escribe("b");
-        escribeEnt(b);
-        escribe("c");
-        escribeEnt(c);
-        escribe("---");
-        b++;
-    }
-    a++;
-}
-*/
+    vector v1;
 
-escribeEnt(test);
-escribeEnt(test2);
-escribeEnt(aaa);
+    v1[0] = 7;
+
+    v1[1] = 7;
+
+    v1[2] = 7;
+    /*
+    
+    escribe("v1");
+    escribeEnt(v1[1]);
+    */
 
 devuelve;
 
