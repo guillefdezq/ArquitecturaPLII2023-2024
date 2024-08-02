@@ -8,7 +8,7 @@ import compiler.intermediate.Temporal;
 import compiler.intermediate.Value;
 import compiler.intermediate.Variable;
 import compiler.semantic.type.TypeSimple;
-
+import compiler.syntax.nonTerminal.Expresion;
 import es.uned.lsi.compiler.code.ExecutionEnvironmentIF;
 import es.uned.lsi.compiler.code.MemoryDescriptorIF;
 import es.uned.lsi.compiler.code.RegisterDescriptorIF;
@@ -17,6 +17,7 @@ import es.uned.lsi.compiler.intermediate.LabelIF;
 import es.uned.lsi.compiler.intermediate.OperandIF;
 import es.uned.lsi.compiler.intermediate.QuadrupleIF;
 import es.uned.lsi.compiler.intermediate.TemporalFactory;
+import es.uned.lsi.compiler.intermediate.VariableIF;
 
 /**
  * Class for the ENS2001 Execution environment.
@@ -121,8 +122,16 @@ public class ExecutionEnvironmentEns2001
 
             // ADD indice, dirvariable     -> ADD  o2, o1 
             // MOVE acumulador, resultado  -> MOVE .a, r
-            b.append("ADD " + o2 + ", " + o1 + "\n");
-            b.append("MOVE " + ".A" + ", " + r + "\n");  // Lo tengo casi casi
+
+            System.out.println("STP: " + o1 + ", " + o2 + ", " + r + ", ");
+
+            int direccion = ((Variable) quadruple.getResult()).getAddress();
+            int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
+            int total = direccion + adicion;
+
+            System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
+
+            b.append("MOVE " + o1 + ", #-" + total + "[.IX]\n");  // Lo tengo casi casi
         } else if (quadruple.getOperation().equals("ADD")) {
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
