@@ -131,7 +131,29 @@ public class ExecutionEnvironmentEns2001
 
             System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
 
-            b.append("MOVE " + o1 + ", #-" + total + "[.IX]\n");  // Lo tengo casi casi
+            b.append("MOVE " + o1 + ", #-" + total + "[.IX]\n");  
+            
+        } else if (quadruple.getOperation().equals("MVP")) {
+            //("MVP", temporal, variable, expr.getIndice())
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            String o2 = operacion(quadruple.getSecondOperand());
+            // se debe añadir el numero del indice a la posicion que se quiere modificar
+            // por tanto, se coge la dirección de la variable y se añade, sin más.
+
+            // ADD indice, dirvariable     -> ADD  o2, o1 
+            // MOVE acumulador, resultado  -> MOVE .a, r
+
+            System.out.println("MVP: " + o1 + ", " + o2 + ", " + r + ", ");
+
+            int direccion = ((Variable) quadruple.getFirstOperand()).getAddress();
+            int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
+            int total = direccion + adicion;
+
+            System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
+
+            b.append("MOVE #-" + total + "[.IX], " + r + "\n");  
+
         } else if (quadruple.getOperation().equals("ADD")) {
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());

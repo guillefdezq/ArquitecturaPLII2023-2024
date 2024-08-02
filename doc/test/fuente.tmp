@@ -12,22 +12,43 @@ PRINCIPAL: NOP
 ; Quadruple - [VARLOCALVECTOR v1, 3, null]
 ; sin declarar?
 
+; Quadruple - [MVP null, null, 0]
+; sin declarar?
+
 ; Quadruple - [MV T_1, 7, null]
 MOVE #7, #-8[.IX]
 ; Quadruple - [STP v1, T_1, 0]
 MOVE #-8[.IX], #-4[.IX]
+
+; Quadruple - [MVP null, null, 1]
+; sin declarar?
 
 ; Quadruple - [MV T_3, 7, null]
 MOVE #7, #-10[.IX]
 ; Quadruple - [STP v1, T_3, 1]
 MOVE #-10[.IX], #-5[.IX]
 
+; Quadruple - [MVP null, null, 2]
+; sin declarar?
+
 ; Quadruple - [MV T_5, 7, null]
 MOVE #7, #-12[.IX]
 ; Quadruple - [STP v1, T_5, 2]
 MOVE #-12[.IX], #-6[.IX]
 
+; Quadruple - [WRSTR T_6, L_0, null]
+WRSTR /L_0 
+
+; Quadruple - [MVP null, null, 1]
+; sin declarar?
+
+; Quadruple - [WRINT T_8, null, null]
+WRINT #-15[.IX] 
+WRCHAR #10 
+
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
 
+; Quadruple - [CADENA v1\n, L_0, null]
+L_0: DATA "v1\n"
 
