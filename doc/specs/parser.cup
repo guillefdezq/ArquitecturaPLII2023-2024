@@ -1251,14 +1251,14 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 
 			ScopeIF scope = scopeManager.getCurrentScope();
 			IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
-			TemporalFactory temporalFactory = new TemporalFactory(scope);
-			TemporalIF temporal = temporalFactory.create();
+			//TemporalFactory temporalFactory = new TemporalFactory(scope);
+			//TemporalIF temporal = temporalFactory.create();
 
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 			Variable variable = new Variable(expr.getNombreVector(), expr.getSymbolVariableIdentificador().getScope());
 			//intermediateCodeBuilder.addQuadruple("MVP", temporal, variable, expr.getIndice());		// Ya se inserta esta cuádrupla más abajo
 
-			expr.setTemporal(temporal);
+			//expr.setTemporal(temporal);
 			expr.setIntermediateCode(intermediateCodeBuilder.create());
 			// expr.setType(scopeManager.searchType("ENTERO")); // Esto no hace falta porque estamos reutilizando la expresión.
 			System.out.println("     QUAD>" + expr.getIntermediateCode());  
@@ -1340,6 +1340,7 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 		exprN.setNombreVector(identificador);
 		TemporalFactory temporalFactory = new TemporalFactory(scope);
 		TemporalIF temporal = temporalFactory.create();
+		exprN.setTemporal(temporal);
 
 		Variable variable = new Variable(identificador, symbol.getScope());
 
