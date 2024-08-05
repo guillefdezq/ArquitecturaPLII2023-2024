@@ -12,7 +12,7 @@ vacio principal ()
     {
         a=57;
     }
-    
+    escribeEnt(a);
     devuelve;
 }
 

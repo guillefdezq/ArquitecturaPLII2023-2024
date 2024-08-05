@@ -6,7 +6,7 @@ vacio principal () {
 
     vector v1;
     
-    v1[0] = 69;
+    v1[2] = 22;
 
     escribeEnt(v1[0]);
     
