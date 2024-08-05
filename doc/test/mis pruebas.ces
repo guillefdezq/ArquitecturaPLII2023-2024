@@ -6,10 +6,14 @@ vacio principal () {
 
     vector v1;
     
-    v1[1] = 7;
+    v1[0] = 69;
+    v1[1] = 420;
+    v1[2] = 666;
     
     escribe("v1");
     escribeEnt(v1[1]);
+    /*
+    */
     
 
 devuelve;

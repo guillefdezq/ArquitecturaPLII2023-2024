@@ -114,6 +114,7 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE " + o1 + ", " + r);
         } else if (quadruple.getOperation().equals("STP")) {
             //"STP", variable, expr.getTemporal(), refexpr.getIndice()
+            //      resultado, primer operando,     segundo operando    
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
@@ -149,10 +150,12 @@ public class ExecutionEnvironmentEns2001
             int direccion = ((Variable) quadruple.getFirstOperand()).getAddress();
             int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
             int total = direccion + adicion;
-
+            
             System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
-
+            
             b.append("MOVE #-" + total + "[.IX], " + r + "\n");  
+            /* 
+             */
 
         } else if (quadruple.getOperation().equals("ADD")) {
             String r = operacion(quadruple.getResult());
