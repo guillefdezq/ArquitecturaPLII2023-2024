@@ -1255,7 +1255,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 			Variable variable = new Variable(expr.getNombreVector(), expr.getSymbolVariableIdentificador().getScope());
-			//intermediateCodeBuilder.addQuadruple("MVP", temporal, variable, expr.getIndice());
+			//intermediateCodeBuilder.addQuadruple("MVP", temporal, variable, expr.getIndice());		// Ya se inserta esta cuádrupla más abajo
 
 			expr.setTemporal(temporal);
 			expr.setIntermediateCode(intermediateCodeBuilder.create());
@@ -1317,16 +1317,16 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 
 		String numero = "";
 
-		SymbolVariable variable = (SymbolVariable) symbol;
+		SymbolVariable symbolvariable = (SymbolVariable) symbol;
 		if (symbol instanceof SymbolVariable) {
-			if (!(variable.getType() instanceof TypeArray)) {
+			if (!(symbolvariable.getType() instanceof TypeArray)) {
 				semanticErrorManager.semanticFatalError("La variable " + identificador + " no es un vector.");
 			}
-			if (variable.getType().getSize() < Integer.parseInt(expr.getValor())) {
+			if (symbolvariable.getType().getSize() < Integer.parseInt(expr.getValor())) {
 				semanticErrorManager.semanticFatalError("La variable " + identificador + " no tiene tantos elementos. Equivalente a un IndexOutOfBoundsException.");
 			}
-			exprN.setSymbolVariableIdentificador(variable);
-			numero = variable.getValor().split(",")[Integer.parseInt(expr.getValor())];
+			exprN.setSymbolVariableIdentificador(symbolvariable);
+			numero = symbolvariable.getValor().split(",")[Integer.parseInt(expr.getValor())];
 		} else {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable.");
 		}
@@ -1337,7 +1337,10 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 		exprN.setValor(numero);
 		exprN.setIndice(Integer.parseInt(expr.getValor()));
 		exprN.setNombreVector(identificador);
-		TemporalIF temporal = exprN.getTemporal();
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
+
+		Variable variable = new Variable(identificador, symbol.getScope());
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
