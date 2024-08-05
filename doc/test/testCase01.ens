@@ -6,7 +6,7 @@ PRINCIPAL: NOP
 ;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado máquina
+;PUSH .SR       ;estado mÃ¡quina
 ;PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [DEVUELTO null, null, null]
