@@ -1323,8 +1323,13 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 			if (!(symbolvariable.getType() instanceof TypeArray)) {
 				semanticErrorManager.semanticFatalError("La variable " + identificador + " no es un vector.");
 			}
-			if (symbolvariable.getType().getSize() < Integer.parseInt(expr.getValor())) {
-				semanticErrorManager.semanticFatalError("La variable " + identificador + " no tiene tantos elementos. Equivalente a un IndexOutOfBoundsException.");
+			System.out.println("size " + symbolvariable.getType().getSize() + " < " + expr.getValor());
+			if (symbolvariable.getType().getSize() <= Integer.parseInt(expr.getValor())) {
+				semanticErrorManager.semanticFatalError("La variable " + identificador + " no tiene tantos elementos. Rango admitido entre 0 y " + (symbolvariable.getType().getSize() - 1) + ". Equivalente a un IndexOutOfBoundsException.");
+			}
+			if (0 > Integer.parseInt(expr.getValor())) {
+				// Estado inalcanzable: no se puede utilizar enteros negativos.
+				semanticErrorManager.semanticFatalError("Imposible utilizar un indice negativo. Rango admitido entre 0 y " + (symbolvariable.getType().getSize() - 1) + ". Equivalente a un IndexOutOfBoundsException.");
 			}
 			exprN.setSymbolVariableIdentificador(symbolvariable);
 			numero = symbolvariable.getValor().split(",")[Integer.parseInt(expr.getValor())];
