@@ -1,5 +1,8 @@
 ; Quadruple - [AXIOM null, null, null]
 
+; Quadruple - [VARGLOBAL TAM, 0, null]
+; sin declarar?
+
 ; Quadruple - [FUNCION null, null, null]
 null: NOP
 
@@ -20,30 +23,36 @@ PRINCIPAL: NOP
 ;PUSH .SR       ;estado máquina
 ;PUSH .IX       ;enlace de acceso
 
-; Quadruple - [VARLOCAL c, 0, null]
-MOVE #0, #-4[.IX]
-; Quadruple - [VARLOCAL x, 0, null]
-MOVE #0, #-5[.IX]
+; Quadruple - [VARLOCAL lista1, 0, null]
+MOVE #0, /10000
+; Quadruple - [VARLOCALVECTOR lista1, 3, null]
+; sin declarar?
+
 ; Quadruple - [VARLOCAL a, 0, null]
-MOVE #0, #-6[.IX]
-; Quadruple - [VARLOCAL b, 0, null]
-MOVE #0, #-7[.IX]
-; Quadruple - [MV T_0, 2, null]
-MOVE #2, #-13[.IX]
-; Quadruple - [MV a, T_0, null]
-MOVE #-13[.IX], #-6[.IX]
-; Quadruple - [DEVUELTO T_2, null, null]
-MOVE #-15[.IX], #-0[.IX]
+MOVE #0, #-10[.IX]
+; Quadruple - [VARLOCALVECTOR lista2, 10, null]
+; sin declarar?
+
+; Quadruple - [VARLOCAL x, 0, null]
+MOVE #0, #-21[.IX]
+; Quadruple - [VARLOCALVECTOR lista3, 4, null]
+; sin declarar?
+
+; Quadruple - [VARLOCAL c, 0, null]
+MOVE #0, #-26[.IX]
+; Quadruple - [VARLOCAL a, 0, null]
+MOVE #0, #-27[.IX]
+; Quadruple - [VARLOCALVECTOR lista3, 4, null]
+; sin declarar?
+
+; Quadruple - [DEVUELTO T_1, null, null]
+MOVE #-38[.IX], #-0[.IX]
 HALT
 
-; Quadruple - [MV b, T_2, null]
-MOVE #-15[.IX], #-7[.IX]
-; Quadruple - [MV T_3, b, null]
-MOVE #-7[.IX], #-16[.IX]
-; Quadruple - [WRINT T_3, null, null]
-WRINT #-16[.IX] 
-WRCHAR #10 
-
+; Quadruple - [MV a, T_1, null]
+MOVE #-38[.IX], #-27[.IX]
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
 
+; Quadruple - [CADENA c\n, L_0, null]
+L_0: DATA "c\n"

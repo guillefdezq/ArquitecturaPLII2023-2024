@@ -16,9 +16,6 @@ MOVE #0, #-4[.IX]
 
 ; Quadruple - [MV T_0, 1, null]
 MOVE #1, #-8[.IX]
-; Quadruple - [MVP T_1, v1, 1]
-MOVE #-6[.IX], #-9[.IX]
-
 ; Quadruple - [MV T_2, 7, null]
 MOVE #7, #-10[.IX]
 ; Quadruple - [STP v1, T_2, 1]
