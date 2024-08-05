@@ -805,6 +805,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			symbol = sTable.getSymbols().get(i);
 			if (symbol instanceof SymbolVariable) {
 				((SymbolVariable) symbol).setAddress(direccion);
+				System.out.println("direcciones" + symbol.getName() + "@" + direccion);
 				direccion += symbol.getType().getSize();
 			}			
 		}
