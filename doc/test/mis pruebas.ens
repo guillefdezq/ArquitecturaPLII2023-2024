@@ -6,7 +6,7 @@ PRINCIPAL: NOP
 ;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado mÃ¡quina
+;PUSH .SR       ;estado máquina
 ;PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [VARLOCALVECTOR v1, 3, null]
@@ -32,15 +32,15 @@ MOVE #420, #-12[.IX]
 ; Quadruple - [STP v1, T_5, 1]
 MOVE #-12[.IX], #-5[.IX]
 
-; Quadruple - [MV T_6, 2, null]
-MOVE #2, #-13[.IX]
-; Quadruple - [MVP T_7, v1, 2]
-MOVE #-6[.IX], #-14[.IX]
+; Quadruple - [MV T_6, 1, null]
+MOVE #1, #-13[.IX]
+; Quadruple - [MVP T_7, v1, 1]
+MOVE #-5[.IX], #-14[.IX]
 
 ; Quadruple - [MV T_8, 666, null]
 MOVE #666, #-15[.IX]
-; Quadruple - [STP v1, T_8, 2]
-MOVE #-15[.IX], #-6[.IX]
+; Quadruple - [STP v1, T_8, 1]
+MOVE #-15[.IX], #-5[.IX]
 
 ; Quadruple - [WRSTR T_9, L_0, null]
 WRSTR /L_0 
