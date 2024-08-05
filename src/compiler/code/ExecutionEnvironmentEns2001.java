@@ -154,8 +154,7 @@ public class ExecutionEnvironmentEns2001
             System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
             
             b.append("MOVE #-" + total + "[.IX], " + r + "\n");  
-            /* 
-             */
+
 
         } else if (quadruple.getOperation().equals("ADD")) {
             String r = operacion(quadruple.getResult());

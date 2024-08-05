@@ -9,29 +9,37 @@ PRINCIPAL: NOP
 ;PUSH .SR       ;estado máquina
 ;PUSH .IX       ;enlace de acceso
 
+; Quadruple - [VARLOCAL c, 0, null]
+MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCALVECTOR v1, 3, null]
 ; sin declarar?
 
 ; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-7[.IX]
+MOVE #1, #-8[.IX]
 ; Quadruple - [MVP T_1, v1, 1]
-MOVE #-5[.IX], #-8[.IX]
+MOVE #-6[.IX], #-9[.IX]
 
 ; Quadruple - [MV T_2, 7, null]
-MOVE #7, #-9[.IX]
+MOVE #7, #-10[.IX]
 ; Quadruple - [STP v1, T_2, 1]
-MOVE #-9[.IX], #-5[.IX]
+MOVE #-10[.IX], #-6[.IX]
 
 ; Quadruple - [WRSTR T_3, L_0, null]
 WRSTR /L_0 
 
 ; Quadruple - [MV T_4, 1, null]
-MOVE #1, #-11[.IX]
+MOVE #1, #-12[.IX]
 ; Quadruple - [MVP T_5, v1, 1]
-MOVE #-5[.IX], #-12[.IX]
+MOVE #-6[.IX], #-13[.IX]
 
-; Quadruple - [WRINT T_6, null, null]
+; Quadruple - [WRINT T_5, null, null]
 WRINT #-13[.IX] 
+WRCHAR #10 
+
+; Quadruple - [MV T_7, c, null]
+MOVE #-4[.IX], #-15[.IX]
+; Quadruple - [WRINT T_7, null, null]
+WRINT #-15[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [DEVUELTO null, null, null]
