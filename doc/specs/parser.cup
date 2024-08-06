@@ -1361,16 +1361,19 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 // IDEA: para los parámetros crear variables del tipo nombreFunción+Parametro+nombreParámetro o bien, crear en el no terminal un booleano que compruebe si es parámetro y su posición en la función.
 llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: System.out.println("READ> llamadaFuncion = conParametros");
 		ScopeIF scope = scopeManager.getCurrentScope();
-		SymbolProcedure funcion = (SymbolProcedure) scopeManager.searchSymbol(ident.getLexema());
 
+		if (!scopeManager.containsSymbol(ident.getLexema())) {
+			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no existe. DEBUG: llamadafuncion");
+		}
+		
 		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
-
-		// Get instance of symbol
-		System.out.println(scopeManager.containsSymbol(ident.getLexema()));
-
-		if (!(funcion instanceof SymbolFunction || funcion instanceof SymbolProcedure)) {
+		
+		if (!(symbol instanceof SymbolFunction || symbol instanceof SymbolProcedure)) {
 			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no es una función o procedimiento.");
 		}
+		
+		// Borrar?
+		SymbolProcedure funcion = (SymbolProcedure) symbol;
 		
 		ArrayList<SymbolIF> listaParametros = (ArrayList<SymbolIF>) funcion.getParameters();		// Lista de parámetros de la función
 		ArrayList<String> parametros = (ArrayList<String>) params;		// Lista de parámetros de la declaración
@@ -1392,19 +1395,34 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 
 		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
 
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
+
+		intermediateCodeBuilder.addQuadruple("DVLP", "STARTSUBPROGRAMA");
+
 		intermediateCodeBuilder.addQuadruple("INICIA_FUNCION", procedure);
 
-		for (int i = 0; i < expresionesParametro.size(); i++) {		/// Es muy probable que salte error. Las expresiones no tienen definido los temporales.
+		for (int i = 0; i < expresionesParametro.size(); i++) {
 			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(expresionesParametro.size()-1-i).getTemporal());
 		}
 
-		intermediateCodeBuilder.addQuadruple("LLAMA_FUNCION", procedure);
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelIdentificador = labelFactory.create(ident.getLexema());
 
-		/// Falta codigo de devolución del resultado.
-		
+		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);		/// cuadrupla sin definir
+
 		Expresion expr = new Expresion();
-		expr.setValor("9999");		// Este valor sirve únicamente de referencia, no devuelve valor real.
-		//expr.setTipo(scopeManager.searchType("ENTERO"));
+		expr.setValor("0");		// Este valor sirve únicamente de referencia, no devuelve valor real.
+		
+		if (symbol instanceof SymbolFunction) {
+			intermediateCodeBuilder.addQuadruple("DEVUELVE"/*, temporal*/);			/// cuadrupla sin definir
+			//expr.setTipo(scopeManager.searchType("ENTERO"));
+		} else {
+			//expr.setTipo(scopeManager.searchType("VACIO"));
+		}
+		
+		expr.setIntermediateCode(intermediateCodeBuilder.create());
+		expr.setTemporal(temporal);
 		expr.setTipo(((SymbolIF) funcion).getType());
 		RESULT = expr; :}
 	| IDENTIFICADOR:ident OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros");
