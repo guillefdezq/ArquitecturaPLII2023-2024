@@ -1,16 +1,16 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
+entero test (entero uno) {
+    devuelve 1;
+}
+
 vacio principal () {
-
-    tipo entero vector[3];
-
-    vector v1;
     
-    v1[2] = 22;
+    entero hola;
 
-    escribeEnt(v1[0]);
-    
+    entero no;
 
+    hola = test(1);
 devuelve;
 
 }
