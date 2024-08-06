@@ -36,8 +36,10 @@ PUSH .R0       ;enlace de control
 PUSH .SR       ;estado máquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PARAM null, null, null]
-PUSH null
+; Quadruple - [MV T_0, 1, null]
+MOVE #1, #-8[.IX]
+; Quadruple - [PARAM T_0, null, null]
+PUSH #-8[.IX]
 
 ; Quadruple - [CALL L_test, null, null]
 ; sin declarar?
@@ -45,12 +47,12 @@ PUSH null
 ; Quadruple - [DEVUELVE null, null, null]
 ; sin declarar?
 
-; Quadruple - [DEVUELTO T_1, null, null]
-MOVE #-9[.IX], #-0[.IX]
+; Quadruple - [DEVUELTO T_2, null, null]
+MOVE #-10[.IX], #-0[.IX]
 HALT
 
-; Quadruple - [MV hola, T_1, null]
-MOVE #-9[.IX], #-6[.IX]
+; Quadruple - [MV hola, T_2, null]
+MOVE #-10[.IX], #-6[.IX]
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
 

@@ -1376,17 +1376,14 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		SymbolProcedure funcion = (SymbolProcedure) symbol;
 		
 		ArrayList<SymbolIF> listaParametros = (ArrayList<SymbolIF>) funcion.getParameters();		// Lista de parámetros de la función
-		ArrayList<String> parametros = (ArrayList<String>) params;		// Lista de parámetros de la declaración
+		ArrayList<Expresion> parametros = (ArrayList<Expresion>) params;		// Lista de parámetros de la declaración
 		if (listaParametros.size() != parametros.size()) {
 			semanticErrorManager.semanticFatalError("La función o procedimiento " + ident.getLexema() + " requiere " + listaParametros.size() + " parámetro(s)");
 		}
 
 		ArrayList<Expresion> expresionesParametro = new ArrayList<Expresion>();
-		for (String parametro : parametros) {
-			Expresion expresionParametro = new Expresion();
-			expresionParametro.setValor(parametro);
-			expresionParametro.setTipo(scopeManager.searchType("ENTERO"));
-			expresionesParametro.add(expresionParametro);
+		for (Expresion parametro : parametros) {
+			expresionesParametro.add(parametro);
 		}
 		// La comprobación de introducir tipos enteros ya debería realizarse previamente (o eso creo).
 
@@ -1449,12 +1446,12 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		expr.setTipo(scopeManager.searchType("ENTERO"));
 		RESULT = expr; :};
 parametros ::= expresion:exp {: System.out.println("READ> parametros = expresion"); 
-		ArrayList<String> params = new ArrayList<String>();
-		params.add(0, ((String)( (Expresion) exp).getValor()));
+		ArrayList<Expresion> params = new ArrayList<Expresion>();
+		params.add(0, (Expresion) exp);
 		 RESULT = params; :}
  | expresion:exp COLON parametros:paramsEntrada {: System.out.println("READ> parametros = expresion COLON parametros"); 
-		ArrayList<String> params = (ArrayList<String>) paramsEntrada;
-		params.add(0, ((String)( (Expresion) exp).getValor()));
+		ArrayList<Expresion> params = (ArrayList<Expresion>) paramsEntrada;
+		params.add(0, (Expresion) exp);
  		 RESULT = params; :};
 
 //  SENTENCIAS
