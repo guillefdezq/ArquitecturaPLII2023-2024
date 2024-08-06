@@ -325,7 +325,7 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 
-		int direccion=10000;		//// Las variables globales deberían colocarse desde aquí
+		int direccion=10000;		// Las variables globales se colocarán aquí??
 		SymbolIF symbol;
 		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
 			symbol=scope.getSymbolTable().getSymbols().get(i);
@@ -348,7 +348,7 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 			}
 		}
 
-		/// Se siente muy vacío... no debería contener código intermedio?
+		/// Se siente muy vacío... no debería contener código intermedio? Tal vez sea necesario para añadir las cuádruplas de las funciones y parámetros
 
 		Program ax1 = new Program();
 		Seccionfunciones sf = (Seccionfunciones) secFun;
@@ -362,7 +362,7 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 
-		int direccion=10000;		//// Las variables deberían colocarse desde aquí, pero por alguna razón no lo termina de hacer?
+		int direccion=10000;		
 		SymbolIF symbol;
 		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
 			symbol=scope.getSymbolTable().getSymbols().get(i);
@@ -1050,9 +1050,8 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 		expr.setTemporal(temporal);
 		expr.setIntermediateCode(intermediateCodeBuilder.create());
 		System.out.println("     QUAD>" + expr.getIntermediateCode());  
-		RESULT = expr;
-
- :}	|  OPEN_KEY expresion:exp CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY");
+		RESULT = expr; :}	
+ 	|  OPEN_KEY expresion:exp CLOSE_KEY {: System.out.println("READ> expresion = OPEN_KEY expresion CLOSE_KEY");
  		Expresion expr = (Expresion) exp;
 		System.out.println("(EX)> (" + expr.getValor() + ")");
 		RESULT = expr; :}  /// DUDA: Debería crear un ámbito aquí?
@@ -1115,7 +1114,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			System.out.println("EXP*> " + expra.getValor() + "*" + exprb.getValor() + "=" + expr.getValor());
 			System.out.println("     QUAD>" + expr.getIntermediateCode());  
 			RESULT = expr; :}
- 	|  expresion:exp AUTO_INCREMENTO {: System.out.println("READ> expresion = AUTO_INCREMENTO"); /// Puede estar fallando esto...
+ 	|  expresion:exp AUTO_INCREMENTO {: System.out.println("READ> expresion = AUTO_INCREMENTO");
 		
 		Expresion expr = (Expresion) exp;
 
@@ -1160,7 +1159,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			TemporalIF temporal = temporalFactory.create();
 
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
-			intermediateCodeBuilder.addQuadruple("NEG", temporal, expr.getTemporal());  /// Duda: es esta?
+			intermediateCodeBuilder.addQuadruple("NEG", temporal, expr.getTemporal());
 
 			expr.setTemporal(temporal);
 			expr.setIntermediateCode(intermediateCodeBuilder.create());
@@ -1394,7 +1393,7 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 
 		intermediateCodeBuilder.addQuadruple("INICIA_FUNCION", procedure);
 
-		for (int i = 0; i < expresionesParametro.size(); i++) {		/// Es muy probable que salte error. Las expresiones no tienen definido los temporales.
+		for (int i = 0; i < expresionesParametro.size(); i++) {		
 			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(expresionesParametro.size()-1-i).getTemporal());
 		}
 
@@ -1587,7 +1586,7 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 				Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
 				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
 				intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
-				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getIndice());		/// Puede estar mal construida
+				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getIndice());
 
 				System.out.println("ASIG> vector " + vari.getName() + "[" + indice + "] = " + valorAGuardar);
 			} else {
@@ -1663,7 +1662,7 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
 				intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 				intermediateCodeBuilder.addQuadruple("ADD", variable, variable, expr.getTemporal());
-				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getIndice());		/// Puede estar mal construida
+				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getIndice());
 
 
 				System.out.println("ASIG> vector " + variable.getName() + "[" + indice + "] = " + valorAGuardar);
@@ -1694,7 +1693,6 @@ sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO senten
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelElse);		// Ir al else si no coincide
-		/// No terminado de declarar bien las sentencias de entremedias.
 		intermediateCodeBuilder.addQuadruples(sentenciasi.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BR", labelFinal); //me salgo del if
 		intermediateCodeBuilder.addQuadruple("INL", labelElse);
@@ -1722,11 +1720,7 @@ sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO senten
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelFinal);	// Salir si no coincide
-		/// No terminado de declarar bien las sentencias de entremedias.
 		intermediateCodeBuilder.addQuadruples(sentenciasi.getIntermediateCode());
-		//intermediateCodeBuilder.addQuadruple("BR", labelFinal); //me salgo del if
-		//intermediateCodeBuilder.addQuadruple("INL", labelElse);
-		//intermediateCodeBuilder.addQuadruples(sentenciasino.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
 
 		Sentenciasi sentenciasSi =new Sentenciasi(expr, sentenciasi);
@@ -1926,7 +1920,7 @@ sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 
 		//Value value = new Value(salida);
-		intermediateCodeBuilder.addQuadruple("WRINT", expr.getTemporal());  /// Debería usar WRINT
+		intermediateCodeBuilder.addQuadruple("WRINT", expr.getTemporal());
 
 		// Está tomando la salida del propio parser, no del código intermedio.
 
