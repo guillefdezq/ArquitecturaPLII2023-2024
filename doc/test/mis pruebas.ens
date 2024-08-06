@@ -1,15 +1,16 @@
 ; Quadruple - [AXIOM null, null, null]
 
-; Quadruple - [FUNCION null, null, null]
-null: NOP
+; Quadruple - [INL L_test, null, null]
+L_test: NOP
 
-; Quadruple - [FIN_FUNCION L_FIN_test, 6, null]
-SUB .IX, #6;posiciona el puntero de pila SP para recuperar el contador del programa
-MOVE .A, .SP
-RET ;rescata de la pila el contenido del contador de programa
+; Quadruple - [PUNTEROSUBPROGRAMA T_0, 7, null]
+; sin declarar?
 
+; Quadruple - [DEVUELVE T_0, null, null]
+; sin declarar?
 
-
+; Quadruple - [FINSUBPROGRAMA L_FINtest, 6, null]
+; sin declarar?
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
@@ -17,7 +18,7 @@ PRINCIPAL: NOP
 ;MOVE .SP, .IX  ;guarda el valor de SP en IX
 ;PUSH #-1       ;valor de retorno
 ;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado máquina
+;PUSH .SR       ;estado mÃ¡quina
 ;PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [VARLOCAL uno, 0, null]
@@ -33,13 +34,13 @@ MOVE #0, #-6[.IX]
 MOVE .SP, .R0  ;guarda el valor de SP en R0
 PUSH #-1       ;valor de retorno
 PUSH .R0       ;enlace de control
-PUSH .SR       ;estado máquina
+PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-8[.IX]
+MOVE #1, #-10[.IX]
 ; Quadruple - [PARAM T_0, null, null]
-PUSH #-8[.IX]
+PUSH #-10[.IX]
 
 ; Quadruple - [CALL L_test, null, null]
 ; sin declarar?
@@ -48,11 +49,11 @@ PUSH #-8[.IX]
 ; sin declarar?
 
 ; Quadruple - [DEVUELTO T_2, null, null]
-MOVE #-10[.IX], #-0[.IX]
+MOVE #-12[.IX], #-0[.IX]
 HALT
 
 ; Quadruple - [MV hola, T_2, null]
-MOVE #-10[.IX], #-6[.IX]
+MOVE #-12[.IX], #-6[.IX]
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
 
