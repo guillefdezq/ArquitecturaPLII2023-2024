@@ -1403,6 +1403,7 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		intermediateCodeBuilder.addQuadruple("INICIA_FUNCION", procedure);
 
 		for (int i = 0; i < expresionesParametro.size(); i++) {
+			intermediateCodeBuilder.addQuadruples(expresionesParametro.get(expresionesParametro.size()-1-i).getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(expresionesParametro.size()-1-i).getTemporal());
 		}
 
