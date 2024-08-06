@@ -6,6 +6,8 @@ entero test (entero uno) {
 
 vacio principal () {
     
+    /* Gamboa vídeo 6 minuto 21 */
+
     entero hola;
 
     entero no;

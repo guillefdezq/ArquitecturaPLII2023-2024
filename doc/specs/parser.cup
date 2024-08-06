@@ -679,11 +679,18 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
-		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
 
 		LabelFactory labelFactory = new LabelFactory();
-		LabelIF label = labelFactory.create(identificador);
-		intermediateCodeBuilder.addQuadruple("FUNCION", simboloFuncion);
+		LabelIF labelInicio = labelFactory.create(identificador);
+		LabelIF labelFinal = labelFactory.create("FIN"+identificador);
+
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
+
+		// Hay un paso que realiza Gamboa en el que pone todas las variables a cero. Creo que ya se realiza por norma.
 
 		for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
 			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
@@ -693,34 +700,24 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}
 
-		//// añado variables locales y PUNTEROFINAL como en funcPrin
+		int tamanoTotal = scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size() + 5;  // Para que es el +5?
+
+		intermediateCodeBuilder.addQuadruple("PUNTEROSUBPROGRAMA", temporal, tamanoTotal);  // Posiciona el .SP según el tamaño del R.A del subprograma
 		
-		//gestionar el valor a devolver
-		///intermediateCodeBuilder.addQuadruple(secTip.getIntermediateCode());
-		///intermediateCodeBuilder.addQuadruple(fun1.getIntermediateCode());
-		label = labelFactory.create("FIN_"+identificador);
+		Sentencia func1 = (Sentencia) fun1;
+		intermediateCodeBuilder.addQuadruples(func1.getIntermediateCode());
 
-		// 4*regAct+param+1=posicion
-		int posicion = 4 + ((ArrayList<SymbolIF>) params).size() + 1;
-		Value value = new Value(posicion);
-		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", label, value);
-
-		List<QuadrupleIF> list2 = intermediateCodeBuilder.create();
-		for (int i = 0; i<list2.size(); i++) {
-			if(list2.get(i).getOperation().equals("DEVUELTO")) {
-				list2.get(i).setFirstOperand(value);
-			}
-		}
+		intermediateCodeBuilder.addQuadruple("FINSUBPROGRAMA", labelFinal, params.size()+5);
 
 		Funcion funcion = new Funcion();
 		funcion.setSymbolProcedure((SymbolProcedure) simboloFuncion);
-		funcion.setIntermediateCode(list2);
+		funcion.setIntermediateCode(intermediateCodeBuilder.create());
 
 		RESULT = funcion; :};
                      
          
-funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
-                      | seccionVariables listadoSentencias:listsent  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
+funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = listsent; :}
+                      | seccionVariables listadoSentencias:listsent  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = listsent; :};
 
 
  
