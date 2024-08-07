@@ -685,7 +685,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF labelInicio = labelFactory.create(identificador);
-		LabelIF labelFinal = labelFactory.create("FIN"+identificador);
+		LabelIF labelFinal = labelFactory.create("FIN_"+identificador);
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
@@ -1410,7 +1410,7 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		expr.setValor("0");		// Este valor sirve únicamente de referencia, no devuelve valor real.
 		
 		if (symbol instanceof SymbolFunction) {
-			intermediateCodeBuilder.addQuadruple("DEVUELVE"/*, temporal*/);			/// cuadrupla sin definir
+			intermediateCodeBuilder.addQuadruple("DEVUELTO"/*, temporal*/);			/// cuadrupla sin definir
 			//expr.setTipo(scopeManager.searchType("ENTERO"));
 		} else {
 			//expr.setTipo(scopeManager.searchType("VACIO"));
@@ -1494,7 +1494,7 @@ sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentencia
 		Expresion expr = (Expresion) exp;
 		Sentencia sen = new Sentenciadevuelve(expr.getValor());
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		intermediateCodeBuilder.addQuadruple("DEVUELVE", expr.getTemporal()); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
+		intermediateCodeBuilder.addQuadruple("DEVUELTO", expr.getTemporal()); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		System.out.println("READ> sentenciaDevuelve + expresion = " + expr.getValor()); 
 		RESULT = sen; :};

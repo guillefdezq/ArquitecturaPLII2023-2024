@@ -288,7 +288,8 @@ public class ExecutionEnvironmentEns2001
             b.append(labelFin.toString() + ": NOP\n");
 
         } else if (quadruple.getOperation().equals("AXIOM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            //b.append("AXIOM: NOP");
+            b.append("AXIOM: NOP\n");
+            b.append("BR /PRINCIPAL\n");
         } else if (quadruple.getOperation().equals("CADENA")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
                     String r = operacion(quadruple.getResult());
                 String o1 = operacion(quadruple.getFirstOperand());
@@ -297,11 +298,13 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             b.append("PRINCIPAL: NOP\n");
             b.append("; Por implementar correctamente, relacionado con subprogramas\n");
-            b.append(";MOVE .SP, .IX  ;guarda el valor de SP en IX\n");
-            b.append(";PUSH #-1       ;valor de retorno\n");
-            b.append(";PUSH .IX       ;enlace de control\n");
-            b.append(";PUSH .SR       ;estado máquina\n");
-            b.append(";PUSH .IX       ;enlace de acceso\n");
+
+            b.append("MOVE .SP, .IX  ;guarda el valor de SP en R0\n");
+            b.append("PUSH #-1       ;valor de retorno\n");
+            b.append("PUSH .IX       ;enlace de control\n");
+            b.append("PUSH .SR       ;estado máquina\n");
+            b.append("PUSH .IX       ;enlace de acceso\n");  // Supuestamente es para bloques, pero no se activa...?
+            
         } else if (quadruple.getOperation().equals("INICIA_FUNCION")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             b.append("MOVE .SP, .R0  ;guarda el valor de SP en R0\n");
             b.append("PUSH #-1       ;valor de retorno\n");
@@ -359,6 +362,9 @@ public class ExecutionEnvironmentEns2001
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());  /// En qué situación se usa esto?
             // b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n"); // En qué línea va esto?
+            
+            // La comprobación debería revisar si el puntero pila es el inicio, 65535 o cerca, para detener el flujo.
+            
             if(r!=null)
                 b.append("MOVE " + r + ", #-0[.IX]\n");
             //una función cualquiera
