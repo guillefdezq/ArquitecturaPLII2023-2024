@@ -1,16 +1,14 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
 entero test (entero uno) {
-    devuelve 1;
+    devuelve uno;
 }
 
 vacio principal () {
     
     /* Gamboa vídeo 6 minuto 21 */
 
-    entero hola;
-
-    entero no;
+    entero hola = 5;
 
     hola = test(1);
 devuelve;

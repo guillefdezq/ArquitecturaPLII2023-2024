@@ -1,90 +1,60 @@
 ; Quadruple - [AXIOM null, null, null]
+AXIOM: NOP
+BR /PRINCIPAL
+
+; Quadruple - [INL L_test, null, null]
+L_test: NOP
+
+; Quadruple - [PUNTEROSUBPROGRAMA T_0, 7, null]
+; sin declarar?
+
+; Quadruple - [DEVUELTO T_0, null, null]
+MOVE #-8[.IX], #-0[.IX]
+RET
+
+; Quadruple - [FINSUBPROGRAMA L_FIN_test, 6, null]
+; sin declarar?
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-;MOVE .SP, .IX  ;guarda el valor de SP en IX
-;PUSH #-1       ;valor de retorno
-;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado máquina
-;PUSH .IX       ;enlace de acceso
+MOVE .SP, .IX  ;guarda el valor de SP en R0     
+PUSH #-1       ;valor de retorno                ;-1
+PUSH .IX       ;enlace de control               ;-2
+PUSH .SR       ;estado mÃ¡quina                 ;-3
+PUSH .IX       ;enlace de acceso                ;-4
 
-; Quadruple - [VARLOCAL a, 0, null]
-MOVE #0, #-4[.IX]
-; Quadruple - [VARLOCAL b, 0, null]
-MOVE #0, #-5[.IX]
-; Quadruple - [VARLOCAL c, 0, null]
-MOVE #0, #-6[.IX]
-; Quadruple - [MV T_0, 5, null]
-MOVE #5, #-7[.IX]
-; Quadruple - [MV a, T_0, null]
-MOVE #-7[.IX], #-4[.IX]
-; Quadruple - [MV T_1, 3, null]
-MOVE #3, #-8[.IX]
-; Quadruple - [MV b, T_1, null]
-MOVE #-8[.IX], #-5[.IX]
-; Quadruple - [MV T_2, a, null]
-MOVE #-4[.IX], #-9[.IX]
-; Quadruple - [MV T_3, b, null]
-MOVE #-5[.IX], #-10[.IX]
-; Quadruple - [LS T_4, T_2, T_3]
-CMP #-9[.IX], #-10[.IX]
-BZ /L_5
-BP /L_5
-L_4: MOVE #1, #-11[.IX]
-BR /L_6
-L_5: MOVE #0, #-11[.IX]
-L_6: NOP
+; Quadruple - [VARLOCAL uno, 0, null]
+MOVE #0, #-4[.IX]                               ;-5
+; Quadruple - [VARLOCAL hola, 5, null]
+MOVE #5, #-5[.IX]                               ;-6
+; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
+; sin declarar?
 
-; Quadruple - [MV c, T_4, null]
-MOVE #-11[.IX], #-6[.IX]
-; Quadruple - [WRSTR T_5, L_0, null]
-WRSTR /L_0 
+; Quadruple - [INICIA_FUNCION test, null, null]
+MOVE .SP, .R0  ;guarda el valor de SP en R0
+SUB .SP, #5    ;incrementa el valor de SP
+MOVE .A, .SP   ;cambia de posicion SP para evitar borrado
+PUSH #-1       ;valor de retorno                ;-7
+PUSH .R0       ;enlace de control               ;-8
+PUSH .SR       ;estado mÃ¡quina                 ;-9
+PUSH .IX       ;enlace de acceso                ;-10
 
-; Quadruple - [MV T_6, c, null]
-MOVE #-6[.IX], #-13[.IX]
-; Quadruple - [WRINT T_6, null, null]
-WRINT #-13[.IX] 
-WRCHAR #10 
+; Quadruple - [MV T_0, 1, null]
+MOVE #1, #-9[.IX]
+; Quadruple - [PARAM T_0, null, null]
+PUSH #-9[.IX]
 
-; Quadruple - [MV T_8, a, null]
-MOVE #-4[.IX], #-15[.IX]
-; Quadruple - [MV T_9, a, null]
-MOVE #-4[.IX], #-16[.IX]
-; Quadruple - [EQ T_10, T_8, T_9]
-CMP #-15[.IX], #-16[.IX]
-BZ /L_7
-BNZ /L_8
-L_7: MOVE #1, #-17[.IX]
-BR /L_9
-L_8: MOVE #0, #-17[.IX]
-L_9: NOP
+; Quadruple - [CALL L_test, null, null]
+; sin declarar?
+CALL /L_test
 
-; Quadruple - [NEG T_11, T_10, null]
-CMP #-17[.IX], #0
-BZ /L_10
-BNZ /L_11
-L_10: MOVE #1, #-18[.IX]
-BR /L_12
-L_11: MOVE #0, #-18[.IX]
-L_12: NOP
+; Quadruple - [DEVUELTO T_2, null, null]
+MOVE #-11[.IX], #-0[.IX]
 
-; Quadruple - [MV c, T_11, null]
-MOVE #-18[.IX], #-6[.IX]
-; Quadruple - [WRSTR T_12, L_2, null]
-WRSTR /L_2 
-
-; Quadruple - [MV T_13, c, null]
-MOVE #-6[.IX], #-20[.IX]
-; Quadruple - [WRINT T_13, null, null]
-WRINT #-20[.IX] 
-WRCHAR #10 
-
+; Quadruple - [MV hola, T_2, null]
+MOVE #-11[.IX], #-5[.IX]
 ; Quadruple - [DEVUELTO null, null, null]
 HALT
 
-; Quadruple - [CADENA c es 0\n, L_0, null]
-L_0: DATA "c es 0\n"
-; Quadruple - [CADENA c es 0\n, L_2, null]
-L_2: DATA "c es 0\n"
 
