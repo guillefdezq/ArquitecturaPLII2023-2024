@@ -1,7 +1,7 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
 entero test (entero uno) {
-    devuelve uno;
+    devuelve 123;
 }
 
 vacio principal () {

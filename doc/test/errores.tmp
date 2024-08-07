@@ -1,17 +1,2 @@
-Linea 2: ERROR[8] Entrada Incorrecta - /
-Linea 4: ERROR[8] Entrada Incorrecta - /
-Linea 6: ERROR[8] Entrada Incorrecta - *
-Linea 9: ERROR[8] Entrada Incorrecta - (
-Linea 11: ERROR[3] Instrucción no reconocida - entero
-Linea 12: ERROR[8] Entrada Incorrecta - =
-Linea 14: ERROR[8] Entrada Incorrecta - =
-Linea 15: ERROR[3] Instrucción no reconocida - devuelve
-Linea 17: ERROR[8] Entrada Incorrecta - }
-Linea 20: ERROR[8] Entrada Incorrecta - (
-Linea 22: ERROR[3] Instrucción no reconocida - entero
-Linea 23: ERROR[3] Instrucción no reconocida - entero
-Linea 25: ERROR[8] Entrada Incorrecta - =
-Linea 29: ERROR[8] Entrada Incorrecta - =
-Linea 32: ERROR[8] Entrada Incorrecta - (
-Linea 35: ERROR[3] Instrucción no reconocida - devuelve
-Linea 37: ERROR[8] Entrada Incorrecta - }
+Linea 66: ERROR[4] Operando 1 Incorrecto - null
+Linea 82: ERROR[4] Operando 1 Incorrecto - null
