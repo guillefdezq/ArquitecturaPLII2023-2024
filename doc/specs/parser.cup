@@ -35,6 +35,8 @@ action code {:
 	// Listado para las cadenas
 	List<QuadrupleIF> listaCadenas = new ArrayList<QuadrupleIF>();
 
+	int tamanodireccionprincipal = 4;
+
 :}	
 
 parser code {:
@@ -700,14 +702,14 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}
 
-		int tamanoTotal = scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size() + 5;  // Para que es el +5?
+		int tamanoTotal = scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size() + 5;  // Para que es el +5? El +5 es para reservar los elementos comunes del registro de activacion
 
 		intermediateCodeBuilder.addQuadruple("PUNTEROSUBPROGRAMA", temporal, tamanoTotal);  // Posiciona el .SP según el tamaño del R.A del subprograma
 		
 		Sentencia func1 = (Sentencia) fun1;
 		intermediateCodeBuilder.addQuadruples(func1.getIntermediateCode());
 
-		intermediateCodeBuilder.addQuadruple("FINSUBPROGRAMA", labelFinal, params.size()+5);
+		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", labelFinal, params.size()+5);
 
 		Funcion funcion = new Funcion();
 		funcion.setSymbolProcedure((SymbolProcedure) simboloFuncion);
@@ -867,6 +869,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		// Añadir listado de sentencias
 		Sentencia lt = (Sentencia) listSent;
 
+		tamanodireccionprincipal = direccion;
+
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
 
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
@@ -969,6 +973,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		// Añadir listado de sentencias
 		Sentencia lt = (Sentencia) listsent;
+
+		tamanodireccionprincipal = direccion;
 
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
 
@@ -1285,10 +1291,10 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 
 			// expr.setTipo(...); // No necesario, estoy reutilizando la expresión.
 
-			if (expr.getTipo() == scopeManager.searchType("ENTERO")) {
-				intermediateCodeBuilder.addQuadruple("DEVUELTO", temporal);
-				expr.setTemporal(temporal);
-			}
+			//if (expr.getTipo() == scopeManager.searchType("ENTERO")) {
+			//	intermediateCodeBuilder.addQuadruple("DEVUELTO", temporal);
+			//}
+			expr.setTemporal(temporal);
 
 			expr.setIntermediateCode(intermediateCodeBuilder.create());
 			System.out.println("     QUAD>" + expr.getIntermediateCode());
@@ -1394,7 +1400,10 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 
 		intermediateCodeBuilder.addQuadruple("DVLP", "STARTSUBPROGRAMA");
 
-		intermediateCodeBuilder.addQuadruple("INICIA_FUNCION", procedure);
+		Value direccionesInvocador = new Value(scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size());
+		System.out.println("Llamada tamano " + direccionesInvocador);
+
+		intermediateCodeBuilder.addQuadruple("INICIO_FUNCION", direccionesInvocador);
 
 		for (int i = 0; i < expresionesParametro.size(); i++) {
 			intermediateCodeBuilder.addQuadruples(expresionesParametro.get(expresionesParametro.size()-1-i).getIntermediateCode());
@@ -1409,12 +1418,12 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		Expresion expr = new Expresion();
 		expr.setValor("0");		// Este valor sirve únicamente de referencia, no devuelve valor real.
 		
-		if (symbol instanceof SymbolFunction) {
-			intermediateCodeBuilder.addQuadruple("DEVUELTO"/*, temporal*/);			/// cuadrupla sin definir
-			//expr.setTipo(scopeManager.searchType("ENTERO"));
-		} else {
-			//expr.setTipo(scopeManager.searchType("VACIO"));
-		}
+		//if (symbol instanceof SymbolFunction) {
+		//	intermediateCodeBuilder.addQuadruple("DEVUELTO"/*, temporal*/);			/// cuadrupla sin definir
+		//	//expr.setTipo(scopeManager.searchType("ENTERO"));
+		//} else {
+		//	//expr.setTipo(scopeManager.searchType("VACIO"));
+		//}
 		
 		expr.setIntermediateCode(intermediateCodeBuilder.create());
 		expr.setTemporal(temporal);
