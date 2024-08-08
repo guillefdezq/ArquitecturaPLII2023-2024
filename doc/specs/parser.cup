@@ -654,26 +654,6 @@ funcion0 ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParam
 
 funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {: 
 
-	/* ED
-		ScopeIF scope = scopeManager.getCurrentScope();
-		TypeTableIF typeTable = scope.getTypeTable ();
-		SymbolTableIF sTable = scope.getSymbolTable();
-
-		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getParentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("VACIO"));
-		simboloProcedimiento.setParameters((ArrayList<SymbolIF>) params);
-
-		// DUDA: Qué hace esta línea?
-		// Funcionprincipal funcionPrincipal = new Funcionprincipal (symbolProcedure, g, null, h);
-
-
-		// cerrar ámbito
-		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
-		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
-		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
-		scopeManager.closeScope();
-		sTable.addSymbol(identificador.getLexema(), simboloProcedimiento);
-	*/
-
 		SymbolIF simboloFuncion = (SymbolIF) func0;
 		String identificador = simboloFuncion.getName();
 		ArrayList<SymbolIF> params = ((SymbolProcedure)simboloFuncion).getParameters();
@@ -687,29 +667,11 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF labelInicio = labelFactory.create(identificador);
-		LabelIF labelFinal = labelFactory.create("FIN_"+identificador);
-
+		
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
 
-		// Hay un paso que realiza Gamboa en el que pone todas las variables a cero. Creo que ya se realiza por norma.
-
-		for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
-			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
-			if (symbol instanceof SymbolParameter) {
-				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				intermediateCodeBuilder.addQuadruple("PARAM", variable);
-			}
-		}
-
-		int tamanoTotal = scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size() + 5;  // Para que es el +5? El +5 es para reservar los elementos comunes del registro de activacion
-
-		intermediateCodeBuilder.addQuadruple("PUNTEROSUBPROGRAMA", temporal, tamanoTotal);  // Posiciona el .SP según el tamaño del R.A del subprograma
-		
-		Sentencia func1 = (Sentencia) fun1;
-		intermediateCodeBuilder.addQuadruples(func1.getIntermediateCode());
-
-		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", labelFinal, params.size()+5);
+		// RELLENAR AQUÍ
 
 		Funcion funcion = new Funcion();
 		funcion.setSymbolProcedure((SymbolProcedure) simboloFuncion);
@@ -739,8 +701,6 @@ declaracionParametros  ::= parametro:param {: System.out.println("READ> declarac
  		 RESULT = params; :};
 
 parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parametro = entero"); 
-				
-		
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
@@ -763,8 +723,6 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parame
 
 		:}
  | IDENTIFICADOR:ident IDENTIFICADOR:id {: System.out.println("READ> parametro = identificador"); 
-		
-
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
@@ -1280,22 +1238,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 
-			/* WTF
-			if (expr.getTipo() != null) {  /// Esto no se siente correcto
-				expr.setType(scopeManager.searchType("VACIO"));
-			} else {
-				expr.setType(scopeManager.searchType("ENTERO"));
-				intermediateCodeBuilder.addQuadruple("DEVUELTO", temporal);
-				expr.setTemporal(temporal);
-			}*/
-
-			// expr.setTipo(...); // No necesario, estoy reutilizando la expresión.
-
-			//if (expr.getTipo() == scopeManager.searchType("ENTERO")) {
-			//	intermediateCodeBuilder.addQuadruple("DEVUELTO", temporal);
-			//}
 			expr.setTemporal(temporal);
-
 			expr.setIntermediateCode(intermediateCodeBuilder.create());
 			System.out.println("     QUAD>" + expr.getIntermediateCode());
 

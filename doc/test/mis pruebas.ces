@@ -11,6 +11,6 @@ vacio principal () {
     entero hola = 5;
 
     hola = test(1);
-devuelve;
+    devuelve;
 
 }
