@@ -1,7 +1,6 @@
 ; Quadruple - [AXIOM null, null, null]
 AXIOM: NOP
-CALL /PRINCIPAL
-HALT
+BR /PRINCIPAL
 
 ; Quadruple - [INL L_test, null, null]
 L_test: NOP
@@ -10,7 +9,7 @@ L_test: NOP
 ; sin declarar?
 
 ; Quadruple - [DEVUELTO T_0, null, null]
-MOVE #-8[.IX], #-0[.IX]
+MOVE #-7[.IX], #-0[.IX]
 RET;rescata de la pila el contenido del contador de programa
 
 
@@ -33,10 +32,8 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [VARLOCAL uno, 0, null]
-MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCAL hola, 5, null]
-MOVE #5, #-5[.IX]
+MOVE #5, #-4[.IX]
 ; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
 ; sin declarar?
 
@@ -51,9 +48,9 @@ PUSH .IX       ;enlace de acceso
 MOVE .R0, .IX ;inicio registro activaciÃ³n llamada
 
 ; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-9[.IX]
+MOVE #1, #-8[.IX]
 ; Quadruple - [PARAM T_0, null, null]
-PUSH #-9[.IX]
+PUSH #-8[.IX]
 
 ; Quadruple - [CALL L_test, null, null]
 CALL /L_test ;guarda el contador de programa en la pila
@@ -63,7 +60,7 @@ MOVE #-3[.IX], .R0 ;recuperar direcciÃ³n enlace acceso
 MOVE .R0, .IX ; restaurar enlace acceso
 
 ; Quadruple - [MV hola, T_2, null]
-MOVE #-11[.IX], #-5[.IX]
+MOVE #-10[.IX], #-4[.IX]
 ; Quadruple - [DEVUELTO null, null, null]
 RET;rescata de la pila el contenido del contador de programa
 

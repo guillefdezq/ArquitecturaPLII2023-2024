@@ -292,10 +292,16 @@ public class ExecutionEnvironmentEns2001
             b.append("CALL /PRINCIPAL\n");
             b.append("HALT\n");
         } else if (quadruple.getOperation().equals("CADENA")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-                    String r = operacion(quadruple.getResult());
-                String o1 = operacion(quadruple.getFirstOperand());
-                b.append(o1 + ": DATA \""+ r +"\"");
-                return b.toString();
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            b.append(o1 + ": DATA \""+ r +"\"");
+            return b.toString();
+        } else if (quadruple.getOperation().equals("VARLOCAL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+            String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            b.append("MOVE " + o1 + ", " + r);        
+        // } else if (quadruple.getOperation().equals("VARLOCAL") || quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        //     b.append("; sin declarar\n");
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             b.append("PRINCIPAL: NOP\n");
             b.append("; Por implementar correctamente, relacionado con subprogramas\n");
@@ -307,44 +313,36 @@ public class ExecutionEnvironmentEns2001
             b.append("PUSH .IX       ;enlace de acceso\n");  // Supuestamente es para bloques, pero no se activa...?
             
         } else if (quadruple.getOperation().equals("INICIO_FUNCION")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            String desviacion = operacion(quadruple.getResult());
-            b.append("SUB .SP, "+desviacion+"\n");
-            b.append("MOVE .A, .SP   ;cambia de posicion SP para evitar borrado\n");
-            b.append("MOVE .SP, .R0  ;guarda el valor de SP en R0\n");
-            b.append("PUSH #-1       ;valor de retorno\n");
-            b.append("PUSH .R0       ;enlace de control\n");
-            b.append("PUSH .SR       ;estado máquina\n");
-            b.append("PUSH .IX       ;enlace de acceso\n");
-            b.append("MOVE .R0, .IX ;inicio registro activación llamada\n");
+
+
+            
         } else if (quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
             b.append("PUSH " + r + "\n");
         } else if (quadruple.getOperation().equals("CALL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS - DEBERÍA SER CALL f
-            String r = operacion(quadruple.getResult());
-            b.append("CALL /"+r+" ;guarda el contador de programa en la pila\n");
-            b.append("MOVE .IX, .SP ;recuperar el SP\n");
-            b.append("MOVE #0[.IX], .R1 ;guardar retorno en R1\n");
-            b.append("MOVE #-3[.IX], .R0 ;recuperar dirección enlace acceso\n");
-            b.append("MOVE .R0, .IX ; restaurar enlace acceso\n");
-        } else if (quadruple.getOperation().equals("VARLOCAL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            String r = operacion(quadruple.getResult());
-            String o1 = operacion(quadruple.getFirstOperand());
-            b.append("MOVE " + o1 + ", " + r);        
-        // } else if (quadruple.getOperation().equals("VARLOCAL") || quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-        //     b.append("; sin declarar\n");
+
+
+            
         } else if (quadruple.getOperation().equals("PUNTEROFINAL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            // String r = operacion(quadruple.getResult());
-            String o1 = operacion(quadruple.getFirstOperand());
-            /// FALTA USAR R, temporal
-            b.append("SUB .IX, " + o1+ "\n");
-            b.append("MOVE .A, .SP\n");
+
+
+            
         } else if (quadruple.getOperation().equals("FIN_FUNCION")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS - Puede ser RET x
-            // String r = operacion(quadruple.getResult());
-            String o1 = operacion(quadruple.getFirstOperand());
-            /// FALTA USAR R, LABEL
-            b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
-            b.append("MOVE .A, .SP\n");
-            b.append("RET ;rescata de la pila el contenido del contador de programa\n\n\n\n");
+
+
+
+        } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto         // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+            String r = operacion(quadruple.getResult());
+            // b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n"); // En qué línea va esto?
+            
+            // La comprobación debería revisar si el puntero pila es el inicio, 65535 o cerca, para detener el flujo.
+            if (r != null) {
+                b.append("MOVE " + r + ", #-0[.IX]\n");
+            }
+            
+            //b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
+            //b.append("MOVE .A, .SP\n");
+            b.append("RET;rescata de la pila el contenido del contador de programa\n\n\n\n");
         } else if (quadruple.getOperation().equals("INL")) {
             String r = operacion(quadruple.getResult());
             b.append(r.toString() + ": NOP\n");
@@ -359,19 +357,6 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("BNZ")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
             b.append("BNZ /" + r.toString() + "\n");
-        } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto         // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            String r = operacion(quadruple.getResult());
-            // b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n"); // En qué línea va esto?
-            
-            // La comprobación debería revisar si el puntero pila es el inicio, 65535 o cerca, para detener el flujo.
-            if (r != null) {
-                b.append("MOVE " + r + ", #-0[.IX]\n");
-            }
-            
-            //b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
-            //b.append("MOVE .A, .SP\n");
-            b.append("RET;rescata de la pila el contenido del contador de programa\n\n\n\n");
-
         } else if (quadruple.getOperation().equals("WRSTR")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             // String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
