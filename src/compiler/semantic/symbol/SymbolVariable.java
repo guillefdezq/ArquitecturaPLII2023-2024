@@ -17,7 +17,16 @@ public class SymbolVariable
    
 	private String valor;
     private int address;
+    private boolean isParameter = false;
 	
+    public boolean isParameter() {
+        return isParameter;
+    }
+
+    public void setParameter(boolean isParameter) {
+        this.isParameter = isParameter;
+    }
+
     public int getAddress() {
         return address;
     }
@@ -33,6 +42,8 @@ public class SymbolVariable
 	public void setValor(String valor) {
 		this.valor = valor;
 	}
+
+
 	
     /**
      * Constructor for SymbolVariable.
