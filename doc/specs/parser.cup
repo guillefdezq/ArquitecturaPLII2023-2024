@@ -603,8 +603,8 @@ id1 ::= epsilon {:
 
 seccionFunciones ::= funcion:fun seccionFunciones:secFun {: 
 		System.out.println("READ> seccionFunciones = funciones extra"); 
-		Seccionfunciones sf = (Seccionfunciones) secFun;
 		Funcion f = (Funcion) fun;
+		Seccionfunciones sf = (Seccionfunciones) secFun;
 		List<QuadrupleIF> intermediateCode = f.getIntermediateCode(); // se busca "la primera funcion" antes de las demás
 		intermediateCode.addAll(sf.getIntermediateCode()); // las demás funciones se añaden a continuación
 		sf.setIntermediateCode(intermediateCode);
