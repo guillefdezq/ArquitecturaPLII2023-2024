@@ -731,11 +731,11 @@ seccionParametros ::= declaracionParametros:params {: System.out.println("READ> 
 
 declaracionParametros  ::= parametro:param {: System.out.println("READ> declaracionParametros = uno/ultimo");
 		ArrayList<SymbolIF> params = new ArrayList<SymbolIF>();
-		params.add(((Parametro) param).getSymbolVariableIdentificador());
+		params.add(((Parametro) param).getSymbolParametroIdentificador());
 		 RESULT = params; :}
  | parametro:param COLON declaracionParametros:paramsEntrada {: System.out.println("READ> declaracionParametros = uno mas");
 		ArrayList<SymbolIF> params = (ArrayList<SymbolIF>) paramsEntrada;
-		params.add(((Parametro) param).getSymbolVariableIdentificador());
+		params.add(((Parametro) param).getSymbolParametroIdentificador());
  		 RESULT = params; :};
 
 parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parametro = entero"); 
@@ -751,13 +751,13 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parame
 			semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
 		} else {
 			TypeIF tipo = scopeManager.searchType("ENTERO");
-			SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-			simboloVariable.setValor("0");
-			sTable.addSymbol(nombre, simboloVariable);
+			SymbolParameter simboloParametro = new SymbolParameter(scope, nombre, tipo);
+			simboloParametro.setValor("0");
+			sTable.addSymbol(nombre, simboloParametro);
 			SymbolIF fetch = sTable.getSymbol(nombre);
-			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
-			Parametro parametro = new Parametro(simboloVariable);
-			System.out.println(parametro.getSymbolVariableIdentificador());
+			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolParameter)fetch).getValor());
+			Parametro parametro = new Parametro(simboloParametro);
+			System.out.println(parametro.getSymbolParametroIdentificador());
 			RESULT = parametro; 
 		}
 
@@ -775,13 +775,13 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parame
 			semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
 		} else {
 			TypeIF tipo = scopeManager.searchType(ident.getLexema());
-			SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-			sTable.addSymbol(nombre, simboloVariable);
+			SymbolParameter simboloParametro = new SymbolParameter(scope, nombre, tipo);
+			sTable.addSymbol(nombre, simboloParametro);
 			
 			SymbolIF fetch = sTable.getSymbol(nombre);
 			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
 
-			Parametro parametro = new Parametro(simboloVariable);
+			Parametro parametro = new Parametro(simboloParametro);
 			RESULT = parametro; 
 		}
 
