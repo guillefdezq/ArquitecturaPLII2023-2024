@@ -2,7 +2,8 @@
   package compiler.syntax.nonTerminal;
 
   import compiler.intermediate.Temporal;
-  import compiler.semantic.symbol.SymbolVariable;
+import compiler.semantic.symbol.SymbolParameter;
+import compiler.semantic.symbol.SymbolVariable;
 import compiler.semantic.type.TypeSimple;
 import es.uned.lsi.compiler.semantic.type.TypeIF;
 
@@ -16,7 +17,7 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
     
      // primera producción
      protected TypeSimple typeSimple;
-     protected SymbolVariable symbolVariableIdentificador;
+     protected SymbolParameter symbolParametroIdentificador;
      
      // segunda producción
      protected TypeIF tipoIdentificador;
@@ -28,15 +29,15 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
 
 
 
-    public Parametro(TypeSimple typeSimple, SymbolVariable symbolVariableIdentificador) {
+    public Parametro(TypeSimple typeSimple, SymbolParameter symbolParametroIdentificador) {
       this();
       this.typeSimple = typeSimple;
-      this.symbolVariableIdentificador = symbolVariableIdentificador;  
+      this.symbolParametroIdentificador = symbolParametroIdentificador;  
     }
 
-    public Parametro(TypeIF tipoIdentificador, SymbolVariable symbolVariableIdentificador) {
+    public Parametro(TypeIF tipoIdentificador, SymbolParameter symbolParametroIdentificador) {
       this();
-      this.symbolVariableIdentificador = symbolVariableIdentificador;  
+      this.symbolParametroIdentificador = symbolParametroIdentificador;  
       this.tipoIdentificador = tipoIdentificador;
     }
 
@@ -44,22 +45,22 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
       super();
     }
 
-    public Parametro(SymbolVariable symbolVariableIdentificador) {
+    public Parametro(SymbolParameter symbolParametroIdentificador) {
       this();
-      this.symbolVariableIdentificador = symbolVariableIdentificador;
+      this.symbolParametroIdentificador = symbolParametroIdentificador;
     }
 
-    public SymbolVariable getSymbolVariableIdentificador() {
-      return symbolVariableIdentificador;
+    public SymbolParameter getSymbolParametroIdentificador() {
+      return symbolParametroIdentificador;
     }
 
-    public void setSymbolVariableIdentificador(SymbolVariable symbolVariableIdentificador) {
-      this.symbolVariableIdentificador = symbolVariableIdentificador;
+    public void setSymbolParametroIdentificador(SymbolParameter symbolParametroIdentificador) {
+      this.symbolParametroIdentificador = symbolParametroIdentificador;
     }
 
     public TypeIF getType() {
-      if (symbolVariableIdentificador != null) {
-        return symbolVariableIdentificador.getType();
+      if (symbolParametroIdentificador != null) {
+        return symbolParametroIdentificador.getType();
       } else return null;
     }
 
