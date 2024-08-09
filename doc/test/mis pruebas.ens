@@ -69,12 +69,12 @@ PUSH #-6[.IX]
 ; Quadruple - [VALOR_RETORNO T_1, null, null]
 MOVE .R9, #-7[.IX]
 
-; Quadruple - [MV hola, T_2, null]
-MOVE #-8[.IX], #-5[.IX]
-; Quadruple - [MV T_3, hola, null]
-MOVE #-5[.IX], #-9[.IX]
-; Quadruple - [WRINT T_3, null, null]
-WRINT #-9[.IX] 
+; Quadruple - [MV hola, T_1, null]
+MOVE #-7[.IX], #-5[.IX]
+; Quadruple - [MV T_2, hola, null]
+MOVE #-5[.IX], #-8[.IX]
+; Quadruple - [WRINT T_2, null, null]
+WRINT #-8[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
