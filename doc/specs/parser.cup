@@ -1269,13 +1269,11 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			Expresion expr = (Expresion) exp;
 
 			IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
-			TemporalFactory temporalFactory = new TemporalFactory(scope);
-			TemporalIF temporal = temporalFactory.create();
 
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 
-			expr.setTemporal(temporal);
-			expr.setIntermediateCode(intermediateCodeBuilder.create());
+			//expr.setTemporal(temporal);
+			//expr.setIntermediateCode(intermediateCodeBuilder.create());
 			System.out.println("     QUAD>" + expr.getIntermediateCode());
 
 			RESULT = expr; 
