@@ -299,7 +299,8 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("VARLOCAL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
-            b.append("MOVE " + o1 + ", " + r);        
+            //b.append("MOVE " + o1 + ", " + r);        
+            b.append("PUSH " + o1 + "\n");
         // } else if (quadruple.getOperation().equals("VARLOCAL") || quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
         //     b.append("; sin declarar\n");
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {      // Equivalente a STARTGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
@@ -357,8 +358,15 @@ public class ExecutionEnvironmentEns2001
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append(r.toString() + ": NOP\n");
-            b.append("SUB .IX, " + o1 + "\n");
+            //b.append("SUB .IX, " + o1 + "\n");
+            b.append("SUB .IX, #5\n");
             b.append("MOVE .A, .SP\n");
+            b.append("RET\n");
+
+        } else if (quadruple.getOperation().equals("FIN_PRINCIPAL")) {
+            String r = operacion(quadruple.getResult());
+            b.append(r.toString() + ": NOP\n");
+            b.append("MOVE #-2, .SP\n");
             b.append("RET\n");
 
         } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto         // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
@@ -367,13 +375,13 @@ public class ExecutionEnvironmentEns2001
             // b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n"); // En qué línea va esto?
             
             // La comprobación debería revisar si el puntero pila es el inicio, 65535 o cerca, para detener el flujo.
-            if (r != null) {
+            if (o1 != null) {
                 b.append("MOVE " + o1 + ", #-0[.IX]\n");
             }
             
             //b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
             //b.append("MOVE .A, .SP\n");
-            b.append("BR /" + r.toString() + ";rescata de la pila el contenido del contador de programa\n\n\n\n");
+            b.append("BR /" + r.toString() + "    ;rescata de la pila el contenido del contador de programa\n\n\n\n");
         } else if (quadruple.getOperation().equals("INL")) {
             String r = operacion(quadruple.getResult());
             b.append(r.toString() + ": NOP\n");

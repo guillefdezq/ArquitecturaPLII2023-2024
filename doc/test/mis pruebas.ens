@@ -15,16 +15,16 @@ MOVE .A, .SP
 
 ; Quadruple - [MV T_0, 123, null]
 MOVE #123, #-6[.IX]
-; Quadruple - [DEVUELTO L_FIN_ambito1, T_0, null]
+; Quadruple - [DEVUELTO L_FIN_FUN_1, T_0, null]
 MOVE #-6[.IX], #-0[.IX]
-BR /L_FIN_ambito1;rescata de la pila el contenido del contador de programa
+BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
 
 
 
 
-; Quadruple - [FIN_FUNCION L_FIN_test, 6, null]
-L_FIN_test: NOP
-SUB .IX, #6
+; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
+L_FIN_FUN_1: NOP
+SUB .IX, #5
 MOVE .A, .SP
 RET
 
@@ -38,9 +38,11 @@ PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [VARLOCAL hola, 0, null]
-MOVE #0, #-5[.IX]
+PUSH #0
+
 ; Quadruple - [VARLOCAL hola, 5, null]
-MOVE #5, #-5[.IX]
+PUSH #5
+
 ; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
 ; sin declarar?
 
@@ -69,10 +71,20 @@ MOVE .R9, #-7[.IX]
 
 ; Quadruple - [MV hola, T_2, null]
 MOVE #-8[.IX], #-5[.IX]
-; Quadruple - [DEVUELTO L_FIN_ambito1, null, null]
-MOVE null, #-0[.IX]
-BR /L_FIN_ambito1;rescata de la pila el contenido del contador de programa
+; Quadruple - [MV T_3, hola, null]
+MOVE #-5[.IX], #-9[.IX]
+; Quadruple - [WRINT T_3, null, null]
+WRINT #-9[.IX] 
+WRCHAR #10 
+
+; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
+BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
 
 
 
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_2, null, null]
+L_FIN_FUN_2: NOP
+MOVE #-2, .SP
+RET
 

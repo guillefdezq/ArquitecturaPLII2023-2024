@@ -9,6 +9,8 @@ vacio principal () {
     entero hola = 5;
 
     hola = test(1);
+
+    escribeEnt(hola);
     devuelve;
 
 }
