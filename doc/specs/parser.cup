@@ -233,7 +233,7 @@ program ::=
   axiom:ax
   {:   		
   		// No modificar esta estructura, aunque se pueden añadir más acciones semánticas
-  		
+
   		List intermediateCode = ax.getIntermediateCode ();
 		finalCodeFactory.setEnvironment(CompilerContext.getExecutionEnvironment());		// instrucción introducida por vídeo Gamboa
   		finalCodeFactory.create (intermediateCode);
@@ -283,13 +283,56 @@ cerrarAmbito ::= {:
 axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {: 
 		System.out.println("READ> axiom = constantes y tipos"); 
 		
-		ScopeIF scope = scopeManager.getCurrentScope();
-		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		ScopeIF thisScope = scopeManager.getCurrentScope();
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(thisScope);
 
 		intermediateCodeBuilder.addQuadruple("AXIOM");		/// Puede ser que esto no sea necesario
 
-		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
-			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+		int direccionGlobal=10000;		//// Las variables globales deberían colocarse desde aquí
+
+		for(int i=0;i<thisScope.getSymbolTable().getSymbols().size();i++) {
+			SymbolIF symbol=thisScope.getSymbolTable().getSymbols().get(i);
+			if(symbol instanceof SymbolVariable) {
+				((SymbolVariable)symbol).setAddress(direccionGlobal);
+				//Actualizamos el valor de direccionGlobal para el próximo símbolo 
+				direccionGlobal = direccionGlobal + symbol.getType().getSize();
+				System.out.println("variable: " + symbol.getType());
+				System.out.println("tamano: " + symbol.getType().getSize());
+			}
+		}
+
+		List<ScopeIF> scopes = scopeManager.getAllScopes();
+		for (ScopeIF scope : scopes) {
+			int direccionRA = 4;
+			List<SymbolIF> symbols = scope.getSymbolTable().getSymbols();
+			for (SymbolIF symbol : symbols) {
+				if (symbol instanceof SymbolParameter) {
+					((SymbolParameter)symbol).setAddress(direccionRA);
+					direccionRA = direccionRA + symbol.getType().getSize();
+				}
+			}
+
+			if (scope.getLevel() != 0) {
+				direccionRA ++;
+			}
+
+			for (SymbolIF symbol : symbols) {
+				if (symbol instanceof SymbolVariable) {
+					((SymbolVariable)symbol).setAddress(direccionRA);
+					direccionRA = direccionRA + symbol.getType().getSize();
+				}
+			}
+
+			List<TemporalIF> temps = scope.getTemporalTable().getTemporals();
+			for (TemporalIF temporal : temps) {
+				((Temporal) temporal).setAddress(direccionRA);
+				direccionRA = direccionRA + ((Temporal) temporal).getSize();
+			}
+		}
+
+
+		for (int i = 0; i < thisScope.getSymbolTable().getSymbols().size(); i++) {
+			SymbolIF symbol = thisScope.getSymbolTable().getSymbols().get(i);
 			if (symbol instanceof SymbolConstant) {
 				Variable variable = new Variable(symbol.getName(), symbol.getScope());
 				intermediateCodeBuilder.addQuadruple("VARGLOBAL", variable, 0);
@@ -306,7 +349,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		List<QuadrupleIF> intermediateCode = intermediateCodeBuilder.create();
 		intermediateCode.addAll(ax1.getIntermediateCode());
 
-		if (scope.getLevel() == 0) {
+		if (thisScope.getLevel() == 0) {		// Y esta comprobacion tan random?
 			for (int i = 0; i < listaCadenas.size(); i++) {
 				intermediateCodeBuilder.addQuadruple(listaCadenas.get(i));
 			}
@@ -327,29 +370,6 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 
-		int direccion=10000;		//// Las variables globales deberían colocarse desde aquí
-		SymbolIF symbol;
-		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
-			symbol=scope.getSymbolTable().getSymbols().get(i);
-			if(symbol instanceof SymbolVariable) {
-				((SymbolVariable)symbol).setAddress(direccion);
-				//Actualizamos el valor de direccion para el próximo símbolo 
-				direccion = direccion + symbol.getType().getSize();
-				System.out.println("variable: " + symbol.getType());
-				System.out.println("tamano: " + symbol.getType().getSize());
-			}
-		}
-
-		TemporalIF temporal;
-		for(int i=0;i<scope.getTemporalTable().getTemporals().size();i++) {
-			temporal=scope.getTemporalTable().getTemporals().get(i);
-			if(temporal instanceof Temporal) {
-				((Temporal)temporal).setAddress(direccion);
-				//Actualizamos el valor de direccion para el próximo símbolo 
-				direccion += ((Temporal)temporal).getSize();
-			}
-		}
-
 		/// Se siente muy vacío... no debería contener código intermedio?
 
 		Program ax1 = new Program();
@@ -360,30 +380,8 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 		:}
   | seccionFunciones:secFun {: 
   		System.out.println("READ> axiom1 = solo funciones");
-		/// Duplicado de lo de arriba
 
 		ScopeIF scope = scopeManager.getCurrentScope();
-
-		int direccion=10000;		//// Las variables deberían colocarse desde aquí, pero por alguna razón no lo termina de hacer?
-		SymbolIF symbol;
-		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
-			symbol=scope.getSymbolTable().getSymbols().get(i);
-			if(symbol instanceof SymbolVariable) {
-				((SymbolVariable)symbol).setAddress(direccion);
-				//Actualizamos el valor de direccion para el próximo símbolo 
-				direccion = direccion + symbol.getType().getSize();
-			}
-		}
-
-		TemporalIF temporal;
-		for(int i=0;i<scope.getTemporalTable().getTemporals().size();i++) {
-			temporal=scope.getTemporalTable().getTemporals().get(i);
-			if(temporal instanceof Temporal) {
-				((Temporal)temporal).setAddress(direccion);
-				//Actualizamos el valor de direccion para el próximo símbolo 
-				direccion += ((Temporal)temporal).getSize();
-			}
-		}
 
 		Program ax1 = new Program();
 		Seccionfunciones sf = (Seccionfunciones) secFun;
@@ -656,6 +654,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		SymbolIF simboloFuncion = (SymbolIF) func0;
 		String identificador = simboloFuncion.getName();
+		//String identificador = scopeManager.getCurrentScope().getName();
 		ArrayList<SymbolIF> params = ((SymbolProcedure)simboloFuncion).getParameters();
 
 		ScopeIF scope = scopeManager.getCurrentScope();
@@ -667,11 +666,31 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF labelInicio = labelFactory.create(identificador);
+		LabelIF labelFin = labelFactory.create("FIN_" + identificador);
 		
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
 
-		// RELLENAR AQUÍ
+		for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
+			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+			if (symbol instanceof SymbolParameter) {
+				int valor = (((SymbolParameter)symbol).getValor() != null) ? Integer.parseInt(((SymbolParameter)symbol).getValor()) : 0;
+				intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", temporal, valor);
+			}
+		}
+
+		int tamanoRA = scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size() + 5;  // Para que es el +5? El +5 es para reservar los elementos comunes del registro de activacion
+
+		intermediateCodeBuilder.addQuadruple("PUNTERO_FUNCION", temporal, tamanoRA);
+		intermediateCodeBuilder.addQuadruples(((Sentencia) fun1).getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", labelFin, params.size()+5);
+		// intermediateCodeBuilder.addQuadruple("INL", labelFin);  //???
+
+		// Reposicionado cerrado de ámbitos aquí
+		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		scopeManager.closeScope();
 
 		Funcion funcion = new Funcion();
 		funcion.setSymbolProcedure((SymbolProcedure) simboloFuncion);
@@ -679,9 +698,8 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		RESULT = funcion; :};
                      
-         
-funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = listsent; :}
-                      | seccionVariables listadoSentencias:listsent  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = listsent; :};
+funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = sinVariables"); RESULT = listsent; :}
+                      | seccionVariables listadoSentencias:listsent  CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = conVariables"); RESULT = listsent; :};
 
 
  
@@ -745,7 +763,7 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parame
 
 		:};
 
-funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias:listSent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal"); 
+funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias:listSent CLOSE_PARENTHESIS {: System.out.println("READ> funcionPrincipal"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
@@ -835,8 +853,13 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		System.out.println("     QUAD>" + fp.getIntermediateCode());
 
+		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		scopeManager.closeScope();
+
 		RESULT = fp; :}
-				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); 
+				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias:listsent CLOSE_PARENTHESIS {: System.out.println("READ> funcionPrincipal + seccion variables"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
@@ -941,6 +964,11 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
 
 		System.out.println("     QUAD>" + fp.getIntermediateCode());
+
+		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		scopeManager.closeScope();
 
 		RESULT = fp;  :};
 
@@ -1333,41 +1361,38 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		}
 		// La comprobación de introducir tipos enteros ya debería realizarse previamente (o eso creo).
 
+		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
 
-		TemporalFactory temporalFactory = new TemporalFactory(scope);
-		TemporalIF temporal = temporalFactory.create();
 
 		intermediateCodeBuilder.addQuadruple("DVLP", "STARTSUBPROGRAMA");
 
 		Value direccionesInvocador = new Value(scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size());
 		System.out.println("Llamada tamano " + direccionesInvocador);
 
-		intermediateCodeBuilder.addQuadruple("INICIO_FUNCION", direccionesInvocador);
+
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
+		
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelIdentificador = labelFactory.create(ident.getLexema());
+		intermediateCodeBuilder.addQuadruple("INICIO_FUNCION");
+
+		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);
 
 		for (int i = 0; i < expresionesParametro.size(); i++) {
 			intermediateCodeBuilder.addQuadruples(expresionesParametro.get(expresionesParametro.size()-1-i).getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(expresionesParametro.size()-1-i).getTemporal());
 		}
 
-		LabelFactory labelFactory = new LabelFactory();
-		LabelIF labelIdentificador = labelFactory.create(ident.getLexema());
-
-		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);		/// cuadrupla sin definir
-
+		if (symbol instanceof SymbolFunction) {
+			intermediateCodeBuilder.addQuadruple("VALOR_RETORNO", temporal);
+		}
+			
 		Expresion expr = new Expresion();
-		expr.setValor("0");		// Este valor sirve únicamente de referencia, no devuelve valor real.
-		
-		//if (symbol instanceof SymbolFunction) {
-		//	intermediateCodeBuilder.addQuadruple("DEVUELTO"/*, temporal*/);			/// cuadrupla sin definir
-		//	//expr.setTipo(scopeManager.searchType("ENTERO"));
-		//} else {
-		//	//expr.setTipo(scopeManager.searchType("VACIO"));
-		//}
-		
+		expr.setValor("0");		// Este valor es un sueñuelo, no tiene efectividad real (debería borrarlo).
 		expr.setIntermediateCode(intermediateCodeBuilder.create());
 		expr.setTemporal(temporal);
 		expr.setTipo(((SymbolIF) funcion).getType());
@@ -1438,15 +1463,26 @@ sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sen
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve = vacío"); 
 		Sentencia sen = new Sentenciadevuelve();
+		// No usado
+		// TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());
+		// TemporalIF temporal = temporalFactory.create();
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFin = labelFactory.create("FIN_"+scopeManager.getCurrentScope().getName());
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		intermediateCodeBuilder.addQuadruple("DEVUELTO");
+		intermediateCodeBuilder.addQuadruple("DEVUELTO", labelFin); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		RESULT = sen; :}
 	| DEVUELVE expresion:exp SEMI_COLON {: 
 		Expresion expr = (Expresion) exp;
 		Sentencia sen = new Sentenciadevuelve(expr.getValor());
+		// No usado
+		// TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());
+		// TemporalIF temporal = temporalFactory.create();
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFin = labelFactory.create("FIN_"+scopeManager.getCurrentScope().getName());
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		intermediateCodeBuilder.addQuadruple("DEVUELTO", expr.getTemporal()); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("DEVUELTO", labelFin, expr.getTemporal()); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		System.out.println("READ> sentenciaDevuelve + expresion = " + expr.getValor()); 
 		RESULT = sen; :};
@@ -1865,10 +1901,10 @@ sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF label = labelFactory.create();
-		TemporalIF temp = temporalFactory.create();
+		TemporalIF temporal = temporalFactory.create();
 
 		Value value = new Value(salida);
-		intermediateCodeBuilder.addQuadruple("WRSTR", temp, label);
+		intermediateCodeBuilder.addQuadruple("WRSTR", temporal, label);
 
 		listaCadenas.add(new Quadruple("CADENA", new Label(salida), label));
 
@@ -1886,7 +1922,7 @@ sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF label = labelFactory.create();
-		TemporalIF temp = temporalFactory.create();
+		TemporalIF temporal = temporalFactory.create();
 
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 

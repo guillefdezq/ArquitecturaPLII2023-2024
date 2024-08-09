@@ -6,23 +6,27 @@ HALT
 ; Quadruple - [INL L_test, null, null]
 L_test: NOP
 
-; Quadruple - [PUNTEROSUBPROGRAMA T_0, 7, null]
-; sin declarar?
+; Quadruple - [VARSUBPROGRAMA T_1, 0, null]
+PUSH #0
 
-; Quadruple - [DEVUELTO T_0, null, null]
-MOVE #-7[.IX], #-0[.IX]
-RET;rescata de la pila el contenido del contador de programa
+; Quadruple - [PUNTERO_FUNCION T_1, 8, null]
+SUB .IX, #8
+MOVE .A, .SP
+
+; Quadruple - [MV T_0, 123, null]
+MOVE #123, #-6[.IX]
+; Quadruple - [DEVUELTO L_FIN_ambito1, T_0, null]
+MOVE #-6[.IX], #-0[.IX]
+BR /L_FIN_ambito1;rescata de la pila el contenido del contador de programa
 
 
 
 
 ; Quadruple - [FIN_FUNCION L_FIN_test, 6, null]
-SUB .IX, #6;posiciona el puntero de pila SP para recuperar el contador del programa
+L_FIN_test: NOP
+SUB .IX, #6
 MOVE .A, .SP
-RET ;rescata de la pila el contenido del contador de programa
-
-
-
+RET
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
@@ -33,37 +37,41 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
+; Quadruple - [VARLOCAL hola, 0, null]
+MOVE #0, #-5[.IX]
 ; Quadruple - [VARLOCAL hola, 5, null]
-MOVE #5, #-4[.IX]
+MOVE #5, #-5[.IX]
 ; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
 ; sin declarar?
 
-; Quadruple - [INICIO_FUNCION 3, null, null]
-SUB .SP, #3
-MOVE .A, .SP   ;cambia de posicion SP para evitar borrado
+; Quadruple - [INICIO_FUNCION null, null, null]
 MOVE .SP, .R0  ;guarda el valor de SP en R0
 PUSH #-1       ;valor de retorno
 PUSH .R0       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
-MOVE .R0, .IX ;inicio registro activaciÃ³n llamada
-
-; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-8[.IX]
-; Quadruple - [PARAM T_0, null, null]
-PUSH #-8[.IX]
 
 ; Quadruple - [CALL L_test, null, null]
-CALL /L_test ;guarda el contador de programa en la pila
-MOVE .IX, .SP ;recuperar el SP
-MOVE #0[.IX], .R1 ;guardar retorno en R1
-MOVE #-3[.IX], .R0 ;recuperar direcciÃ³n enlace acceso
-MOVE .R0, .IX ; restaurar enlace acceso
+MOVE .R0, .IX         ; Guarda el valor de R0 en IX
+CALL /L_test            ; Guarda PC y salta
+MOVE .IX, .R0         ; Restaura puntero pila
+MOVE #0[.IX], .R9     ; Guarda retorno
+MOVE #-3[.IX], .R0    ; Restaura puntero de acceso
+MOVE .R0, .IX         ; ActualizaciÃ³n IX a principal
+
+; Quadruple - [MV T_0, 1, null]
+MOVE #1, #-6[.IX]
+; Quadruple - [PARAM T_0, null, null]
+PUSH #-6[.IX]
+
+; Quadruple - [VALOR_RETORNO T_1, null, null]
+MOVE .R9, #-7[.IX]
 
 ; Quadruple - [MV hola, T_2, null]
-MOVE #-10[.IX], #-4[.IX]
-; Quadruple - [DEVUELTO null, null, null]
-RET;rescata de la pila el contenido del contador de programa
+MOVE #-8[.IX], #-5[.IX]
+; Quadruple - [DEVUELTO L_FIN_ambito1, null, null]
+MOVE null, #-0[.IX]
+BR /L_FIN_ambito1;rescata de la pila el contenido del contador de programa
 
 
 
