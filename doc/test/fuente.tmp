@@ -1,70 +1,91 @@
 ; Quadruple - [AXIOM null, null, null]
-AXIOM: NOP
-BR /PRINCIPAL
-
-; Quadruple - [INL L_test, null, null]
-L_test: NOP
-
-; Quadruple - [PUNTEROSUBPROGRAMA T_0, 7, null]
-; sin declarar?
-
-; Quadruple - [DEVUELTO T_0, null, null]
-MOVE #-7[.IX], #-0[.IX]
-RET;rescata de la pila el contenido del contador de programa
-
-
-
-
-; Quadruple - [FIN_FUNCION L_FIN_test, 6, null]
-SUB .IX, #6;posiciona el puntero de pila SP para recuperar el contador del programa
-MOVE .A, .SP
-RET ;rescata de la pila el contenido del contador de programa
-
-
-
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-MOVE .SP, .IX  ;guarda el valor de SP en R0
-PUSH #-1       ;valor de retorno
-PUSH .IX       ;enlace de control
-PUSH .SR       ;estado mÃ¡quina
-PUSH .IX       ;enlace de acceso
+;MOVE .SP, .IX  ;guarda el valor de SP en IX
+;PUSH #-1       ;valor de retorno
+;PUSH .IX       ;enlace de control
+;PUSH .SR       ;estado mÃ¡quina
+;PUSH .IX       ;enlace de acceso
 
-; Quadruple - [VARLOCAL hola, 5, null]
-MOVE #5, #-4[.IX]
-; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
-; sin declarar?
+; Quadruple - [VARLOCAL a, 0, null]
+MOVE #0, #-4[.IX]
+; Quadruple - [VARLOCAL b, 0, null]
+MOVE #0, #-5[.IX]
+; Quadruple - [MV T_0, 19, null]
+MOVE #19, #-6[.IX]
+; Quadruple - [MV b, T_0, null]
+MOVE #-6[.IX], #-5[.IX]
+; Quadruple - [MV T_1, b, null]
+MOVE #-5[.IX], #-7[.IX]
+; Quadruple - [ADD T_2, T_1, 1]
+ADD #-7[.IX], #1
+MOVE .A , #-8[.IX]
 
-; Quadruple - [INICIO_FUNCION 3, null, null]
-SUB .SP, #3
-MOVE .A, .SP   ;cambia de posicion SP para evitar borrado
-MOVE .SP, .R0  ;guarda el valor de SP en R0
-PUSH #-1       ;valor de retorno
-PUSH .R0       ;enlace de control
-PUSH .SR       ;estado mÃ¡quina
-PUSH .IX       ;enlace de acceso
-MOVE .R0, .IX ;inicio registro activaciÃ³n llamada
+; Quadruple - [MV a, T_2, null]
+MOVE #-8[.IX], #-4[.IX]
+; Quadruple - [MV T_3, a, null]
+MOVE #-4[.IX], #-9[.IX]
+; Quadruple - [MV T_4, 1, null]
+MOVE #1, #-10[.IX]
+; Quadruple - [ADD T_5, T_3, T_4]
+ADD #-9[.IX], #-10[.IX]
+MOVE .A , #-11[.IX]
 
-; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-8[.IX]
-; Quadruple - [PARAM T_0, null, null]
-PUSH #-8[.IX]
+; Quadruple - [MV T_6, 6, null]
+MOVE #6, #-12[.IX]
+; Quadruple - [MV T_7, 2, null]
+MOVE #2, #-13[.IX]
+; Quadruple - [MUL T_8, T_6, T_7]
+MUL #-12[.IX], #-13[.IX]
+MOVE .A , #-14[.IX]
 
-; Quadruple - [CALL L_test, null, null]
-CALL /L_test ;guarda el contador de programa en la pila
-MOVE .IX, .SP ;recuperar el SP
-MOVE #0[.IX], .R1 ;guardar retorno en R1
-MOVE #-3[.IX], .R0 ;recuperar direcciÃ³n enlace acceso
-MOVE .R0, .IX ; restaurar enlace acceso
+; Quadruple - [ADD T_9, T_5, T_8]
+ADD #-11[.IX], #-14[.IX]
+MOVE .A , #-15[.IX]
 
-; Quadruple - [MV hola, T_2, null]
-MOVE #-10[.IX], #-4[.IX]
+; Quadruple - [MV a, T_9, null]
+MOVE #-15[.IX], #-4[.IX]
+; Quadruple - [WRSTR T_10, L_0, null]
+WRSTR /L_0 
+
+; Quadruple - [MV T_11, a, null]
+MOVE #-4[.IX], #-17[.IX]
+; Quadruple - [WRINT T_11, null, null]
+WRINT #-17[.IX] 
+WRCHAR #10 
+
+; Quadruple - [MV T_13, 3, null]
+MOVE #3, #-19[.IX]
+; Quadruple - [MV T_14, 3, null]
+MOVE #3, #-20[.IX]
+; Quadruple - [ADD T_15, T_13, T_14]
+ADD #-19[.IX], #-20[.IX]
+MOVE .A , #-21[.IX]
+
+; Quadruple - [MV T_16, 2, null]
+MOVE #2, #-22[.IX]
+; Quadruple - [MUL T_17, T_15, T_16]
+MUL #-21[.IX], #-22[.IX]
+MOVE .A , #-23[.IX]
+
+; Quadruple - [MV a, T_17, null]
+MOVE #-23[.IX], #-4[.IX]
+; Quadruple - [WRSTR T_18, L_2, null]
+WRSTR /L_2 
+
+; Quadruple - [MV T_19, a, null]
+MOVE #-4[.IX], #-25[.IX]
+; Quadruple - [WRINT T_19, null, null]
+WRINT #-25[.IX] 
+WRCHAR #10 
+
 ; Quadruple - [DEVUELTO null, null, null]
-RET;rescata de la pila el contenido del contador de programa
+HALT
 
-
-
-
+; Quadruple - [CADENA a\n, L_0, null]
+L_0: DATA "a\n"
+; Quadruple - [CADENA asociacion parentesis\n, L_2, null]
+L_2: DATA "asociacion parentesis\n"
 
