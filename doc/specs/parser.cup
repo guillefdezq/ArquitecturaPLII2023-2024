@@ -654,7 +654,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		SymbolIF simboloFuncion = (SymbolIF) func0;
 		String identificador = simboloFuncion.getName();
-		//String identificador = scopeManager.getCurrentScope().getName();
+		String identificadorFin = "FUN_" + String.valueOf(scopeManager.getCurrentScope().getId());
 		ArrayList<SymbolIF> params = ((SymbolProcedure)simboloFuncion).getParameters();
 
 		ScopeIF scope = scopeManager.getCurrentScope();
@@ -666,7 +666,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF labelInicio = labelFactory.create(identificador);
-		LabelIF labelFin = labelFactory.create("FIN_" + identificador);
+		LabelIF labelFin = labelFactory.create("FIN_" + identificadorFin);
 		
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
@@ -849,6 +849,11 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
 
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
+
+		intermediateCodeBuilder.addQuadruple("FIN_PRINCIPAL", labelFin);
+
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
 
 		System.out.println("     QUAD>" + fp.getIntermediateCode());
@@ -959,7 +964,10 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
 
-		//intermediateCodeBuilder.addQuadruple("PUNTEROFINAL", temporal, direccion);
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
+
+		intermediateCodeBuilder.addQuadruple("FIN_PRINCIPAL", labelFin);
 
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
 
@@ -1467,7 +1475,7 @@ sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentencia
 		// TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());
 		// TemporalIF temporal = temporalFactory.create();
 		LabelFactory labelFactory = new LabelFactory();
-		LabelIF labelFin = labelFactory.create("FIN_"+scopeManager.getCurrentScope().getName());
+		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		intermediateCodeBuilder.addQuadruple("DEVUELTO", labelFin); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
@@ -1479,7 +1487,7 @@ sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentencia
 		// TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());
 		// TemporalIF temporal = temporalFactory.create();
 		LabelFactory labelFactory = new LabelFactory();
-		LabelIF labelFin = labelFactory.create("FIN_"+scopeManager.getCurrentScope().getName());
+		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("DEVUELTO", labelFin, expr.getTemporal()); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
