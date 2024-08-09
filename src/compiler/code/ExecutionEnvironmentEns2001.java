@@ -311,7 +311,7 @@ public class ExecutionEnvironmentEns2001
             b.append("PUSH .SR       ;estado máquina\n");
             b.append("PUSH .IX       ;enlace de acceso\n");  // Supuestamente es para bloques, pero no se activa...?
             
-        } else if (quadruple.getOperation().equals("PUNTEROPRINCIPAL")) {   // Equivalente a PUNTEROGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("PUNTERO_PRINCIPAL")) {   // Equivalente a PUNTEROGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());        //// No utilizado?
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("SUB .IX, " + o1 + "\n");
@@ -330,7 +330,7 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("CALL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS - DEBERÍA SER CALL f
             String r = operacion(quadruple.getResult());
             b.append("MOVE .R0, .IX         ; Guarda el valor de R0 en IX\n");
-            b.append("CALL " + r + "            ; Guarda PC y salta\n");
+            b.append("CALL /" + r + "            ; Guarda PC y salta\n");
             b.append("MOVE .IX, .R0         ; Restaura puntero pila\n");
             b.append("MOVE #0[.IX], .R9     ; Guarda retorno\n");
             b.append("MOVE #-3[.IX], .R0    ; Restaura puntero de acceso\n");
@@ -340,33 +340,40 @@ public class ExecutionEnvironmentEns2001
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
 
-            b.append("PUSH " + o1 + "\n");
+            //b.append("PUSH " + o1 + "\n");
+            b.append("PUSH #0\n");
 
-        } else if (quadruple.getOperation().equals("PUNTEROSUBPROGRAMA")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("PUNTERO_FUNCION")) {       // Equivalente a PUNTEROSUBPROGRAMA       // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());    // No se usa tampoco...?
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("SUB .IX, " + o1 + "\n");
             b.append("MOVE .A, .SP\n"); 
-            
+
+        } else if (quadruple.getOperation().equals("VALOR_RETORNO")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+            String r = operacion(quadruple.getResult());
+            b.append("MOVE .R9, " + r + "\n");
+
         } else if (quadruple.getOperation().equals("FIN_FUNCION")) {        // Equivalente a FINSUBPROGRAMA        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS - Puede ser RET x
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append(r.toString() + ": NOP\n");
             b.append("SUB .IX, " + o1 + "\n");
             b.append("MOVE .A, .SP\n");
+            b.append("RET\n");
 
         } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto         // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
             // b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n"); // En qué línea va esto?
             
             // La comprobación debería revisar si el puntero pila es el inicio, 65535 o cerca, para detener el flujo.
             if (r != null) {
-                b.append("MOVE " + r + ", #-0[.IX]\n");
+                b.append("MOVE " + o1 + ", #-0[.IX]\n");
             }
             
             //b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
             //b.append("MOVE .A, .SP\n");
-            b.append("RET;rescata de la pila el contenido del contador de programa\n\n\n\n");
+            b.append("BR /" + r.toString() + ";rescata de la pila el contenido del contador de programa\n\n\n\n");
         } else if (quadruple.getOperation().equals("INL")) {
             String r = operacion(quadruple.getResult());
             b.append(r.toString() + ": NOP\n");
