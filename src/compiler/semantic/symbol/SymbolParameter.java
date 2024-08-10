@@ -12,7 +12,7 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
 //       Include properties to characterize parameters
 
 public class SymbolParameter
-    extends SymbolBase      // Realmente es una copia de SymbolVariable, podría haberlo extendido, pero así será más fácil.
+    extends SymbolVariable      // Realmente es una copia de SymbolVariable, podría haberlo extendido, pero así será más fácil.
 {  
 
     private String valor;

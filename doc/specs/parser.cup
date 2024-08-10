@@ -313,6 +313,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 				if (symbol instanceof SymbolParameter) {
 					((SymbolParameter)symbol).setAddress(direccionRA);
 					direccionRA = direccionRA + symbol.getType().getSize();
+					System.out.println("Parametro: " + ((SymbolParameter)symbol).getName() + ". Dir: " + ((SymbolParameter)symbol).getAddress());
 				}
 			}
 
@@ -675,11 +676,15 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
 
+		int direccionParams = -4;
+
 		for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
 			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
 			if (symbol instanceof SymbolParameter) {
 				int valor = (((SymbolParameter)symbol).getValor() != null) ? Integer.parseInt(((SymbolParameter)symbol).getValor()) : 0;
-				intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", temporal, valor);
+				intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", temporal, direccionParams);
+				System.out.println("PARAMETRO POS " + direccionParams + " = " + ((SymbolParameter)symbol).getAddress());
+				direccionParams--;
 			}
 		}
 
@@ -1043,8 +1048,9 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			numero = constant.getValor();
 		} else if (symbol instanceof SymbolParameter) {
 			SymbolParameter parameter = (SymbolParameter) symbol;
-			Value value = new Value(Integer.parseInt(((SymbolParameter) symbol).getValor()));
-			intermediateCodeBuilder.addQuadruple("MV", temporal, value);
+			//Value value = new Value(Integer.parseInt(((SymbolParameter) symbol).getValor()));
+			Variable variable = new Variable(((SymbolParameter)parameter).getName(), symbol.getScope());
+			intermediateCodeBuilder.addQuadruple("MV", temporal, variable);
 			numero = parameter.getValor();
 		} else {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable o constante");

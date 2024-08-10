@@ -8,17 +8,17 @@ BR /PRINCIPAL
 ; Quadruple - [INL L_test, null, null]
 L_test: NOP
 
-; Quadruple - [VARSUBPROGRAMA T_1, 0, null]
-PUSH #0
+; Quadruple - [VARSUBPROGRAMA T_1, -4, null]
+PUSH #-4[.IX]
 
 ; Quadruple - [PUNTERO_FUNCION T_1, 8, null]
 SUB .IX, #8
 MOVE .A, .SP
 
-; Quadruple - [MV T_0, 0, null]
-MOVE #0, #-6[.IX]
+; Quadruple - [MV T_0, uno, null]
+MOVE #-6[.IX], #-7[.IX]
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, T_0, null]
-MOVE #-6[.IX], #-0[.IX]
+MOVE #-7[.IX], #-0[.IX]
 BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
 
 ; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
@@ -42,6 +42,9 @@ PUSH .IX       ;enlace de acceso
 ; Quadruple - [PUNTERO_PRINCIPAL T_3, 8, null]
 SUB .IX, #8
 MOVE .A, .SP
+
+; Quadruple - [VARLOCAL uno, 0, null]
+PUSH #0
 
 ; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
 ; sin declarar?
