@@ -337,6 +337,9 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE #0[.IX], .R9     ; Guarda retorno\n");
             b.append("MOVE #-3[.IX], .R0    ; Restaura puntero de acceso\n");
             b.append("MOVE .R0, .IX         ; Actualización IX a principal\n");
+            b.append("; Puede que algo esté mal configurado...\n");
+            b.append("; Necesario: Recuperación de la pila a su sitio original\n");
+            
             
         } else if (quadruple.getOperation().equals("VARSUBPROGRAMA")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
