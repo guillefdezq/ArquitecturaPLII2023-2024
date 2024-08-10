@@ -245,6 +245,10 @@ program ::=
   		
 		ScopeIF scope = scopeManager.getCurrentScope();
 		System.out.println("AMBT>terminamos! " + scope.getName() + " (" + scope.getLevel() + ")");
+
+		System.out.println("\n P A R S E R    F I N A L I Z A N D O . . .");
+		System.out.println("Atención: si esta es la primera línea que está leyendo después de que el compilador haya terminado es muy probable que algo haya fallado en la compilación.");
+
 		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
 		scopeManager.closeScope();
@@ -684,7 +688,6 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		intermediateCodeBuilder.addQuadruple("PUNTERO_FUNCION", temporal, tamanoRA);
 		intermediateCodeBuilder.addQuadruples(((Sentencia) fun1).getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", labelFin, params.size()+5);
-		// intermediateCodeBuilder.addQuadruple("INL", labelFin);  //???
 
 		// Reposicionado cerrado de ámbitos aquí
 		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
@@ -822,6 +825,12 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
+
+			int tamanoRA = scope.getSymbolTable().getSize() + scope.getTemporalTable().getSize() + 4;
+			TemporalFactory temporalFactory = new TemporalFactory(scope);
+			TemporalIF temporal = temporalFactory.create();
+			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
+
 		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
 			symbol = scope.getSymbolTable().getSymbols().get(i);
 			if (symbol instanceof SymbolVariable) {
@@ -1032,6 +1041,11 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			Value value = new Value(Integer.parseInt(((SymbolConstant) symbol).getValor()));
 			intermediateCodeBuilder.addQuadruple("MV", temporal, value);
 			numero = constant.getValor();
+		} else if (symbol instanceof SymbolParameter) {
+			SymbolParameter parameter = (SymbolParameter) symbol;
+			Value value = new Value(Integer.parseInt(((SymbolParameter) symbol).getValor()));
+			intermediateCodeBuilder.addQuadruple("MV", temporal, value);
+			numero = parameter.getValor();
 		} else {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable o constante");
 		}
@@ -1386,12 +1400,12 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		LabelIF labelIdentificador = labelFactory.create(ident.getLexema());
 		intermediateCodeBuilder.addQuadruple("INICIO_FUNCION");
 
-		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);
-
 		for (int i = 0; i < expresionesParametro.size(); i++) {
 			intermediateCodeBuilder.addQuadruples(expresionesParametro.get(expresionesParametro.size()-1-i).getIntermediateCode());
 			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(expresionesParametro.size()-1-i).getTemporal());
 		}
+
+		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);
 
 		if (symbol instanceof SymbolFunction) {
 			intermediateCodeBuilder.addQuadruple("VALOR_RETORNO", temporal);
@@ -1463,7 +1477,7 @@ sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sen
 	| sentenciaSi:sen {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = sen; :}
 	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = sen; :}
 	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = sen; :}
-	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
+	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = sen; :}
 	| sentenciaSalida:sen {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = sen; :}
 	| bloque:sen {: System.out.println("READ> sentencia = bloque"); RESULT = sen; :};
 
@@ -1896,7 +1910,11 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentmi
 
 		:};
 
-sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
+sentenciaLlamadaFuncion ::= llamadaFuncion:fun SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); 
+	Expresion func = (Expresion) fun;
+	Sentencia sen = new Sentencia();
+	sen.setIntermediateCode(func.getIntermediateCode());
+	RESULT = sen; :};
 
 sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		Sentencia sen = new Sentencia();

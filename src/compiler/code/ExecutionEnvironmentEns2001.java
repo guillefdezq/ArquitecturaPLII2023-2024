@@ -289,8 +289,9 @@ public class ExecutionEnvironmentEns2001
 
         } else if (quadruple.getOperation().equals("AXIOM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             b.append("AXIOM: NOP\n");
-            b.append("CALL /PRINCIPAL\n");
-            b.append("HALT\n");
+            //b.append("CALL /PRINCIPAL\n");
+            b.append("BR /PRINCIPAL\n");
+            //b.append("HALT\n");
         } else if (quadruple.getOperation().equals("CADENA")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
@@ -341,10 +342,11 @@ public class ExecutionEnvironmentEns2001
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
 
-            //b.append("PUSH " + o1 + "\n");
-            b.append("PUSH #0\n");
+            b.append("PUSH " + o1 + "\n");
+            //b.append("PUSH #0\n");
 
         } else if (quadruple.getOperation().equals("PUNTERO_FUNCION")) {       // Equivalente a PUNTEROSUBPROGRAMA       // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+            // DUPLICADO DE PUNTERO_PRINCIPAL
             String r = operacion(quadruple.getResult());    // No se usa tampoco...?
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("SUB .IX, " + o1 + "\n");
@@ -359,15 +361,16 @@ public class ExecutionEnvironmentEns2001
             String o1 = operacion(quadruple.getFirstOperand());
             b.append(r.toString() + ": NOP\n");
             //b.append("SUB .IX, " + o1 + "\n");
-            b.append("SUB .IX, #5\n");
+            b.append("SUB .IX, " + o1 + "\n");
             b.append("MOVE .A, .SP\n");
-            b.append("RET\n");
+            b.append("RET\n\n\n\n");
 
         } else if (quadruple.getOperation().equals("FIN_PRINCIPAL")) {
             String r = operacion(quadruple.getResult());
-            b.append(r.toString() + ": NOP\n");
-            b.append("MOVE #-2, .SP\n");
-            b.append("RET\n");
+            b.append(r.toString() + ": HALT\n");
+            //b.append("HALT\n");
+            //b.append("MOVE #-2, .SP\n");
+            //b.append("RET\n");
 
         } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto         // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
@@ -381,7 +384,7 @@ public class ExecutionEnvironmentEns2001
             
             //b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
             //b.append("MOVE .A, .SP\n");
-            b.append("BR /" + r.toString() + "    ;rescata de la pila el contenido del contador de programa\n\n\n\n");
+            b.append("BR /" + r.toString() + "    ;rescata de la pila el contenido del contador de programa\n");
         } else if (quadruple.getOperation().equals("INL")) {
             String r = operacion(quadruple.getResult());
             b.append(r.toString() + ": NOP\n");

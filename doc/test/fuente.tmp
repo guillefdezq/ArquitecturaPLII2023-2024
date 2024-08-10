@@ -1,7 +1,9 @@
 ; Quadruple - [AXIOM null, null, null]
 AXIOM: NOP
-CALL /PRINCIPAL
-HALT
+BR /PRINCIPAL
+
+; Quadruple - [VARGLOBAL otra, 0, null]
+; sin declarar?
 
 ; Quadruple - [INL L_test, null, null]
 L_test: NOP
@@ -13,20 +15,20 @@ PUSH #0
 SUB .IX, #8
 MOVE .A, .SP
 
-; Quadruple - [MV T_0, 123, null]
-MOVE #123, #-6[.IX]
+; Quadruple - [MV T_0, 0, null]
+MOVE #0, #-6[.IX]
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, T_0, null]
 MOVE #-6[.IX], #-0[.IX]
 BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
 
-
-
-
 ; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
 L_FIN_FUN_1: NOP
-SUB .IX, #5
+SUB .IX, #6
 MOVE .A, .SP
 RET
+
+
+
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
@@ -37,11 +39,9 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [VARLOCAL hola, 0, null]
-PUSH #0
-
-; Quadruple - [VARLOCAL hola, 5, null]
-PUSH #5
+; Quadruple - [PUNTERO_PRINCIPAL T_3, 8, null]
+SUB .IX, #8
+MOVE .A, .SP
 
 ; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
 ; sin declarar?
@@ -53,6 +53,11 @@ PUSH .R0       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
+; Quadruple - [MV T_0, 420, null]
+MOVE #420, #-5[.IX]
+; Quadruple - [PARAM T_0, null, null]
+PUSH #-5[.IX]
+
 ; Quadruple - [CALL L_test, null, null]
 MOVE .R0, .IX         ; Guarda el valor de R0 en IX
 CALL /L_test            ; Guarda PC y salta
@@ -61,31 +66,17 @@ MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-3[.IX], .R0    ; Restaura puntero de acceso
 MOVE .R0, .IX         ; ActualizaciÃ³n IX a principal
 
-; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-6[.IX]
-; Quadruple - [PARAM T_0, null, null]
-PUSH #-6[.IX]
-
 ; Quadruple - [VALOR_RETORNO T_1, null, null]
-MOVE .R9, #-7[.IX]
+MOVE .R9, #-6[.IX]
 
-; Quadruple - [MV hola, T_1, null]
-MOVE #-7[.IX], #-5[.IX]
-; Quadruple - [MV T_2, hola, null]
-MOVE #-5[.IX], #-8[.IX]
-; Quadruple - [WRINT T_2, null, null]
-WRINT #-8[.IX] 
+; Quadruple - [WRINT T_1, null, null]
+WRINT #-6[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
 BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
 
-
-
-
 ; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_2, null, null]
-L_FIN_FUN_2: NOP
-MOVE #-2, .SP
-RET
+L_FIN_FUN_2: HALT
 
 
