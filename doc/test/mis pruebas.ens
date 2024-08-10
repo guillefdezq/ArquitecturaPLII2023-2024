@@ -68,6 +68,8 @@ MOVE .IX, .R0         ; Restaura puntero pila
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-3[.IX], .R0    ; Restaura puntero de acceso
 MOVE .R0, .IX         ; ActualizaciÃ³n IX a principal
+; Puede que algo estÃ© mal configurado...
+; Necesario: RecuperaciÃ³n de la pila a su sitio original
 
 ; Quadruple - [VALOR_RETORNO T_1, null, null]
 MOVE .R9, #-6[.IX]
