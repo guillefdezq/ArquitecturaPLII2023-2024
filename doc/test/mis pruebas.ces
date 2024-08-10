@@ -1,16 +1,15 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
+#constante otra 420;
+
 entero test (entero uno) {
-    devuelve 123;
+    devuelve uno;
 }
 
 vacio principal () {
     
-    entero hola = 5;
+    escribeEnt(test(otra));
 
-    hola = test(1);
-
-    escribeEnt(hola);
     devuelve;
 
 }
