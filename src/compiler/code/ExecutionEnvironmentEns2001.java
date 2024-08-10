@@ -342,7 +342,7 @@ public class ExecutionEnvironmentEns2001
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
 
-            b.append("PUSH " + o1 + "\n");
+            b.append("PUSH " + o1 + "[.IX]\n");
             //b.append("PUSH #0\n");
 
         } else if (quadruple.getOperation().equals("PUNTERO_FUNCION")) {       // Equivalente a PUNTEROSUBPROGRAMA       // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
