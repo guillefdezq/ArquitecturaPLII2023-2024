@@ -715,7 +715,7 @@ funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS {: System.out.println(
 
 
 seccionParametros ::= declaracionParametros:params {: System.out.println("READ> seccionParametros = sí"); RESULT = params; :}
- | epsilon {: System.out.println("READ> seccionParametros = no"); RESULT = null; :};
+ | epsilon {: System.out.println("READ> seccionParametros = no"); RESULT = new ArrayList<SymbolIF>(); :};
 
 declaracionParametros  ::= parametro:param {: System.out.println("READ> declaracionParametros = uno/ultimo");
 		ArrayList<SymbolIF> params = new ArrayList<SymbolIF>();
@@ -1425,25 +1425,51 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		RESULT = expr; :}
 	| IDENTIFICADOR:ident OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros");
 	 	ScopeIF scope = scopeManager.getCurrentScope();
-		SymbolProcedure funcion = (SymbolProcedure) scopeManager.searchSymbol(ident.getLexema());
+
+		if (!scopeManager.containsSymbol(ident.getLexema())) {
+			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no existe. DEBUG: llamadafuncion");
+		}
 		
-		if (!(funcion instanceof SymbolFunction || funcion instanceof SymbolProcedure)) {
+		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
+		
+		if (!(symbol instanceof SymbolFunction || symbol instanceof SymbolProcedure)) {
 			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no es una función o procedimiento.");
 		}
-
-		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		
+		// Borrar?
+		SymbolProcedure funcion = (SymbolProcedure) symbol;
+		
 
 		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
 
-		intermediateCodeBuilder.addQuadruple("INICIA_FUNCION", procedure);
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		intermediateCodeBuilder.addQuadruple("LLAMA_FUNCION", procedure);
 
-		/// Falta codigo de devolución del resultado.
+
+		intermediateCodeBuilder.addQuadruple("DVLP", "STARTSUBPROGRAMA");
+
+		Value direccionesInvocador = new Value(scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size());
+		System.out.println("Llamada tamano " + direccionesInvocador);
+
+
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
 		
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelIdentificador = labelFactory.create(ident.getLexema());
+		intermediateCodeBuilder.addQuadruple("INICIO_FUNCION");
+
+		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);
+
+		if (symbol instanceof SymbolFunction) {
+			intermediateCodeBuilder.addQuadruple("VALOR_RETORNO", temporal);
+		}
+			
 		Expresion expr = new Expresion();
-		expr.setValor("9999");		// Este valor sirve únicamente de referencia, no devuelve valor real.
-		expr.setTipo(scopeManager.searchType("ENTERO"));
+		expr.setValor("0");		// Este valor es un sueñuelo, no tiene efectividad real (debería borrarlo).
+		expr.setIntermediateCode(intermediateCodeBuilder.create());
+		expr.setTemporal(temporal);
+		expr.setTipo(((SymbolIF) funcion).getType());
 		RESULT = expr; :};
 parametros ::= expresion:exp {: System.out.println("READ> parametros = expresion"); 
 		ArrayList<Expresion> params = new ArrayList<Expresion>();

@@ -2,13 +2,15 @@
 
 #constante otra 420;
 
-entero test (entero uno) {
-    devuelve uno;
+entero test () {
+    devuelve;
 }
 
 vacio principal () {
     
-    escribeEnt(test(otra));
+    escribeEnt(test());
+
+
 
     devuelve;
 

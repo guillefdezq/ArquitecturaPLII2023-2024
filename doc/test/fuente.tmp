@@ -8,22 +8,16 @@ BR /PRINCIPAL
 ; Quadruple - [INL L_test, null, null]
 L_test: NOP
 
-; Quadruple - [VARSUBPROGRAMA T_1, -4, null]
-PUSH #-4[.IX]
-
-; Quadruple - [PUNTERO_FUNCION T_1, 8, null]
-SUB .IX, #8
+; Quadruple - [PUNTERO_FUNCION T_0, 6, null]
+SUB .IX, #6
 MOVE .A, .SP
 
-; Quadruple - [MV T_0, uno, null]
-MOVE #-6[.IX], #-7[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_1, T_0, null]
-MOVE #-7[.IX], #-0[.IX]
+; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
 BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
+; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 5, null]
 L_FIN_FUN_1: NOP
-SUB .IX, #6
+SUB .IX, #5
 MOVE .A, .SP
 RET
 
@@ -39,12 +33,9 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_3, 8, null]
-SUB .IX, #8
+; Quadruple - [PUNTERO_PRINCIPAL T_2, 7, null]
+SUB .IX, #7
 MOVE .A, .SP
-
-; Quadruple - [VARLOCAL uno, 0, null]
-PUSH #0
 
 ; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
 ; sin declarar?
@@ -56,11 +47,6 @@ PUSH .R0       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [MV T_0, 420, null]
-MOVE #420, #-5[.IX]
-; Quadruple - [PARAM T_0, null, null]
-PUSH #-5[.IX]
-
 ; Quadruple - [CALL L_test, null, null]
 MOVE .R0, .IX         ; Guarda el valor de R0 en IX
 CALL /L_test            ; Guarda PC y salta
@@ -70,11 +56,11 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
 
-; Quadruple - [VALOR_RETORNO T_1, null, null]
-MOVE .R9, #-6[.IX]
+; Quadruple - [VALOR_RETORNO T_0, null, null]
+MOVE .R9, #-5[.IX]
 
-; Quadruple - [WRINT T_1, null, null]
-WRINT #-6[.IX] 
+; Quadruple - [WRINT T_0, null, null]
+WRINT #-5[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
