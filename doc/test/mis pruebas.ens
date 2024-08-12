@@ -50,7 +50,7 @@ PUSH #0
 ; sin declarar?
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .R0  ;guarda el valor de SP en R0
+MOVE .SP, .R0  ;guarda el valor de SP en R0 para guardar EC y establecer aquÃ­ IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .R0       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
@@ -64,12 +64,11 @@ PUSH #-5[.IX]
 ; Quadruple - [CALL L_test, null, null]
 MOVE .R0, .IX         ; Guarda el valor de R0 en IX
 CALL /L_test            ; Guarda PC y salta
-MOVE .IX, .R0         ; Restaura puntero pila
 MOVE #0[.IX], .R9     ; Guarda retorno
-MOVE #-3[.IX], .R0    ; Restaura puntero de acceso
-MOVE .R0, .IX         ; ActualizaciÃ³n IX a principal
-; Puede que algo estÃ© mal configurado...
-; Necesario: RecuperaciÃ³n de la pila a su sitio original
+MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
+; Puede que algo este mal configurado...
+; Necesario: Recuperacion de la pila a su sitio original
 
 ; Quadruple - [VALOR_RETORNO T_1, null, null]
 MOVE .R9, #-6[.IX]
