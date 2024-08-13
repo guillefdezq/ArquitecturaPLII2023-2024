@@ -5,9 +5,8 @@ BR /PRINCIPAL
 ; Quadruple - [INL L_incrementa, null, null]
 L_incrementa: NOP
 
-; Quadruple - [VARSUBPROGRAMA T_5, -4, null]
-PUSH #-4[.IX]
-
+; Quadruple - [VARSUBPROGRAMA x, -4, null]
+MOVE #-4[.IX], #-7[.IX]
 ; Quadruple - [PUNTERO_FUNCION T_5, 13, null]
 SUB .IX, #13
 MOVE .A, .SP
@@ -50,14 +49,22 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
+; Quadruple - [PUNTERO_PRINCIPAL T_5, 12, null]
+SUB .IX, #12
+MOVE .A, .SP
+
 ; Quadruple - [VARLOCAL a, 0, null]
-PUSH #0
-
+MOVE #0, #-5[.IX]
 ; Quadruple - [VARLOCAL b, 0, null]
-PUSH #0
-
-
-
+MOVE #0, #-6[.IX]
+; Quadruple - [VARLOCAL c, 0, null]
+MOVE #0, #-6[.IX]
+; Quadruple - [VARLOCAL x, 0, null]
+MOVE #0, #-7[.IX]
+; Quadruple - [VARLOCAL a, 0, null]
+MOVE #0, #-5[.IX]
+; Quadruple - [VARLOCAL b, 0, null]
+MOVE #0, #-6[.IX]
 ; Quadruple - [MV T_0, 2, null]
 MOVE #2, #-7[.IX]
 ; Quadruple - [MV a, T_0, null]
