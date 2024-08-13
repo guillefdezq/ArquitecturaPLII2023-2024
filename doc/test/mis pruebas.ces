@@ -3,7 +3,7 @@
 #constante otra 420;
 
 entero test () {
-    devuelve;
+    devuelve 24;
 }
 
 vacio principal () {

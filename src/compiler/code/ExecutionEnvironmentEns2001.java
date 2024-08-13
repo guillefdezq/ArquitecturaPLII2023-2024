@@ -300,8 +300,8 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("VARLOCAL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
-            //b.append("MOVE " + o1 + ", " + r);        
-            b.append("PUSH " + o1 + "\n");
+            b.append("MOVE " + o1 + ", " + r);        
+            //b.append("PUSH " + o1 + "\n");
         // } else if (quadruple.getOperation().equals("VARLOCAL") || quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
         //     b.append("; sin declarar\n");
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {      // Equivalente a STARTGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
@@ -345,7 +345,8 @@ public class ExecutionEnvironmentEns2001
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
 
-            b.append("PUSH " + o1 + "[.IX]\n");
+            b.append("MOVE " + o1 + "[.IX], " + r); 
+            //b.append("PUSH " + o1 + "[.IX]\n");
             //b.append("PUSH #0\n");
 
         } else if (quadruple.getOperation().equals("PUNTERO_FUNCION")) {       // Equivalente a PUNTEROSUBPROGRAMA       // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
