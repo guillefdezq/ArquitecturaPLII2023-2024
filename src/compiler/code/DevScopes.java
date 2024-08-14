@@ -40,9 +40,10 @@ public class DevScopes {
                     // TODO: handle exception
                     System.out.println(e);
                 }
+                System.out.println("    Nivel : " + scope.getLevel());
                 System.out.println("    Open: " + scope.getScopeManager().getOpenScopes());
                 System.out.println("    Simbolos: " + scope.getSymbolTable());
-
+                System.out.println("\n");
             }
 
 

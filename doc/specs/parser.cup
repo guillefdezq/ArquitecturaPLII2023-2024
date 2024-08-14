@@ -674,6 +674,56 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
 
+
+		// Asignación de direcciones
+
+		int direccion = 4;
+
+		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
+		
+		System.out.println("listScopeHijos en funcion normal sin borrar " + listScopeHijos);
+
+		boolean fueraInteres = false;
+		for (int i = 0 ; i < scopeManager.getAllScopes().size() ; i++) {
+			if (i < scope.getId()) listScopeHijos.remove(0);
+		}
+
+		System.out.println("listScopeHijos en funcion normal " + listScopeHijos);
+
+
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				if (symbol instanceof SymbolVariable) {
+					((SymbolVariable) symbol).setAddress(direccion);
+					direccion += symbol.getType().getSize();
+				}
+			}
+		}
+
+		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
+			if (temporal instanceof Temporal) {
+				((Temporal) temporal).setAddress(direccion);
+				//direccion += temporal.getType().getSize();
+				direccion += ((Temporal) temporal).getSize();
+			}
+		}
+
+		
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
+				TemporalIF temporal = tempScope.getTemporalTable().getTemporals().get(i);
+				if (temporal instanceof Temporal) {
+					((Temporal) temporal).setAddress(direccion);
+					direccion += ((Temporal) temporal).getSize();
+				}
+			}
+		}
+
+		// Lo demás
+
+
 		TemporalFactory temporalFactory = new TemporalFactory(scope);
 		TemporalIF temporal = temporalFactory.create();
 
@@ -794,9 +844,9 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		sTable.addSymbol(identificador, simboloProcedimiento);
 
 		int direccion = 4;
-		SymbolIF symbol;
+		
 		for (int i = 0; i < sTable.getSymbols().size(); i++) {
-			symbol = sTable.getSymbols().get(i);
+			SymbolIF symbol = sTable.getSymbols().get(i);
 			if (symbol instanceof SymbolVariable) {
 				((SymbolVariable) symbol).setAddress(direccion);
 				System.out.println("direcciones" + symbol.getName() + "@" + direccion);
@@ -804,13 +854,20 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}			
 		}
 
+		DevScopes devScopes = new DevScopes(scopeManager);		/// Recuerda borrar esto ¬_¬'
+
 		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
 
+		for (int i = 0 ; i < scope.getId() ; i++) {
+			listScopeHijos.remove(0);
+		}
+
+		System.out.println("listScopeHijos en funcion principal " + listScopeHijos);
 
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					((SymbolVariable) symbol).setAddress(direccion);
 					direccion += symbol.getType().getSize();
@@ -848,7 +905,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
 
 		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
-			symbol = scope.getSymbolTable().getSymbols().get(i);
+			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
 			if (symbol instanceof SymbolVariable) {
 				Variable variable = new Variable(symbol.getName(), symbol.getScope());
 				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
@@ -857,7 +914,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					Variable variable = new Variable(symbol.getName(), symbol.getScope());
 					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
@@ -902,9 +959,9 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		sTable.addSymbol(identificador, simboloProcedimiento);
 
 		int direccion = 4;
-		SymbolIF symbol;
+		
 		for (int i = 0; i < sTable.getSymbols().size(); i++) {
-			symbol = sTable.getSymbols().get(i);
+			SymbolIF symbol = sTable.getSymbols().get(i);
 			if (symbol instanceof SymbolVariable) {
 				((SymbolVariable) symbol).setAddress(direccion);
 				direccion += symbol.getType().getSize();
@@ -920,8 +977,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			listScopeHijos.remove(0);
 		}
 
-		System.out.println(listScopeHijos);
-
+		System.out.println("listScopeHijos en funcion principal " + listScopeHijos);
 
 		// Print scopes
 		for (ScopeIF tempScope: listScopeHijos) {
@@ -930,7 +986,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					((SymbolVariable) symbol).setAddress(direccion);
 					direccion += symbol.getType().getSize();
@@ -979,7 +1035,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					
 					Variable variable = new Variable(symbol.getName(), symbol.getScope());
