@@ -6,30 +6,47 @@ vacio hola () {
     entero todo;
     entero mal;
     mientras (todo < 5) {
+        mal = 0;
         mientras (mal < 4) {
+            entero a;
             escribeEnt(mal);
             mal++;
         }
+        todo++;
+    }
+    devuelve;
+}
+
+vacio adios () {
+    entero todo;
+    entero mal;
+    mientras (todo < 5) {
+        mal = 0;
+        mientras (mal < 4) {
+            entero a;
+            escribeEnt(mal);
+            mal++;
+        }
+        todo++;
     }
     devuelve;
 }
 
 vacio principal () {
     
-    entero a;
-    entero b;
-    a = 3;
-
-    mientras (a < 5) {
-        b = 0;
-        mientras (b < 3) {
-            escribeEnt(b);
-            b++;
+    entero nada;
+    entero bien;
+    mientras (nada < 5) {
+        bien = 0;
+        mientras (bien < 4) {
+            entero b;
+            escribeEnt(bien);
+            bien++;
         }
-
-        escribeEnt(a);
-        a++;
+        nada++;
     }
+    
+    hola();
 
     devuelve;
 
