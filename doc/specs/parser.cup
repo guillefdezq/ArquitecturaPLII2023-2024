@@ -251,6 +251,7 @@ program ::=
 
 		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
 
 		System.out.println("\n\n\n");
@@ -281,6 +282,7 @@ cerrarAmbito ::= {:
 		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
 		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
 :}; 
 
@@ -700,6 +702,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
 		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
 
 		Funcion funcion = new Funcion();
@@ -877,6 +880,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
 		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
 
 		RESULT = fp; :}
@@ -901,9 +905,44 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}			
 		}
 
-		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes(); 
+
+		DevScopes devScopes = new DevScopes(scopeManager);
+
+		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
 
 
+		// Vamos a suponer que este realmente no es el falloo...
+
+//		List<ScopeIF> listScopeHijos = new ArrayList<ScopeIF>(); 
+
+//		// Intento de búsqueda de hijos desde este scope.
+//		for (ScopeIF scopeAnalizado : scopeManager.getAllScopes()) {
+//
+//			System.out.println("SCOPES encontrados >> " + listScopeHijos);
+//
+//			System.out.println("AnalisisScopes>> " + scopeAnalizado.getName() + " (" + scopeAnalizado.getLevel() + ") ID " + scopeAnalizado.getId());
+//			ScopeIF scopeAnalisis = scopeAnalizado;
+//
+//			if (scopeAnalisis.getName() == "global") continue;
+//
+//			System.out.println("SCOPE = " + scopeAnalizado.getId() + " : PARENT = " + scopeAnalizado.getParentScope().getId());
+//
+//			if (listScopeHijos.contains(scopeAnalisis.getParentScope())) {
+//				listScopeHijos.add(scopeAnalizado);
+//				continue;
+//			}
+//
+//			if (scopeAnalisis.getParentScope().getId() == scope.getId()) {
+//				listScopeHijos.add(scopeAnalizado);
+//				continue;
+//			}
+//
+//		}
+
+		// Print scopes
+		for (ScopeIF tempScope: listScopeHijos) {
+			System.out.println("     SCOPES> " + tempScope.getName() + " (" + tempScope.getLevel() + ")  " + tempScope.getSymbolTable().getSymbols());
+		}
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
@@ -944,13 +983,15 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			TemporalIF temporal = temporalFactory.create();
 			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
 
-		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
-			symbol = scope.getSymbolTable().getSymbols().get(i);
-			if (symbol instanceof SymbolVariable) {
-				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
-			}
-		}
+		//  Duplicado
+		//for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
+		//	symbol = scope.getSymbolTable().getSymbols().get(i);
+		//	if (symbol instanceof SymbolVariable) {
+		//		Variable variable = new Variable(symbol.getName(), symbol.getScope());
+		//		intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+		//		System.out.println("VARLOCAL>");
+		//	}
+		//}
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
@@ -1002,9 +1043,10 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		System.out.println("     QUAD>" + fp.getIntermediateCode());
 
-		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
-		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
-		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		System.out.println("AMBT>cerrar PRINCIPAL " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos:   " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:      " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
 
 		RESULT = fp;  :};

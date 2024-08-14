@@ -2,15 +2,22 @@
 
 #constante otra 420;
 
-entero test () {
-    devuelve 24;
-}
-
 vacio principal () {
     
-    escribeEnt(test());
+    entero a;
+    entero b;
+    a = 3;
 
+    mientras (a < 5) {
+        b = 0;
+        mientras (b < 3) {
+            escribeEnt(b);
+            b++;
+        }
 
+        escribeEnt(a);
+        a++;
+    }
 
     devuelve;
 

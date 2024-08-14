@@ -16,7 +16,7 @@ public class SymbolParameter
 {  
 
     private String valor;
-    private int address;
+    private int address = 0;
 
     public int getAddress() {
         return address;
