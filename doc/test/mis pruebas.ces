@@ -2,6 +2,18 @@
 
 #constante otra 420;
 
+vacio hola () {
+    entero todo;
+    entero mal;
+    mientras (todo < 5) {
+        mientras (mal < 4) {
+            escribeEnt(mal);
+            mal++;
+        }
+    }
+    devuelve;
+}
+
 vacio principal () {
     
     entero a;

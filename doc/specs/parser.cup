@@ -299,7 +299,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		for(int i=0;i<thisScope.getSymbolTable().getSymbols().size();i++) {
 			SymbolIF symbol=thisScope.getSymbolTable().getSymbols().get(i);
 			if(symbol instanceof SymbolVariable) {
-				((SymbolVariable)symbol).setAddress(direccionGlobal);
+				((SymbolVariable)symbol).setAddress(direccionGlobal);					/// No debería ser constante?		// Además las direcciones son machacadas por el bucle de a continuación.
 				//Actualizamos el valor de direccionGlobal para el próximo símbolo 
 				direccionGlobal = direccionGlobal + symbol.getType().getSize();
 				System.out.println("variable: " + symbol.getType());
@@ -308,11 +308,15 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		}
 
 		List<ScopeIF> scopes = scopeManager.getAllScopes();
+
+
+
 		for (ScopeIF scope : scopes) {
 			int direccionRA = 4;
 			List<SymbolIF> symbols = scope.getSymbolTable().getSymbols();
 			for (SymbolIF symbol : symbols) {
 				if (symbol instanceof SymbolParameter) {
+					if (((SymbolParameter)symbol).getAddress() != 0) continue;
 					((SymbolParameter)symbol).setAddress(direccionRA);
 					direccionRA = direccionRA + symbol.getType().getSize();
 					System.out.println("Parametro: " + ((SymbolParameter)symbol).getName() + ". Dir: " + ((SymbolParameter)symbol).getAddress());
@@ -325,6 +329,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 
 			for (SymbolIF symbol : symbols) {
 				if (symbol instanceof SymbolVariable) {
+					if (((SymbolVariable)symbol).getAddress() != 0) continue;
 					((SymbolVariable)symbol).setAddress(direccionRA);
 					direccionRA = direccionRA + symbol.getType().getSize();
 				}
@@ -332,6 +337,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 
 			List<TemporalIF> temps = scope.getTemporalTable().getTemporals();
 			for (TemporalIF temporal : temps) {
+				if (temporal.getAddress() != 0) continue;
 				((Temporal) temporal).setAddress(direccionRA);
 				direccionRA = direccionRA + ((Temporal) temporal).getSize();
 			}
@@ -906,38 +912,16 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		}
 
 
-		DevScopes devScopes = new DevScopes(scopeManager);
+		DevScopes devScopes = new DevScopes(scopeManager);		/// Recuerda borrar esto ¬_¬'
 
 		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
 
+		for (int i = 0 ; i < scope.getId() ; i++) {
+			listScopeHijos.remove(0);
+		}
 
-		// Vamos a suponer que este realmente no es el falloo...
+		System.out.println(listScopeHijos);
 
-//		List<ScopeIF> listScopeHijos = new ArrayList<ScopeIF>(); 
-
-//		// Intento de búsqueda de hijos desde este scope.
-//		for (ScopeIF scopeAnalizado : scopeManager.getAllScopes()) {
-//
-//			System.out.println("SCOPES encontrados >> " + listScopeHijos);
-//
-//			System.out.println("AnalisisScopes>> " + scopeAnalizado.getName() + " (" + scopeAnalizado.getLevel() + ") ID " + scopeAnalizado.getId());
-//			ScopeIF scopeAnalisis = scopeAnalizado;
-//
-//			if (scopeAnalisis.getName() == "global") continue;
-//
-//			System.out.println("SCOPE = " + scopeAnalizado.getId() + " : PARENT = " + scopeAnalizado.getParentScope().getId());
-//
-//			if (listScopeHijos.contains(scopeAnalisis.getParentScope())) {
-//				listScopeHijos.add(scopeAnalizado);
-//				continue;
-//			}
-//
-//			if (scopeAnalisis.getParentScope().getId() == scope.getId()) {
-//				listScopeHijos.add(scopeAnalizado);
-//				continue;
-//			}
-//
-//		}
 
 		// Print scopes
 		for (ScopeIF tempScope: listScopeHijos) {
