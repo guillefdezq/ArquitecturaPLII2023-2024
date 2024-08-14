@@ -14,21 +14,34 @@ public class DevScopes {
 
     public DevScopes (ScopeManagerIF scopeManager) {
         System.out.println("------[ D E V   S C O P E M A N A G E R ]------");
-        
+
             if (scopeManager != null) {
                 System.out.println("ScopeManager recibido: " + scopeManager);
             } else {
                 System.out.println("No se ha recibido ScopeManager!");
             }
 
+
+            System.out.println("ScopeManager ALL: " + scopeManager.getAllScopes()); 
+            System.out.println("ScopeManager OPEN: " + scopeManager.getOpenScopes());
+
+
             for (ScopeIF scope : scopeManager.getAllScopes()) {
 
+                
                 System.out.println("Scope ID" + scope.getId() + " : " + scope.getName());
-                if (scope.getParentScope() != null) {
-                System.out.println("    Padre: " + scope.getParentScope().getId() + " : " + scope.getParentScope().getName());
-                } else { 
-                    System.out.println("    No tiene padre");
+                try {
+                    if (scope.getParentScope() != null) {
+                        System.out.println("    Padre: " + scope.getParentScope().getId() + " : " + scope.getParentScope().getName());
+                    } else { 
+                        System.out.println("    No tiene padre");
+                    }
+                } catch (Exception e) {
+                    // TODO: handle exception
+                    System.out.println(e);
                 }
+                System.out.println("    Open: " + scope.getScopeManager().getOpenScopes());
+                System.out.println("    Simbolos: " + scope.getSymbolTable());
 
             }
 
