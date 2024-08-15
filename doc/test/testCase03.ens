@@ -1,0 +1,51 @@
+; Quadruple - [AXIOM null, null, null]
+AXIOM: NOP
+BR /PRINCIPAL
+
+; Quadruple - [VARGLOBAL VERDADERO, 0, null]
+; sin declarar?
+
+; Quadruple - [VARGLOBAL FALSO, 0, null]
+; sin declarar?
+
+; Quadruple - [PRINCIPAL null, null, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas
+MOVE .SP, .IX  ;guarda el valor de SP en R0
+PUSH #-1       ;valor de retorno
+PUSH .IX       ;enlace de control
+PUSH .SR       ;estado mÃ¡quina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [PUNTERO_PRINCIPAL T_6, 11, null]
+SUB .IX, #11
+MOVE .A, .SP
+
+; Quadruple - [WRSTR T_0, L_0, null]
+WRSTR /L_0 
+
+; Quadruple - [MV T_1, 1, null]
+MOVE #1, #-11[.IX]
+; Quadruple - [WRINT T_1, null, null]
+WRINT #-11[.IX] 
+WRCHAR #10 
+
+; Quadruple - [WRSTR T_3, L_2, null]
+WRSTR /L_2 
+
+; Quadruple - [MV T_4, 0, null]
+MOVE #0, #-14[.IX]
+; Quadruple - [WRINT T_4, null, null]
+WRINT #-14[.IX] 
+WRCHAR #10 
+
+; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
+BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
+L_FIN_FUN_1: HALT
+
+; Quadruple - [CADENA verdadero\n, L_0, null]
+L_0: DATA "verdadero\n"
+; Quadruple - [CADENA falso\n, L_2, null]
+L_2: DATA "falso\n"
