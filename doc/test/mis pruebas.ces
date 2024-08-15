@@ -17,26 +17,11 @@ vacio hola () {
     devuelve;
 }
 
-vacio adios () {
-    entero todo;
-    entero mal;
-    mientras (todo < 5) {
-        mal = 0;
-        mientras (mal < 4) {
-            entero a;
-            escribeEnt(mal);
-            mal++;
-        }
-        todo++;
-    }
-    devuelve;
-}
-
 vacio principal () {
     
     entero nada;
     entero bien;
-    mientras (nada < 5) {
+    mientras (nada  < 5) {
         bien = 0;
         mientras (bien < 4) {
             entero b;
@@ -46,6 +31,8 @@ vacio principal () {
         nada++;
     }
     
+    escribe("SEPARACION");
+
     hola();
 
     devuelve;

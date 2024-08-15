@@ -677,7 +677,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		// Asignación de direcciones
 
-		int direccion = 4;
+		int direccion = 5 + params.size();
 
 		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
 		
@@ -904,20 +904,32 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			TemporalIF temporal = temporalFactory.create();
 			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
 
-		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
-			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
-			if (symbol instanceof SymbolVariable) {
-				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
-			}
-		}
+		//	Esto ya se realiza abajo
+		//
+		//	for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
+		//		SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+		//		if (symbol instanceof SymbolVariable) {
+		//			Variable variable = new Variable(symbol.getName(), symbol.getScope());
+		//			Value value = new Value((((SymbolVariable)symbol).getValor()!=null)?Integer.parseInt(((SymbolVariable)symbol).getValor()):0);
+		//			intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, value);
+		//		}
+		//	}
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
 				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
-				if (symbol instanceof SymbolVariable) {
-					Variable variable = new Variable(symbol.getName(), symbol.getScope());
-					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				int valor;
+				System.out.println("	 symbol.getName() = " + symbol.getName());
+				System.out.println("     symbol.getType() = " + symbol.getType());
+				if ((symbol.getType() instanceof TypeSimple) && (symbol instanceof SymbolVariable)) {
+					valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+				System.out.println(" D E B U G");
+					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
+				} else if ((symbol.getType() instanceof TypeArray)) {
+					String valores = ((SymbolVariable)symbol).getValor();
+					int size = ((TypeArray)symbol.getType()).getSize();
+					intermediateCodeBuilder.addQuadruple("VARLOCALVECTOR", variable, size);
 				}
 			}
 		}
@@ -994,14 +1006,16 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}
 		}
 
-		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
-			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
-			if (temporal instanceof Temporal) {
-				((Temporal) temporal).setAddress(direccion);
-				//direccion += temporal.getType().getSize();
-				direccion += ((Temporal) temporal).getSize();
-			}
-		}
+		// Ya se realiza esta acción abajo
+		//
+		// 	for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+		// 		TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
+		// 		if (temporal instanceof Temporal) {
+		// 			((Temporal) temporal).setAddress(direccion);
+		// 			//direccion += temporal.getType().getSize();
+		// 			direccion += ((Temporal) temporal).getSize();
+		// 		}
+		// 	}
 
 		
 		for (ScopeIF tempScope: listScopeHijos) {
@@ -1023,7 +1037,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			TemporalIF temporal = temporalFactory.create();
 			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
 
-		//  Duplicado
+		//  Duplicado, ya se realiza esta acción abajo
+		//
 		//for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
 		//	symbol = scope.getSymbolTable().getSymbols().get(i);
 		//	if (symbol instanceof SymbolVariable) {
@@ -1038,24 +1053,23 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					
-					Variable variable = new Variable(symbol.getName(), symbol.getScope());
-					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+					//Variable variable = new Variable(symbol.getName(), symbol.getScope());
+					//Value value = new Value((((SymbolVariable)symbol).getValor()!=null)?Integer.parseInt(((SymbolVariable)symbol).getValor()):0);
+					//intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, value);
 
 					// // Esta parte aparece deshabilitada en otra derivación
 					//
-					// Variable variable = new Variable(symbol.getName(), symbol.getScope());
-					// int valor;
-					// System.out.println("     symbol.getType() = " + symbol.getType());
-					// if ((symbol.getType() instanceof TypeSimple)) {
-					// 	valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
-					// 	intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
-					// } else if ((symbol.getType() instanceof TypeArray)) {
-					// 	String valores = ((SymbolVariable)symbol).getValor();
-					// 	int size = ((TypeArray)symbol.getType()).getSize();
-					// 	intermediateCodeBuilder.addQuadruple("VARLOCALVECTOR", variable, size);
-					// } else {
-					// 	semanticErrorManager.semanticFatalError("Error inesperado en línea 945 en el PARSER.CUP.");
-					// }
+					Variable variable = new Variable(symbol.getName(), symbol.getScope());
+					int valor;
+					System.out.println("     symbol.getType() = " + symbol.getType());
+					if ((symbol.getType() instanceof TypeSimple)  && (symbol instanceof SymbolVariable)) {
+						valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+						intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
+					} else if ((symbol.getType() instanceof TypeArray)) {
+						String valores = ((SymbolVariable)symbol).getValor();
+						int size = ((TypeArray)symbol.getType()).getSize();
+						intermediateCodeBuilder.addQuadruple("VARLOCALVECTOR", variable, size);
+					}
 				}	
 			}
 		}
