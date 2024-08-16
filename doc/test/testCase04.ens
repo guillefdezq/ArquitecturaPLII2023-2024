@@ -5,10 +5,10 @@ BR /PRINCIPAL
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-MOVE .SP, .IX  ;guarda el valor de SP en R0
+MOVE .SP, .IX  ;guarda el valor de SP en IY
 PUSH #-1       ;valor de retorno
 PUSH .IX       ;enlace de control
-PUSH .SR       ;estado mÃ¡quina
+PUSH .SR       ;estado máquina
 PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [PUNTERO_PRINCIPAL T_16, 23, null]

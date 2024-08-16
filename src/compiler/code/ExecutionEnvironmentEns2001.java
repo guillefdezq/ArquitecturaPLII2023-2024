@@ -307,10 +307,10 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {      // Equivalente a STARTGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             b.append("PRINCIPAL: NOP\n");
             b.append("; Por implementar correctamente, relacionado con subprogramas\n");
-            b.append("MOVE .SP, .IX  ;guarda el valor de SP en R0\n");
+            b.append("MOVE .SP, .IX  ;guarda el valor de SP en IY\n");
             b.append("PUSH #-1       ;valor de retorno\n");
             b.append("PUSH .IX       ;enlace de control\n");
-            b.append("PUSH .SR       ;estado máquina\n");
+            b.append("PUSH .SR       ;estado maquina\n");
             b.append("PUSH .IX       ;enlace de acceso\n");
             
         } else if (quadruple.getOperation().equals("PUNTERO_PRINCIPAL")) {   // Equivalente a PUNTEROGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
@@ -320,10 +320,10 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE .A, .SP\n");
 
         } else if (quadruple.getOperation().equals("INICIO_FUNCION")) {     // Equivalente a STARTSUBPROGRAMA        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            b.append("MOVE .SP, .R0  ;guarda el valor de SP en R0 para guardar EC y establecer aquí IX(nuevo EA)\n");
+            b.append("MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)\n");
             b.append("PUSH #-1       ;valor de retorno\n");
-            b.append("PUSH .R0       ;enlace de control\n");
-            b.append("PUSH .SR       ;estado máquina\n");
+            b.append("PUSH .IY       ;enlace de control\n");
+            b.append("PUSH .SR       ;estado maquina\n");
             b.append("PUSH .IX       ;enlace de acceso\n");
             
         } else if (quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
@@ -333,9 +333,9 @@ public class ExecutionEnvironmentEns2001
             b.append("PUSH " + r + "\n");
         } else if (quadruple.getOperation().equals("CALL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS - DEBERÍA SER CALL f
             String r = operacion(quadruple.getResult());
-            b.append("MOVE .R0, .IX         ; Guarda el valor de R0 en IX\n");
+            b.append("MOVE .IY, .IX         ; Guarda el valor de IY en IX\n");
             b.append("CALL /" + r + "            ; Guarda PC y salta\n");
-//            b.append("MOVE .IX, .R0         ; Restaura puntero pila\n");
+//            b.append("MOVE .IX, .IY         ; Restaura puntero pila\n");
             b.append("MOVE #0[.IX], .R9     ; Guarda retorno\n");
             b.append("MOVE #-1[.IX], .SP    ; Restaura enlace de control\n");
             b.append("MOVE #-3[.IX], .IX    ; Restaura enlace de acceso\n");

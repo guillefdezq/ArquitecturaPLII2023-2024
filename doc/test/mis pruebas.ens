@@ -32,10 +32,10 @@ RET
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-MOVE .SP, .IX  ;guarda el valor de SP en R0
+MOVE .SP, .IX  ;guarda el valor de SP en IY
 PUSH #-1       ;valor de retorno
 PUSH .IX       ;enlace de control
-PUSH .SR       ;estado mÃ¡quina
+PUSH .SR       ;estado máquina
 PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [PUNTERO_PRINCIPAL T_1, 6, null]
@@ -48,14 +48,14 @@ MOVE #25, #-4[.IX]
 ; sin declarar?
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .R0  ;guarda el valor de SP en R0 para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
-PUSH .R0       ;enlace de control
-PUSH .SR       ;estado mÃ¡quina
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado máquina
 PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [CALL L_hola, null, null]
-MOVE .R0, .IX         ; Guarda el valor de R0 en IX
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
 CALL /L_hola            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control

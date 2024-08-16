@@ -13,4 +13,5 @@ call ant finalTest -Dtest-file-name=testCase08.ces
 call ant finalTest -Dtest-file-name=testCase09.ces
 call ant finalTest -Dtest-file-name=testCase10.ces
 call ant finalTest -Dtest-file-name=testCase11.ces
+call ant finalTest -Dtest-file-name=fibonacci.ces
 call ant finalTest -Dtest-file-name="mis pruebas.ces"
