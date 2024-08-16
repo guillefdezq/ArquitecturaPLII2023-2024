@@ -5,14 +5,14 @@ BR /PRINCIPAL
 ; Quadruple - [INL L_printfibo, null, null]
 L_printfibo: NOP
 
-; Quadruple - [VARSUBPROGRAMA endi, -4, null]
-MOVE #-4[.IX], #-9[.IX]
-; Quadruple - [VARSUBPROGRAMA val2, -5, null]
-MOVE #-5[.IX], #-10[.IX]
+; Quadruple - [VARSUBPROGRAMA i, -4, null]
+MOVE #-4[.IX], #-12[.IX]
+; Quadruple - [VARSUBPROGRAMA endi, -5, null]
+MOVE #-5[.IX], #-9[.IX]
 ; Quadruple - [VARSUBPROGRAMA val1, -6, null]
 MOVE #-6[.IX], #-11[.IX]
-; Quadruple - [VARSUBPROGRAMA i, -7, null]
-MOVE #-7[.IX], #-12[.IX]
+; Quadruple - [VARSUBPROGRAMA val2, -7, null]
+MOVE #-7[.IX], #-10[.IX]
 ; Quadruple - [PUNTERO_FUNCION T_14, 27, null]
 SUB .IX, #27
 MOVE .A, .SP
@@ -50,27 +50,6 @@ PUSH .R0       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [MV T_10, val1, null]
-MOVE #-11[.IX], #-23[.IX]
-; Quadruple - [MV T_11, val2, null]
-MOVE #-10[.IX], #-24[.IX]
-; Quadruple - [ADD T_12, T_10, T_11]
-ADD #-23[.IX], #-24[.IX]
-MOVE .A , #-25[.IX]
-
-; Quadruple - [PARAM T_12, null, null]
-PUSH #-25[.IX]
-
-; Quadruple - [MV T_9, val2, null]
-MOVE #-10[.IX], #-22[.IX]
-; Quadruple - [PARAM T_9, null, null]
-PUSH #-22[.IX]
-
-; Quadruple - [MV T_8, endi, null]
-MOVE #-9[.IX], #-21[.IX]
-; Quadruple - [PARAM T_8, null, null]
-PUSH #-21[.IX]
-
 ; Quadruple - [MV T_5, i, null]
 MOVE #-12[.IX], #-18[.IX]
 ; Quadruple - [MV T_6, 1, null]
@@ -81,6 +60,27 @@ MOVE .A , #-20[.IX]
 
 ; Quadruple - [PARAM T_7, null, null]
 PUSH #-20[.IX]
+
+; Quadruple - [MV T_8, endi, null]
+MOVE #-9[.IX], #-21[.IX]
+; Quadruple - [PARAM T_8, null, null]
+PUSH #-21[.IX]
+
+; Quadruple - [MV T_9, val2, null]
+MOVE #-10[.IX], #-22[.IX]
+; Quadruple - [PARAM T_9, null, null]
+PUSH #-22[.IX]
+
+; Quadruple - [MV T_10, val1, null]
+MOVE #-11[.IX], #-23[.IX]
+; Quadruple - [MV T_11, val2, null]
+MOVE #-10[.IX], #-24[.IX]
+; Quadruple - [ADD T_12, T_10, T_11]
+ADD #-23[.IX], #-24[.IX]
+MOVE .A , #-25[.IX]
+
+; Quadruple - [PARAM T_12, null, null]
+PUSH #-25[.IX]
 
 ; Quadruple - [CALL L_printfibo, null, null]
 MOVE .R0, .IX         ; Guarda el valor de R0 en IX
@@ -129,25 +129,25 @@ PUSH .R0       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [MV T_3, 1, null]
-MOVE #1, #-7[.IX]
-; Quadruple - [PARAM T_3, null, null]
-PUSH #-7[.IX]
-
-; Quadruple - [MV T_2, 0, null]
-MOVE #0, #-6[.IX]
-; Quadruple - [PARAM T_2, null, null]
-PUSH #-6[.IX]
+; Quadruple - [MV T_0, 1, null]
+MOVE #1, #-4[.IX]
+; Quadruple - [PARAM T_0, null, null]
+PUSH #-4[.IX]
 
 ; Quadruple - [MV T_1, 10, null]
 MOVE #10, #-5[.IX]
 ; Quadruple - [PARAM T_1, null, null]
 PUSH #-5[.IX]
 
-; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-4[.IX]
-; Quadruple - [PARAM T_0, null, null]
-PUSH #-4[.IX]
+; Quadruple - [MV T_2, 0, null]
+MOVE #0, #-6[.IX]
+; Quadruple - [PARAM T_2, null, null]
+PUSH #-6[.IX]
+
+; Quadruple - [MV T_3, 1, null]
+MOVE #1, #-7[.IX]
+; Quadruple - [PARAM T_3, null, null]
+PUSH #-7[.IX]
 
 ; Quadruple - [CALL L_printfibo, null, null]
 MOVE .R0, .IX         ; Guarda el valor de R0 en IX

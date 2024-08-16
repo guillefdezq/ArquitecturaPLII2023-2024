@@ -670,6 +670,10 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		String identificadorFin = "FUN_" + String.valueOf(scopeManager.getCurrentScope().getId());
 		ArrayList<SymbolIF> params = ((SymbolProcedure)simboloFuncion).getParameters();
 
+		for (SymbolIF param : params) {
+			System.out.println("ParametroFunc> " + param.getName());
+		}
+
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
@@ -734,13 +738,22 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 
 		int direccionParams = -4;
 
-		for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
-			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+		//	for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
+		//		SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+		//		if (symbol instanceof SymbolParameter) {
+		//			// int valor = (((SymbolParameter)symbol).getValor() != null) ? Integer.parseInt(((SymbolParameter)symbol).getValor()) : 0;
+		//			// ^^^^^^^^^	La linea anterior no se utiliza...
+		//			Variable variable = new Variable(symbol.getName(), symbol.getScope());
+		//			// intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", temporal, direccionParams);
+		//			intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", variable, direccionParams);
+		//			System.out.println("PARAMETRO POS " + direccionParams + " = " + ((SymbolParameter)symbol).getAddress());
+		//			direccionParams--;
+		//		}
+		//	}
+
+		for (SymbolIF symbol : params) {
 			if (symbol instanceof SymbolParameter) {
-				// int valor = (((SymbolParameter)symbol).getValor() != null) ? Integer.parseInt(((SymbolParameter)symbol).getValor()) : 0;
-				// ^^^^^^^^^	La linea anterior no se utiliza...
 				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				// intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", temporal, direccionParams);
 				intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", variable, direccionParams);
 				System.out.println("PARAMETRO POS " + direccionParams + " = " + ((SymbolParameter)symbol).getAddress());
 				direccionParams--;
@@ -800,11 +813,11 @@ seccionParametros ::= declaracionParametros:params {: System.out.println("READ> 
 
 declaracionParametros  ::= parametro:param {: System.out.println("READ> declaracionParametros = uno/ultimo");
 		ArrayList<SymbolIF> params = new ArrayList<SymbolIF>();
-		params.add(((Parametro) param).getSymbolParametroIdentificador());
+		params.add(0,((Parametro) param).getSymbolParametroIdentificador());
 		 RESULT = params; :}
  | parametro:param COLON declaracionParametros:paramsEntrada {: System.out.println("READ> declaracionParametros = uno mas");
 		ArrayList<SymbolIF> params = (ArrayList<SymbolIF>) paramsEntrada;
-		params.add(((Parametro) param).getSymbolParametroIdentificador());
+		params.add(0,((Parametro) param).getSymbolParametroIdentificador());
  		 RESULT = params; :};
 
 parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parametro = entero"); 
@@ -1153,6 +1166,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 	| IDENTIFICADOR:id {: 
 		String identificador = id.getLexema(); 
 		Expresion expr = new Expresion();
+		expr.setIdentificador(identificador);
 		if(!(scopeManager.containsSymbol(identificador))) {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
 		}
@@ -1515,8 +1529,11 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		}
 
 		ArrayList<Expresion> expresionesParametro = new ArrayList<Expresion>();
-		for (Expresion parametro : parametros) {
+		for (int i = 0; i < parametros.size(); i++) {
+			Expresion parametro = parametros.get(i);
+			parametro.setIdentificador(listaParametros.get(i).getName());
 			expresionesParametro.add(parametro);
+			System.out.println("Parametro> " + parametro.getValor() + " " + parametro.getIdentificador());
 		}
 		// La comprobación de introducir tipos enteros ya debería realizarse previamente (o eso creo).
 
@@ -1539,9 +1556,9 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		LabelIF labelIdentificador = labelFactory.create(ident.getLexema());
 		intermediateCodeBuilder.addQuadruple("INICIO_FUNCION");
 
-		for (int i = 0; i < expresionesParametro.size(); i++) {
-			intermediateCodeBuilder.addQuadruples(expresionesParametro.get(expresionesParametro.size()-1-i).getIntermediateCode());
-			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(expresionesParametro.size()-1-i).getTemporal());
+		for (int i = expresionesParametro.size()-1; i >=0 ; i--) {
+			intermediateCodeBuilder.addQuadruples(expresionesParametro.get(i).getIntermediateCode());
+			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(i).getTemporal());
 		}
 
 		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);
@@ -1606,12 +1623,14 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: S
 		RESULT = expr; :};
 parametros ::= expresion:exp {: System.out.println("READ> parametros = expresion"); 
 		ArrayList<Expresion> params = new ArrayList<Expresion>();
-		params.add(0, (Expresion) exp);
-		 RESULT = params; :}
+		//params.add(0, (Expresion) exp);
+		params.add((Expresion) exp);
+		RESULT = params; :}
  | expresion:exp COLON parametros:paramsEntrada {: System.out.println("READ> parametros = expresion COLON parametros"); 
 		ArrayList<Expresion> params = (ArrayList<Expresion>) paramsEntrada;
-		params.add(0, (Expresion) exp);
- 		 RESULT = params; :};
+		//params.add(0, (Expresion) exp);
+		params.add((Expresion) exp);
+ 		RESULT = params; :};
 
 //  SENTENCIAS
 
