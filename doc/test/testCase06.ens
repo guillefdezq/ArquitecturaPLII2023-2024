@@ -12,23 +12,23 @@ SUB .IX, #13
 MOVE .A, .SP
 
 ; Quadruple - [MV T_0, x, null]
-MOVE #-7[.IX], #-13[.IX]
+MOVE #-7[.IX], #-8[.IX]
 ; Quadruple - [MV T_1, 1, null]
-MOVE #1, #-14[.IX]
+MOVE #1, #-9[.IX]
 ; Quadruple - [ADD T_2, T_0, T_1]
-ADD #-13[.IX], #-14[.IX]
-MOVE .A , #-15[.IX]
+ADD #-8[.IX], #-9[.IX]
+MOVE .A , #-10[.IX]
 
 ; Quadruple - [MV x, T_2, null]
-MOVE #-15[.IX], #-7[.IX]
+MOVE #-10[.IX], #-7[.IX]
 ; Quadruple - [MV T_3, x, null]
-MOVE #-7[.IX], #-16[.IX]
+MOVE #-7[.IX], #-11[.IX]
 ; Quadruple - [MV c, T_3, null]
-MOVE #-16[.IX], #-6[.IX]
+MOVE #-11[.IX], #-6[.IX]
 ; Quadruple - [MV T_4, c, null]
-MOVE #-6[.IX], #-17[.IX]
+MOVE #-6[.IX], #-12[.IX]
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, T_4, null]
-MOVE #-17[.IX], #-0[.IX]
+MOVE #-12[.IX], #-0[.IX]
 BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
 
 ; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
@@ -49,18 +49,18 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_5, 12, null]
-SUB .IX, #12
+; Quadruple - [PUNTERO_PRINCIPAL T_5, 11, null]
+SUB .IX, #11
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]
-MOVE #0, #-6[.IX]
+MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCAL b, 0, null]
-MOVE #0, #-7[.IX]
+MOVE #0, #-5[.IX]
 ; Quadruple - [MV T_0, 2, null]
-MOVE #2, #-8[.IX]
+MOVE #2, #-6[.IX]
 ; Quadruple - [MV a, T_0, null]
-MOVE #-8[.IX], #-6[.IX]
+MOVE #-6[.IX], #-4[.IX]
 ; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
 ; sin declarar?
 
@@ -72,9 +72,9 @@ PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [MV T_1, a, null]
-MOVE #-6[.IX], #-9[.IX]
+MOVE #-4[.IX], #-7[.IX]
 ; Quadruple - [PARAM T_1, null, null]
-PUSH #-9[.IX]
+PUSH #-7[.IX]
 
 ; Quadruple - [CALL L_incrementa, null, null]
 MOVE .R0, .IX         ; Guarda el valor de R0 en IX
@@ -86,14 +86,14 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Necesario: Recuperacion de la pila a su sitio original
 
 ; Quadruple - [VALOR_RETORNO T_2, null, null]
-MOVE .R9, #-10[.IX]
+MOVE .R9, #-8[.IX]
 
 ; Quadruple - [MV b, T_2, null]
-MOVE #-10[.IX], #-7[.IX]
+MOVE #-8[.IX], #-5[.IX]
 ; Quadruple - [MV T_3, b, null]
-MOVE #-7[.IX], #-11[.IX]
+MOVE #-5[.IX], #-9[.IX]
 ; Quadruple - [WRINT T_3, null, null]
-WRINT #-11[.IX] 
+WRINT #-9[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]

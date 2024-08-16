@@ -11,8 +11,8 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_1, 6, null]
-SUB .IX, #6
+; Quadruple - [PUNTERO_PRINCIPAL T_1, 5, null]
+SUB .IX, #5
 MOVE .A, .SP
 
 ; Quadruple - [WRSTR T_0, L_0, null]

@@ -8,82 +8,82 @@ PRINCIPAL: NOP
 MOVE .SP, .IX  ;guarda el valor de SP en R0
 PUSH #-1       ;valor de retorno
 PUSH .IX       ;enlace de control
-PUSH .SR       ;estado máquina
+PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_15, 23, null]
-SUB .IX, #23
+; Quadruple - [PUNTERO_PRINCIPAL T_15, 22, null]
+SUB .IX, #22
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]
-MOVE #0, #-7[.IX]
+MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCAL b, 0, null]
-MOVE #0, #-8[.IX]
+MOVE #0, #-5[.IX]
 ; Quadruple - [VARLOCAL c, 0, null]
-MOVE #0, #-9[.IX]
+MOVE #0, #-6[.IX]
 ; Quadruple - [MV T_0, 5, null]
-MOVE #5, #-10[.IX]
+MOVE #5, #-7[.IX]
 ; Quadruple - [MV a, T_0, null]
-MOVE #-10[.IX], #-7[.IX]
+MOVE #-7[.IX], #-4[.IX]
 ; Quadruple - [MV T_1, 3, null]
-MOVE #3, #-11[.IX]
+MOVE #3, #-8[.IX]
 ; Quadruple - [MV b, T_1, null]
-MOVE #-11[.IX], #-8[.IX]
+MOVE #-8[.IX], #-5[.IX]
 ; Quadruple - [MV T_2, a, null]
-MOVE #-7[.IX], #-12[.IX]
+MOVE #-4[.IX], #-9[.IX]
 ; Quadruple - [MV T_3, b, null]
-MOVE #-8[.IX], #-13[.IX]
+MOVE #-5[.IX], #-10[.IX]
 ; Quadruple - [LS T_4, T_2, T_3]
-CMP #-12[.IX], #-13[.IX]
+CMP #-9[.IX], #-10[.IX]
 BZ /L_7
 BP /L_7
-L_6: MOVE #1, #-14[.IX]
+L_6: MOVE #1, #-11[.IX]
 BR /L_8
-L_7: MOVE #0, #-14[.IX]
+L_7: MOVE #0, #-11[.IX]
 L_8: NOP
 
 ; Quadruple - [MV c, T_4, null]
-MOVE #-14[.IX], #-9[.IX]
+MOVE #-11[.IX], #-6[.IX]
 ; Quadruple - [WRSTR T_5, L_0, null]
 WRSTR /L_0 
 
 ; Quadruple - [MV T_6, c, null]
-MOVE #-9[.IX], #-16[.IX]
+MOVE #-6[.IX], #-13[.IX]
 ; Quadruple - [WRINT T_6, null, null]
-WRINT #-16[.IX] 
+WRINT #-13[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [MV T_8, a, null]
-MOVE #-7[.IX], #-18[.IX]
+MOVE #-4[.IX], #-15[.IX]
 ; Quadruple - [MV T_9, a, null]
-MOVE #-7[.IX], #-19[.IX]
+MOVE #-4[.IX], #-16[.IX]
 ; Quadruple - [EQ T_10, T_8, T_9]
-CMP #-18[.IX], #-19[.IX]
+CMP #-15[.IX], #-16[.IX]
 BZ /L_9
 BNZ /L_10
-L_9: MOVE #1, #-20[.IX]
+L_9: MOVE #1, #-17[.IX]
 BR /L_11
-L_10: MOVE #0, #-20[.IX]
+L_10: MOVE #0, #-17[.IX]
 L_11: NOP
 
 ; Quadruple - [NEG T_11, T_10, null]
-CMP #-20[.IX], #0
+CMP #-17[.IX], #0
 BZ /L_12
 BNZ /L_13
-L_12: MOVE #1, #-21[.IX]
+L_12: MOVE #1, #-18[.IX]
 BR /L_14
-L_13: MOVE #0, #-21[.IX]
+L_13: MOVE #0, #-18[.IX]
 L_14: NOP
 
 ; Quadruple - [MV c, T_11, null]
-MOVE #-21[.IX], #-9[.IX]
+MOVE #-18[.IX], #-6[.IX]
 ; Quadruple - [WRSTR T_12, L_2, null]
 WRSTR /L_2 
 
 ; Quadruple - [MV T_13, c, null]
-MOVE #-9[.IX], #-23[.IX]
+MOVE #-6[.IX], #-20[.IX]
 ; Quadruple - [WRINT T_13, null, null]
-WRINT #-23[.IX] 
+WRINT #-20[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]

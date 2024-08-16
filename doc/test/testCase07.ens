@@ -11,39 +11,39 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_15, 23, null]
-SUB .IX, #23
+; Quadruple - [PUNTERO_PRINCIPAL T_15, 26, null]
+SUB .IX, #26
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]
-MOVE #0, #-7[.IX]
+MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCAL b, 0, null]
-MOVE #0, #-8[.IX]
+MOVE #0, #-5[.IX]
 ; Quadruple - [VARLOCAL dia, 0, null]
-MOVE #0, #-9[.IX]
+MOVE #0, #-6[.IX]
 ; Quadruple - [MV T_0, 2, null]
-MOVE #2, #-10[.IX]
+MOVE #2, #-7[.IX]
 ; Quadruple - [MV a, T_0, null]
-MOVE #-10[.IX], #-7[.IX]
+MOVE #-7[.IX], #-4[.IX]
 ; Quadruple - [MV T_1, 2, null]
-MOVE #2, #-11[.IX]
+MOVE #2, #-8[.IX]
 ; Quadruple - [MV b, T_1, null]
-MOVE #-11[.IX], #-8[.IX]
+MOVE #-8[.IX], #-5[.IX]
 ; Quadruple - [MV T_2, a, null]
-MOVE #-7[.IX], #-12[.IX]
+MOVE #-4[.IX], #-9[.IX]
 ; Quadruple - [MV T_3, b, null]
-MOVE #-8[.IX], #-13[.IX]
+MOVE #-5[.IX], #-10[.IX]
 ; Quadruple - [EQ T_4, T_2, T_3]
-CMP #-12[.IX], #-13[.IX]
+CMP #-9[.IX], #-10[.IX]
 BZ /L_15
 BNZ /L_16
-L_15: MOVE #1, #-14[.IX]
+L_15: MOVE #1, #-11[.IX]
 BR /L_17
-L_16: MOVE #0, #-14[.IX]
+L_16: MOVE #0, #-11[.IX]
 L_17: NOP
 
 ; Quadruple - [BRF T_4, L_3, null]
-CMP #-14[.IX], #0
+CMP #-11[.IX], #0
 BZ /L_3
 
 ; Quadruple - [WRSTR T_0, L_0, null]
@@ -71,32 +71,32 @@ WRSTR /L_4
 L_5: NOP
 
 ; Quadruple - [MV T_6, a, null]
-MOVE #-7[.IX], #-16[.IX]
+MOVE #-4[.IX], #-13[.IX]
 ; Quadruple - [MV T_7, 5, null]
-MOVE #5, #-17[.IX]
+MOVE #5, #-14[.IX]
 ; Quadruple - [LS T_8, T_6, T_7]
-CMP #-16[.IX], #-17[.IX]
+CMP #-13[.IX], #-14[.IX]
 BZ /L_19
 BP /L_19
-L_18: MOVE #1, #-18[.IX]
+L_18: MOVE #1, #-15[.IX]
 BR /L_20
-L_19: MOVE #0, #-18[.IX]
+L_19: MOVE #0, #-15[.IX]
 L_20: NOP
 
 ; Quadruple - [BRF T_8, L_6, null]
-CMP #-18[.IX], #0
+CMP #-15[.IX], #0
 BZ /L_6
 
 ; Quadruple - [MV T_9, a, null]
-MOVE #-7[.IX], #-19[.IX]
+MOVE #-4[.IX], #-16[.IX]
 ; Quadruple - [MV T_10, 1, null]
-MOVE #1, #-20[.IX]
+MOVE #1, #-17[.IX]
 ; Quadruple - [ADD T_11, T_9, T_10]
-ADD #-19[.IX], #-20[.IX]
-MOVE .A , #-21[.IX]
+ADD #-16[.IX], #-17[.IX]
+MOVE .A , #-18[.IX]
 
 ; Quadruple - [MV a, T_11, null]
-MOVE #-21[.IX], #-7[.IX]
+MOVE #-18[.IX], #-4[.IX]
 ; Quadruple - [BR L_5, null, null]
 BR /L_5
 
@@ -110,19 +110,19 @@ L_6: NOP
 WRSTR /L_7 
 
 ; Quadruple - [MV T_13, 2, null]
-MOVE #2, #-23[.IX]
+MOVE #2, #-20[.IX]
 ; Quadruple - [MV dia, T_13, null]
-MOVE #-23[.IX], #-9[.IX]
+MOVE #-20[.IX], #-6[.IX]
 ; Quadruple - [DVLP Alternativas, Inicio, null]
 ; sin declarar?
 
 ; Quadruple - [MV T_14, dia, null]
-MOVE #-9[.IX], #-24[.IX]
+MOVE #-6[.IX], #-21[.IX]
 ; Quadruple - [INL L_11, null, null]
 L_11: NOP
 
 ; Quadruple - [CMP T_14, 2, null]
-CMP #-24[.IX], #2
+CMP #-21[.IX], #2
 
 ; Quadruple - [BNZ L_12, null, null]
 BNZ /L_12
@@ -137,7 +137,7 @@ BR /L_10
 L_12: NOP
 
 ; Quadruple - [CMP T_14, 1, null]
-CMP #-24[.IX], #1
+CMP #-21[.IX], #1
 
 ; Quadruple - [BNZ L_10, null, null]
 BNZ /L_10
