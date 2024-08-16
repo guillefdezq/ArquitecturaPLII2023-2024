@@ -11,6 +11,8 @@ MOVE #-4[.IX], #-7[.IX]
 SUB .IX, #13
 MOVE .A, .SP
 
+; Quadruple - [VARLOCAL c, 0, null]
+MOVE #0, #-6[.IX]
 ; Quadruple - [MV T_0, x, null]
 MOVE #-7[.IX], #-8[.IX]
 ; Quadruple - [MV T_1, 1, null]

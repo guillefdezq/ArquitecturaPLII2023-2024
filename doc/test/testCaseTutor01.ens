@@ -10,10 +10,20 @@ L_incrementa: NOP
 
 ; Quadruple - [VARSUBPROGRAMA x, -4, null]
 MOVE #-4[.IX], #-17[.IX]
-; Quadruple - [PUNTERO_FUNCION T_1, 11, null]
-SUB .IX, #11
+; Quadruple - [PUNTERO_FUNCION T_1, 28, null]
+SUB .IX, #28
 MOVE .A, .SP
 
+; Quadruple - [VARLOCAL a, 0, null]
+MOVE #0, #-6[.IX]
+; Quadruple - [VARLOCALVECTOR lista2, 10, null]
+; sin declarar?
+
+; Quadruple - [VARLOCALVECTOR lista3, 4, null]
+; sin declarar?
+
+; Quadruple - [VARLOCAL c, 0, null]
+MOVE #0, #-22[.IX]
 ; Quadruple - [MV T_0, 1, null]
 MOVE #1, #-24[.IX]
 ; Quadruple - [MV c, T_0, null]

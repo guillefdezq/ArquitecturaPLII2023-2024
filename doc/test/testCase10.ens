@@ -9,8 +9,8 @@ L_suma: NOP
 MOVE #-4[.IX], #-7[.IX]
 ; Quadruple - [VARSUBPROGRAMA y, -5, null]
 MOVE #-5[.IX], #-8[.IX]
-; Quadruple - [PUNTERO_FUNCION T_3, 11, null]
-SUB .IX, #11
+; Quadruple - [PUNTERO_FUNCION T_3, 12, null]
+SUB .IX, #12
 MOVE .A, .SP
 
 ; Quadruple - [MV T_0, x, null]
@@ -138,15 +138,15 @@ PUSH .R0       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [MV T_7, uno, null]
-MOVE #-6[.IX], #-21[.IX]
-; Quadruple - [PARAM T_7, null, null]
-PUSH #-21[.IX]
-
 ; Quadruple - [MV T_6, b, null]
 MOVE #-5[.IX], #-20[.IX]
 ; Quadruple - [PARAM T_6, null, null]
 PUSH #-20[.IX]
+
+; Quadruple - [MV T_7, uno, null]
+MOVE #-6[.IX], #-21[.IX]
+; Quadruple - [PARAM T_7, null, null]
+PUSH #-21[.IX]
 
 ; Quadruple - [CALL L_suma, null, null]
 MOVE .R0, .IX         ; Guarda el valor de R0 en IX
