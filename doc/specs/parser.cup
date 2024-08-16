@@ -798,6 +798,29 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		funcion.setSymbolProcedure((SymbolProcedure) simboloFuncion);
 		funcion.setIntermediateCode(intermediateCodeBuilder.create());
 
+		QuadrupleIF devuelto = null;
+		
+		for (QuadrupleIF cuadrupla : funcion.getIntermediateCode()) {
+			System.out.println(cuadrupla.toString());
+			if (cuadrupla.getOperation().equals("DEVUELTO")) {
+				devuelto = cuadrupla;
+				break;
+			}
+		}
+		
+		if (((SymbolIF) func0) instanceof SymbolFunction) {
+			if (devuelto.getFirstOperand() == null) {
+				semanticErrorManager.semanticFatalError("Funcion " + identificador + " no devuelve valor.");
+			}
+		} else if (((SymbolIF) func0) instanceof SymbolProcedure) {
+			if (devuelto.getFirstOperand() != null) {
+				semanticErrorManager.semanticFatalError("Procedimiento " + identificador + " devuelve valor.");
+			}
+		} else {
+			semanticErrorManager.semanticFatalError("ERROR INESPERADO EN LA LINEA 821");
+		}
+
+
 		RESULT = funcion; :};
                      
 funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = sinVariables"); RESULT = listsent; :}

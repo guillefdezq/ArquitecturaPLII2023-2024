@@ -2,10 +2,10 @@
 
 #constante otra 420;
 
-entero hola () {
+vacio hola () {
     entero holatest = 58;
     
-    devuelve 55;
+    devuelve;
 }
 
 vacio principal () {
