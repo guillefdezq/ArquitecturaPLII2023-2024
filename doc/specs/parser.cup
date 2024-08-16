@@ -35,6 +35,8 @@ action code {:
 	// Listado para las cadenas
 	List<QuadrupleIF> listaCadenas = new ArrayList<QuadrupleIF>();
 
+	int tamanodireccionprincipal = 4;
+
 :}	
 
 parser code {:
@@ -231,7 +233,7 @@ program ::=
   axiom:ax
   {:   		
   		// No modificar esta estructura, aunque se pueden añadir más acciones semánticas
-  		
+
   		List intermediateCode = ax.getIntermediateCode ();
 		finalCodeFactory.setEnvironment(CompilerContext.getExecutionEnvironment());		// instrucción introducida por vídeo Gamboa
   		finalCodeFactory.create (intermediateCode);
@@ -243,8 +245,13 @@ program ::=
   		
 		ScopeIF scope = scopeManager.getCurrentScope();
 		System.out.println("AMBT>terminamos! " + scope.getName() + " (" + scope.getLevel() + ")");
+
+		System.out.println("\n P A R S E R    F I N A L I Z A N D O . . .");
+		System.out.println("Atención: si esta es la primera línea que está leyendo después de que el compilador haya terminado es muy probable que algo haya fallado en la compilación.");
+
 		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
 
 		System.out.println("\n\n\n");
@@ -275,19 +282,70 @@ cerrarAmbito ::= {:
 		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
 		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
 :}; 
 
 axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {: 
 		System.out.println("READ> axiom = constantes y tipos"); 
 		
-		ScopeIF scope = scopeManager.getCurrentScope();
-		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		ScopeIF thisScope = scopeManager.getCurrentScope();
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(thisScope);
 
 		intermediateCodeBuilder.addQuadruple("AXIOM");		/// Puede ser que esto no sea necesario
 
-		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
-			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+		int direccionGlobal=10000;		//// Las variables globales deberían colocarse desde aquí
+
+		for(int i=0;i<thisScope.getSymbolTable().getSymbols().size();i++) {
+			SymbolIF symbol=thisScope.getSymbolTable().getSymbols().get(i);
+			if(symbol instanceof SymbolVariable) {
+				((SymbolVariable)symbol).setAddress(direccionGlobal);					/// No debería ser constante?		// Además las direcciones son machacadas por el bucle de a continuación.
+				//Actualizamos el valor de direccionGlobal para el próximo símbolo 
+				direccionGlobal = direccionGlobal + symbol.getType().getSize();
+				System.out.println("variable: " + symbol.getType());
+				System.out.println("tamano: " + symbol.getType().getSize());
+			}
+		}
+
+		List<ScopeIF> scopes = scopeManager.getAllScopes();
+
+
+
+		for (ScopeIF scope : scopes) {
+			int direccionRA = 4;
+			List<SymbolIF> symbols = scope.getSymbolTable().getSymbols();
+			for (SymbolIF symbol : symbols) {
+				if (symbol instanceof SymbolParameter) {
+					if (((SymbolParameter)symbol).getAddress() != 0) continue;
+					((SymbolParameter)symbol).setAddress(direccionRA);
+					direccionRA = direccionRA + symbol.getType().getSize();
+					System.out.println("Parametro: " + ((SymbolParameter)symbol).getName() + ". Dir: " + ((SymbolParameter)symbol).getAddress());
+				}
+			}
+
+			if (scope.getLevel() != 0) {
+				direccionRA ++;
+			}
+
+			for (SymbolIF symbol : symbols) {
+				if (symbol instanceof SymbolVariable) {
+					if (((SymbolVariable)symbol).getAddress() != 0) continue;
+					((SymbolVariable)symbol).setAddress(direccionRA);
+					direccionRA = direccionRA + symbol.getType().getSize();
+				}
+			}
+
+			List<TemporalIF> temps = scope.getTemporalTable().getTemporals();
+			for (TemporalIF temporal : temps) {
+				if (temporal.getAddress() != 0) continue;
+				((Temporal) temporal).setAddress(direccionRA);
+				direccionRA = direccionRA + ((Temporal) temporal).getSize();
+			}
+		}
+
+
+		for (int i = 0; i < thisScope.getSymbolTable().getSymbols().size(); i++) {
+			SymbolIF symbol = thisScope.getSymbolTable().getSymbols().get(i);
 			if (symbol instanceof SymbolConstant) {
 				Variable variable = new Variable(symbol.getName(), symbol.getScope());
 				intermediateCodeBuilder.addQuadruple("VARGLOBAL", variable, 0);
@@ -304,7 +362,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		List<QuadrupleIF> intermediateCode = intermediateCodeBuilder.create();
 		intermediateCode.addAll(ax1.getIntermediateCode());
 
-		if (scope.getLevel() == 0) {
+		if (thisScope.getLevel() == 0) {		// Y esta comprobacion tan random?
 			for (int i = 0; i < listaCadenas.size(); i++) {
 				intermediateCodeBuilder.addQuadruple(listaCadenas.get(i));
 			}
@@ -325,29 +383,6 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 
-		int direccion=10000;		// Las variables globales se colocarán aquí??
-		SymbolIF symbol;
-		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
-			symbol=scope.getSymbolTable().getSymbols().get(i);
-			if(symbol instanceof SymbolVariable) {
-				((SymbolVariable)symbol).setAddress(direccion);
-				//Actualizamos el valor de direccion para el próximo símbolo 
-				direccion = direccion + symbol.getType().getSize();
-				System.out.println("variable: " + symbol.getType());
-				System.out.println("tamano: " + symbol.getType().getSize());
-			}
-		}
-
-		TemporalIF temporal;
-		for(int i=0;i<scope.getTemporalTable().getTemporals().size();i++) {
-			temporal=scope.getTemporalTable().getTemporals().get(i);
-			if(temporal instanceof Temporal) {
-				((Temporal)temporal).setAddress(direccion);
-				//Actualizamos el valor de direccion para el próximo símbolo 
-				direccion += ((Temporal)temporal).getSize();
-			}
-		}
-
 		/// Se siente muy vacío... no debería contener código intermedio? Tal vez sea necesario para añadir las cuádruplas de las funciones y parámetros
 
 		Program ax1 = new Program();
@@ -358,30 +393,8 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 		:}
   | seccionFunciones:secFun {: 
   		System.out.println("READ> axiom1 = solo funciones");
-		/// Duplicado de lo de arriba
 
 		ScopeIF scope = scopeManager.getCurrentScope();
-
-		int direccion=10000;		
-		SymbolIF symbol;
-		for(int i=0;i<scope.getSymbolTable().getSymbols().size();i++) {
-			symbol=scope.getSymbolTable().getSymbols().get(i);
-			if(symbol instanceof SymbolVariable) {
-				((SymbolVariable)symbol).setAddress(direccion);
-				//Actualizamos el valor de direccion para el próximo símbolo 
-				direccion = direccion + symbol.getType().getSize();
-			}
-		}
-
-		TemporalIF temporal;
-		for(int i=0;i<scope.getTemporalTable().getTemporals().size();i++) {
-			temporal=scope.getTemporalTable().getTemporals().get(i);
-			if(temporal instanceof Temporal) {
-				((Temporal)temporal).setAddress(direccion);
-				//Actualizamos el valor de direccion para el próximo símbolo 
-				direccion += ((Temporal)temporal).getSize();
-			}
-		}
 
 		Program ax1 = new Program();
 		Seccionfunciones sf = (Seccionfunciones) secFun;
@@ -601,8 +614,8 @@ id1 ::= epsilon {:
 
 seccionFunciones ::= funcion:fun seccionFunciones:secFun {: 
 		System.out.println("READ> seccionFunciones = funciones extra"); 
-		Seccionfunciones sf = (Seccionfunciones) secFun;
 		Funcion f = (Funcion) fun;
+		Seccionfunciones sf = (Seccionfunciones) secFun;
 		List<QuadrupleIF> intermediateCode = f.getIntermediateCode(); // se busca "la primera funcion" antes de las demás
 		intermediateCode.addAll(sf.getIntermediateCode()); // las demás funciones se añaden a continuación
 		sf.setIntermediateCode(intermediateCode);
@@ -652,75 +665,143 @@ funcion0 ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParam
 
 funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {: 
 
-	/* ED
+		SymbolIF simboloFuncion = (SymbolIF) func0;
+		String identificador = simboloFuncion.getName();
+		String identificadorFin = "FUN_" + String.valueOf(scopeManager.getCurrentScope().getId());
+		ArrayList<SymbolIF> params = ((SymbolProcedure)simboloFuncion).getParameters();
+
+		for (SymbolIF param : params) {
+			System.out.println("ParametroFunc> " + param.getName());
+		}
+
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
 
-		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getParentScope(), identificador.getLexema(), (TypeIF) scopeManager.searchType("VACIO"));
-		simboloProcedimiento.setParameters((ArrayList<SymbolIF>) params);
 
-		// DUDA: Qué hace esta línea?
-		// Funcionprincipal funcionPrincipal = new Funcionprincipal (symbolProcedure, g, null, h);
+		// Asignación de direcciones
+
+		int direccion = 5 + params.size();
+
+		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
+		
+		System.out.println("listScopeHijos en funcion normal sin borrar " + listScopeHijos);
+
+		for (int i = 0 ; i < scopeManager.getAllScopes().size() ; i++) {
+			if (i < scope.getId()) listScopeHijos.remove(0);
+		}
+
+		System.out.println("listScopeHijos en funcion normal " + listScopeHijos);
 
 
-		// cerrar ámbito
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				if (symbol instanceof SymbolVariable) {
+					((SymbolVariable) symbol).setAddress(direccion);
+					direccion += symbol.getType().getSize();
+				}
+			}
+		}
+
+		//	for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+		//		TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
+		//		if (temporal instanceof Temporal) {
+		//			((Temporal) temporal).setAddress(direccion);
+		//			//direccion += temporal.getType().getSize();
+		//			direccion += ((Temporal) temporal).getSize();
+		//		}
+		//	}
+		
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
+				TemporalIF temporal = tempScope.getTemporalTable().getTemporals().get(i);
+				if (temporal instanceof Temporal) {
+					((Temporal) temporal).setAddress(direccion);
+					direccion += ((Temporal) temporal).getSize();
+				}
+			}
+		}
+
+		// Lo demás
+
+
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
+
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelInicio = labelFactory.create(identificador);
+		LabelIF labelFin = labelFactory.create("FIN_" + identificadorFin);
+		
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
+
+		int direccionParams = -4;
+
+		//	for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
+		//		SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+		//		if (symbol instanceof SymbolParameter) {
+		//			// int valor = (((SymbolParameter)symbol).getValor() != null) ? Integer.parseInt(((SymbolParameter)symbol).getValor()) : 0;
+		//			// ^^^^^^^^^	La linea anterior no se utiliza...
+		//			Variable variable = new Variable(symbol.getName(), symbol.getScope());
+		//			// intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", temporal, direccionParams);
+		//			intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", variable, direccionParams);
+		//			System.out.println("PARAMETRO POS " + direccionParams + " = " + ((SymbolParameter)symbol).getAddress());
+		//			direccionParams--;
+		//		}
+		//	}
+
+		for (SymbolIF symbol : params) {
+			if (symbol instanceof SymbolParameter) {
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", variable, direccionParams);
+				System.out.println("PARAMETRO POS " + direccionParams + " = " + ((SymbolParameter)symbol).getAddress());
+				direccionParams--;
+			}
+		}
+
+		//int tamanoRA = scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size() + 5;  // Para que es el +5? El +5 es para reservar los elementos comunes del registro de activacion
+		int tamanoRA = direccion;
+
+		intermediateCodeBuilder.addQuadruple("PUNTERO_FUNCION", temporal, tamanoRA);
+		
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				int valor;
+				System.out.println("	 symbol.getName() = " + symbol.getName());
+				System.out.println("     symbol.getType() = " + symbol.getType());
+				if ((symbol.getType() instanceof TypeSimple) && (symbol instanceof SymbolVariable) && !(symbol instanceof SymbolParameter)) {
+					valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+				System.out.println(" D E B U G");
+					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
+				} else if ((symbol.getType() instanceof TypeArray)) {
+					String valores = ((SymbolVariable)symbol).getValor();
+					int size = ((TypeArray)symbol.getType()).getSize();
+					intermediateCodeBuilder.addQuadruple("VARLOCALVECTOR", variable, size);
+				}
+			}
+		}
+
+		intermediateCodeBuilder.addQuadruples(((Sentencia) fun1).getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", labelFin, params.size()+5);
+
+		// Reposicionado cerrado de ámbitos aquí
 		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
 		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
 		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
-		sTable.addSymbol(identificador.getLexema(), simboloProcedimiento);
-	*/
-
-		SymbolIF simboloFuncion = (SymbolIF) func0;
-		String identificador = simboloFuncion.getName();
-		ArrayList<SymbolIF> params = ((SymbolProcedure)simboloFuncion).getParameters();
-
-		ScopeIF scope = scopeManager.getCurrentScope();
-		TypeTableIF typeTable = scope.getTypeTable ();
-		SymbolTableIF sTable = scope.getSymbolTable();
-		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
-
-		LabelFactory labelFactory = new LabelFactory();
-		LabelIF label = labelFactory.create(identificador);
-		intermediateCodeBuilder.addQuadruple("FUNCION", simboloFuncion);
-
-		for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
-			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
-			if (symbol instanceof SymbolParameter) {
-				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				intermediateCodeBuilder.addQuadruple("PARAM", variable);
-			}
-		}
-
-		//// añado variables locales y PUNTEROFINAL como en funcPrin
-		
-		//gestionar el valor a devolver
-		///intermediateCodeBuilder.addQuadruple(secTip.getIntermediateCode());
-		///intermediateCodeBuilder.addQuadruple(fun1.getIntermediateCode());
-		label = labelFactory.create("FIN_"+identificador);
-
-		// 4*regAct+param+1=posicion
-		int posicion = 4 + ((ArrayList<SymbolIF>) params).size() + 1;
-		Value value = new Value(posicion);
-		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", label, value);
-
-		List<QuadrupleIF> list2 = intermediateCodeBuilder.create();
-		for (int i = 0; i<list2.size(); i++) {
-			if(list2.get(i).getOperation().equals("DEVUELTO")) {
-				list2.get(i).setFirstOperand(value);
-			}
-		}
 
 		Funcion funcion = new Funcion();
 		funcion.setSymbolProcedure((SymbolProcedure) simboloFuncion);
-		funcion.setIntermediateCode(list2);
+		funcion.setIntermediateCode(intermediateCodeBuilder.create());
 
 		RESULT = funcion; :};
                      
-         
-funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = sinVariables"); RESULT = null; :}
-                      | seccionVariables listadoSentencias:listsent  CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcion1 = conVariables"); RESULT = null; :};
+funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = sinVariables"); RESULT = listsent; :}
+                      | seccionVariables listadoSentencias:listsent  CLOSE_PARENTHESIS {: System.out.println("READ> funcion1 = conVariables"); RESULT = listsent; :};
 
 
  
@@ -728,20 +809,18 @@ funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System
 
 
 seccionParametros ::= declaracionParametros:params {: System.out.println("READ> seccionParametros = sí"); RESULT = params; :}
- | epsilon {: System.out.println("READ> seccionParametros = no"); RESULT = null; :};
+ | epsilon {: System.out.println("READ> seccionParametros = no"); RESULT = new ArrayList<SymbolIF>(); :};
 
 declaracionParametros  ::= parametro:param {: System.out.println("READ> declaracionParametros = uno/ultimo");
 		ArrayList<SymbolIF> params = new ArrayList<SymbolIF>();
-		params.add(((Parametro) param).getSymbolVariableIdentificador());
+		params.add(0,((Parametro) param).getSymbolParametroIdentificador());
 		 RESULT = params; :}
  | parametro:param COLON declaracionParametros:paramsEntrada {: System.out.println("READ> declaracionParametros = uno mas");
 		ArrayList<SymbolIF> params = (ArrayList<SymbolIF>) paramsEntrada;
-		params.add(((Parametro) param).getSymbolVariableIdentificador());
+		params.add(0,((Parametro) param).getSymbolParametroIdentificador());
  		 RESULT = params; :};
 
 parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parametro = entero"); 
-				
-		
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
@@ -752,20 +831,18 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parame
 			semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
 		} else {
 			TypeIF tipo = scopeManager.searchType("ENTERO");
-			SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-			simboloVariable.setValor("0");
-			sTable.addSymbol(nombre, simboloVariable);
+			SymbolParameter simboloParametro = new SymbolParameter(scope, nombre, tipo);
+			simboloParametro.setValor("0");
+			sTable.addSymbol(nombre, simboloParametro);
 			SymbolIF fetch = sTable.getSymbol(nombre);
-			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
-			Parametro parametro = new Parametro(simboloVariable);
-			System.out.println(parametro.getSymbolVariableIdentificador());
+			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolParameter)fetch).getValor());
+			Parametro parametro = new Parametro(simboloParametro);
+			System.out.println(parametro.getSymbolParametroIdentificador());
 			RESULT = parametro; 
 		}
 
 		:}
  | IDENTIFICADOR:ident IDENTIFICADOR:id {: System.out.println("READ> parametro = identificador"); 
-		
-
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
@@ -776,19 +853,19 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: System.out.println("READ> parame
 			semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
 		} else {
 			TypeIF tipo = scopeManager.searchType(ident.getLexema());
-			SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-			sTable.addSymbol(nombre, simboloVariable);
+			SymbolParameter simboloParametro = new SymbolParameter(scope, nombre, tipo);
+			sTable.addSymbol(nombre, simboloParametro);
 			
 			SymbolIF fetch = sTable.getSymbol(nombre);
 			System.out.println("VARI>nuevo " + fetch.getType().getName() + " " + fetch.getName() + "@" + fetch.getScope().getName() + "=" + ((SymbolVariable)fetch).getValor());
 
-			Parametro parametro = new Parametro(simboloVariable);
+			Parametro parametro = new Parametro(simboloParametro);
 			RESULT = parametro; 
 		}
 
 		:};
 
-funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias:listSent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal"); 
+funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias:listSent CLOSE_PARENTHESIS {: System.out.println("READ> funcionPrincipal"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
@@ -800,9 +877,9 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		sTable.addSymbol(identificador, simboloProcedimiento);
 
 		int direccion = 4;
-		SymbolIF symbol;
+		
 		for (int i = 0; i < sTable.getSymbols().size(); i++) {
-			symbol = sTable.getSymbols().get(i);
+			SymbolIF symbol = sTable.getSymbols().get(i);
 			if (symbol instanceof SymbolVariable) {
 				((SymbolVariable) symbol).setAddress(direccion);
 				System.out.println("direcciones" + symbol.getName() + "@" + direccion);
@@ -810,13 +887,20 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}			
 		}
 
+		DevScopes devScopes = new DevScopes(scopeManager);		/// Recuerda borrar esto ¬_¬'
+
 		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
 
+		for (int i = 0 ; i < scope.getId() ; i++) {
+			listScopeHijos.remove(0);
+		}
+
+		System.out.println("listScopeHijos en funcion principal " + listScopeHijos);
 
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					((SymbolVariable) symbol).setAddress(direccion);
 					direccion += symbol.getType().getSize();
@@ -824,14 +908,14 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}
 		}
 
-		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
-			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
-			if (temporal instanceof Temporal) {
-				((Temporal) temporal).setAddress(direccion);
-				//direccion += temporal.getType().getSize();
-				direccion += ((Temporal) temporal).getSize();
-			}
-		}
+		// 	for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+		// 		TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
+		// 		if (temporal instanceof Temporal) {
+		// 			((Temporal) temporal).setAddress(direccion);
+		// 			//direccion += temporal.getType().getSize();
+		// 			direccion += ((Temporal) temporal).getSize();
+		// 		}
+		// 	}
 
 		
 		for (ScopeIF tempScope: listScopeHijos) {
@@ -847,20 +931,39 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
-		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
-			symbol = scope.getSymbolTable().getSymbols().get(i);
-			if (symbol instanceof SymbolVariable) {
-				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
-			}
-		}
+
+			//int tamanoRA = scope.getSymbolTable().getSize() + scope.getTemporalTable().getSize() + 4;
+			int tamanoRA = direccion;
+			TemporalFactory temporalFactory = new TemporalFactory(scope);
+			TemporalIF temporal = temporalFactory.create();
+			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
+
+		//	Esto ya se realiza abajo
+		//
+		//	for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
+		//		SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
+		//		if (symbol instanceof SymbolVariable) {
+		//			Variable variable = new Variable(symbol.getName(), symbol.getScope());
+		//			Value value = new Value((((SymbolVariable)symbol).getValor()!=null)?Integer.parseInt(((SymbolVariable)symbol).getValor()):0);
+		//			intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, value);
+		//		}
+		//	}
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				symbol = tempScope.getSymbolTable().getSymbols().get(i);
-				if (symbol instanceof SymbolVariable) {
-					Variable variable = new Variable(symbol.getName(), symbol.getScope());
-					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				int valor;
+				System.out.println("	 symbol.getName() = " + symbol.getName());
+				System.out.println("     symbol.getType() = " + symbol.getType());
+				if ((symbol.getType() instanceof TypeSimple) && (symbol instanceof SymbolVariable)) {
+					valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+				System.out.println(" D E B U G");
+					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
+				} else if ((symbol.getType() instanceof TypeArray)) {
+					String valores = ((SymbolVariable)symbol).getValor();
+					int size = ((TypeArray)symbol.getType()).getSize();
+					intermediateCodeBuilder.addQuadruple("VARLOCALVECTOR", variable, size);
 				}
 			}
 		}
@@ -870,14 +973,27 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		// Añadir listado de sentencias
 		Sentencia lt = (Sentencia) listSent;
 
+		tamanodireccionprincipal = direccion;
+
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
+
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
+
+		intermediateCodeBuilder.addQuadruple("FIN_PRINCIPAL", labelFin);
 
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
 
 		System.out.println("     QUAD>" + fp.getIntermediateCode());
 
+		System.out.println("AMBT>cerrar " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos: " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:    " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
+		scopeManager.closeScope();
+
 		RESULT = fp; :}
-				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias:listsent CLOSE_PARENTHESIS cerrarAmbito {: System.out.println("READ> funcionPrincipal + seccion variables"); 
+				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias:listsent CLOSE_PARENTHESIS {: System.out.println("READ> funcionPrincipal + seccion variables"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
@@ -889,22 +1005,34 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		sTable.addSymbol(identificador, simboloProcedimiento);
 
 		int direccion = 4;
-		SymbolIF symbol;
-		for (int i = 0; i < sTable.getSymbols().size(); i++) {
-			symbol = sTable.getSymbols().get(i);
-			if (symbol instanceof SymbolVariable) {
-				((SymbolVariable) symbol).setAddress(direccion);
-				direccion += symbol.getType().getSize();
-			}			
+		
+		// 	for (int i = 0; i < sTable.getSymbols().size(); i++) {
+		// 		SymbolIF symbol = sTable.getSymbols().get(i);
+		// 		if (symbol instanceof SymbolVariable) {
+		// 			((SymbolVariable) symbol).setAddress(direccion);
+		// 			direccion += symbol.getType().getSize();
+		// 		}			
+		// 	}
+
+
+		DevScopes devScopes = new DevScopes(scopeManager);		/// Recuerda borrar esto ¬_¬'
+
+		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes();
+
+		for (int i = 0 ; i < scope.getId() ; i++) {
+			listScopeHijos.remove(0);
 		}
 
-		List<ScopeIF> listScopeHijos = scopeManager.getAllScopes(); 
+		System.out.println("listScopeHijos en funcion principal " + listScopeHijos);
 
-
+		// Print scopes
+		for (ScopeIF tempScope: listScopeHijos) {
+			System.out.println("     SCOPES> " + tempScope.getName() + " (" + tempScope.getLevel() + ")  " + tempScope.getSymbolTable().getSymbols());
+		}
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
 					((SymbolVariable) symbol).setAddress(direccion);
 					direccion += symbol.getType().getSize();
@@ -912,14 +1040,16 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}
 		}
 
-		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
-			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
-			if (temporal instanceof Temporal) {
-				((Temporal) temporal).setAddress(direccion);
-				//direccion += temporal.getType().getSize();
-				direccion += ((Temporal) temporal).getSize();
-			}
-		}
+		// Ya se realiza esta acción abajo
+		//
+		// 	for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+		// 		TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
+		// 		if (temporal instanceof Temporal) {
+		// 			((Temporal) temporal).setAddress(direccion);
+		// 			//direccion += temporal.getType().getSize();
+		// 			direccion += ((Temporal) temporal).getSize();
+		// 		}
+		// 	}
 
 		
 		for (ScopeIF tempScope: listScopeHijos) {
@@ -935,51 +1065,78 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
-		for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
-			symbol = scope.getSymbolTable().getSymbols().get(i);
-			if (symbol instanceof SymbolVariable) {
-				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
-			}
-		}
+
+			//int tamanoRA = scope.getSymbolTable().getSize() + scope.getTemporalTable().getSize() + 4;
+			int tamanoRA = direccion;
+			TemporalFactory temporalFactory = new TemporalFactory(scope);
+			TemporalIF temporal = temporalFactory.create();
+			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
+
+		//  Duplicado, ya se realiza esta acción abajo
+		//
+		//	for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
+		//		symbol = scope.getSymbolTable().getSymbols().get(i);
+		//		if (symbol instanceof SymbolVariable) {
+		//			Variable variable = new Variable(symbol.getName(), symbol.getScope());
+		//			intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+		//			System.out.println("VARLOCAL>");
+		//		}
+		//	}
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
-				symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
 				if (symbol instanceof SymbolVariable) {
+					
+					//Variable variable = new Variable(symbol.getName(), symbol.getScope());
+					//Value value = new Value((((SymbolVariable)symbol).getValor()!=null)?Integer.parseInt(((SymbolVariable)symbol).getValor()):0);
+					//intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, value);
+
+					// // Esta parte aparece deshabilitada en otra derivación
+					//
 					Variable variable = new Variable(symbol.getName(), symbol.getScope());
 					int valor;
 					System.out.println("     symbol.getType() = " + symbol.getType());
-					if ((symbol.getType() instanceof TypeSimple)) {
+					if ((symbol.getType() instanceof TypeSimple)  && (symbol instanceof SymbolVariable)) {
 						valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
 						intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
 					} else if ((symbol.getType() instanceof TypeArray)) {
 						String valores = ((SymbolVariable)symbol).getValor();
 						int size = ((TypeArray)symbol.getType()).getSize();
 						intermediateCodeBuilder.addQuadruple("VARLOCALVECTOR", variable, size);
-					} else {
-						semanticErrorManager.semanticFatalError("Error inesperado en línea 945 en el PARSER.CUP.");
 					}
 				}	
 			}
 		}
 
-
-		TemporalFactory temporalFactory = new TemporalFactory(scope);
-		TemporalIF temporal = temporalFactory.create();
+		// // Duplicado de más arriba
+		//
+		// TemporalFactory temporalFactory = new TemporalFactory(scope);
+		// TemporalIF temporal = temporalFactory.create();
 		
 		Funcion fp = new Funcion();
 
 		// Añadir listado de sentencias
 		Sentencia lt = (Sentencia) listsent;
 
+		tamanodireccionprincipal = direccion;
+
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
 
-		//intermediateCodeBuilder.addQuadruple("PUNTEROFINAL", temporal, direccion);
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
+
+		intermediateCodeBuilder.addQuadruple("FIN_PRINCIPAL", labelFin);
 
 		fp.setIntermediateCode(intermediateCodeBuilder.create());
 
 		System.out.println("     QUAD>" + fp.getIntermediateCode());
+
+		System.out.println("AMBT>cerrar PRINCIPAL " + scope.getName() + " (" + (scope.getLevel()) + ")");
+		semanticErrorManager.semanticDebug("Tabla de Simbolos:   " + scopeManager.getCurrentScope().getSymbolTable());
+		semanticErrorManager.semanticDebug("Tabla de Tipos:      " + scopeManager.getCurrentScope().getTypeTable());
+		semanticErrorManager.semanticDebug("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
+		scopeManager.closeScope();
 
 		RESULT = fp;  :};
 
@@ -1009,6 +1166,7 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 	| IDENTIFICADOR:id {: 
 		String identificador = id.getLexema(); 
 		Expresion expr = new Expresion();
+		expr.setIdentificador(identificador);
 		if(!(scopeManager.containsSymbol(identificador))) {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
 		}
@@ -1035,6 +1193,12 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			Value value = new Value(Integer.parseInt(((SymbolConstant) symbol).getValor()));
 			intermediateCodeBuilder.addQuadruple("MV", temporal, value);
 			numero = constant.getValor();
+		} else if (symbol instanceof SymbolParameter) {
+			SymbolParameter parameter = (SymbolParameter) symbol;
+			//Value value = new Value(Integer.parseInt(((SymbolParameter) symbol).getValor()));
+			Variable variable = new Variable(((SymbolParameter)parameter).getName(), symbol.getScope());
+			intermediateCodeBuilder.addQuadruple("MV", temporal, variable);
+			numero = parameter.getValor();
 		} else {
 			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable o constante");
 		}
@@ -1271,28 +1435,11 @@ expresion ::= NUMERO:num {: System.out.println("READ> expresion = NUMERO");
 			Expresion expr = (Expresion) exp;
 
 			IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
-			TemporalFactory temporalFactory = new TemporalFactory(scope);
-			TemporalIF temporal = temporalFactory.create();
 
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 
-			/* WTF
-			if (expr.getTipo() != null) {  /// Esto no se siente correcto
-				expr.setType(scopeManager.searchType("VACIO"));
-			} else {
-				expr.setType(scopeManager.searchType("ENTERO"));
-				intermediateCodeBuilder.addQuadruple("DEVUELTO", temporal);
-				expr.setTemporal(temporal);
-			}*/
-
-			// expr.setTipo(...); // No necesario, estoy reutilizando la expresión.
-
-			if (expr.getTipo() == scopeManager.searchType("ENTERO")) {
-				intermediateCodeBuilder.addQuadruple("DEVUELTO", temporal);
-				expr.setTemporal(temporal);
-			}
-
-			expr.setIntermediateCode(intermediateCodeBuilder.create());
+			//expr.setTemporal(temporal);
+			//expr.setIntermediateCode(intermediateCodeBuilder.create());
 			System.out.println("     QUAD>" + expr.getIntermediateCode());
 
 			RESULT = expr; 
@@ -1360,82 +1507,129 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 // IDEA: para los parámetros crear variables del tipo nombreFunción+Parametro+nombreParámetro o bien, crear en el no terminal un booleano que compruebe si es parámetro y su posición en la función.
 llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: System.out.println("READ> llamadaFuncion = conParametros");
 		ScopeIF scope = scopeManager.getCurrentScope();
-		SymbolProcedure funcion = (SymbolProcedure) scopeManager.searchSymbol(ident.getLexema());
 
+		if (!scopeManager.containsSymbol(ident.getLexema())) {
+			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no existe. DEBUG: llamadafuncion");
+		}
+		
 		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
-
-		// Get instance of symbol
-		System.out.println(scopeManager.containsSymbol(ident.getLexema()));
-
-		if (!(funcion instanceof SymbolFunction || funcion instanceof SymbolProcedure)) {
+		
+		if (!(symbol instanceof SymbolFunction || symbol instanceof SymbolProcedure)) {
 			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no es una función o procedimiento.");
 		}
 		
+		// Borrar?
+		SymbolProcedure funcion = (SymbolProcedure) symbol;
+		
 		ArrayList<SymbolIF> listaParametros = (ArrayList<SymbolIF>) funcion.getParameters();		// Lista de parámetros de la función
-		ArrayList<String> parametros = (ArrayList<String>) params;		// Lista de parámetros de la declaración
+		ArrayList<Expresion> parametros = (ArrayList<Expresion>) params;		// Lista de parámetros de la declaración
 		if (listaParametros.size() != parametros.size()) {
 			semanticErrorManager.semanticFatalError("La función o procedimiento " + ident.getLexema() + " requiere " + listaParametros.size() + " parámetro(s)");
 		}
 
 		ArrayList<Expresion> expresionesParametro = new ArrayList<Expresion>();
-		for (String parametro : parametros) {
-			Expresion expresionParametro = new Expresion();
-			expresionParametro.setValor(parametro);
-			expresionParametro.setTipo(scopeManager.searchType("ENTERO"));
-			expresionesParametro.add(expresionParametro);
+		for (int i = 0; i < parametros.size(); i++) {
+			Expresion parametro = parametros.get(i);
+			parametro.setIdentificador(listaParametros.get(i).getName());
+			expresionesParametro.add(parametro);
+			System.out.println("Parametro> " + parametro.getValor() + " " + parametro.getIdentificador());
 		}
 		// La comprobación de introducir tipos enteros ya debería realizarse previamente (o eso creo).
 
+		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
 
-		intermediateCodeBuilder.addQuadruple("INICIA_FUNCION", procedure);
 
-		for (int i = 0; i < expresionesParametro.size(); i++) {		
-			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(expresionesParametro.size()-1-i).getTemporal());
+		intermediateCodeBuilder.addQuadruple("DVLP", "STARTSUBPROGRAMA");
+
+		Value direccionesInvocador = new Value(scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size());
+		System.out.println("Llamada tamano " + direccionesInvocador);
+
+
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
+		
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelIdentificador = labelFactory.create(ident.getLexema());
+		intermediateCodeBuilder.addQuadruple("INICIO_FUNCION");
+
+		for (int i = expresionesParametro.size()-1; i >=0 ; i--) {
+			intermediateCodeBuilder.addQuadruples(expresionesParametro.get(i).getIntermediateCode());
+			intermediateCodeBuilder.addQuadruple("PARAM", expresionesParametro.get(i).getTemporal());
 		}
 
-		intermediateCodeBuilder.addQuadruple("LLAMA_FUNCION", procedure);
+		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);
 
-		/// Falta codigo de devolución del resultado.
-		
+		if (symbol instanceof SymbolFunction) {
+			intermediateCodeBuilder.addQuadruple("VALOR_RETORNO", temporal);
+		}
+			
 		Expresion expr = new Expresion();
-		expr.setValor("9999");		// Este valor sirve únicamente de referencia, no devuelve valor real.
-		//expr.setTipo(scopeManager.searchType("ENTERO"));
+		expr.setValor("0");		// Este valor es un sueñuelo, no tiene efectividad real (debería borrarlo).
+		expr.setIntermediateCode(intermediateCodeBuilder.create());
+		expr.setTemporal(temporal);
 		expr.setTipo(((SymbolIF) funcion).getType());
 		RESULT = expr; :}
 	| IDENTIFICADOR:ident OPEN_KEY CLOSE_KEY {: System.out.println("READ> llamadaFuncion = sinParametros");
 	 	ScopeIF scope = scopeManager.getCurrentScope();
-		SymbolProcedure funcion = (SymbolProcedure) scopeManager.searchSymbol(ident.getLexema());
+
+		if (!scopeManager.containsSymbol(ident.getLexema())) {
+			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no existe. DEBUG: llamadafuncion");
+		}
 		
-		if (!(funcion instanceof SymbolFunction || funcion instanceof SymbolProcedure)) {
+		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
+		
+		if (!(symbol instanceof SymbolFunction || symbol instanceof SymbolProcedure)) {
 			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no es una función o procedimiento.");
 		}
-
-		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
+		
+		// Borrar?
+		SymbolProcedure funcion = (SymbolProcedure) symbol;
+		
 
 		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
 
-		intermediateCodeBuilder.addQuadruple("INICIA_FUNCION", procedure);
+		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		intermediateCodeBuilder.addQuadruple("LLAMA_FUNCION", procedure);
 
-		/// Falta codigo de devolución del resultado.
+
+		intermediateCodeBuilder.addQuadruple("DVLP", "STARTSUBPROGRAMA");
+
+		Value direccionesInvocador = new Value(scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size());
+		System.out.println("Llamada tamano " + direccionesInvocador);
+
+
+		TemporalFactory temporalFactory = new TemporalFactory(scope);
+		TemporalIF temporal = temporalFactory.create();
 		
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelIdentificador = labelFactory.create(ident.getLexema());
+		intermediateCodeBuilder.addQuadruple("INICIO_FUNCION");
+
+		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);
+
+		if (symbol instanceof SymbolFunction) {
+			intermediateCodeBuilder.addQuadruple("VALOR_RETORNO", temporal);
+		}
+			
 		Expresion expr = new Expresion();
-		expr.setValor("9999");		// Este valor sirve únicamente de referencia, no devuelve valor real.
-		expr.setTipo(scopeManager.searchType("ENTERO"));
+		expr.setValor("0");		// Este valor es un sueñuelo, no tiene efectividad real (debería borrarlo).
+		expr.setIntermediateCode(intermediateCodeBuilder.create());
+		expr.setTemporal(temporal);
+		expr.setTipo(((SymbolIF) funcion).getType());
 		RESULT = expr; :};
 parametros ::= expresion:exp {: System.out.println("READ> parametros = expresion"); 
-		ArrayList<String> params = new ArrayList<String>();
-		params.add(0, ((String)( (Expresion) exp).getValor()));
-		 RESULT = params; :}
+		ArrayList<Expresion> params = new ArrayList<Expresion>();
+		//params.add(0, (Expresion) exp);
+		params.add((Expresion) exp);
+		RESULT = params; :}
  | expresion:exp COLON parametros:paramsEntrada {: System.out.println("READ> parametros = expresion COLON parametros"); 
-		ArrayList<String> params = (ArrayList<String>) paramsEntrada;
-		params.add(0, ((String)( (Expresion) exp).getValor()));
- 		 RESULT = params; :};
+		ArrayList<Expresion> params = (ArrayList<Expresion>) paramsEntrada;
+		//params.add(0, (Expresion) exp);
+		params.add((Expresion) exp);
+ 		RESULT = params; :};
 
 //  SENTENCIAS
 
@@ -1466,21 +1660,32 @@ sentencia ::= sentenciaDevuelve:sen {: System.out.println("READ> sentencia = sen
 	| sentenciaSi:sen {: System.out.println("READ> sentencia = sentenciaSi"); RESULT = sen; :}
 	| sentenciaAlternativas:sen {: System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = sen; :}
 	| sentenciaMientras:sen {: System.out.println("READ> sentencia = sentenciaMientras"); RESULT = sen; :}
-	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = null; :}
+	| sentenciaLlamadaFuncion:sen {: System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = sen; :}
 	| sentenciaSalida:sen {: System.out.println("READ> sentencia = sentenciaSalida"); RESULT = sen; :}
 	| bloque:sen {: System.out.println("READ> sentencia = bloque"); RESULT = sen; :};
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: System.out.println("READ> sentenciaDevuelve = vacío"); 
 		Sentencia sen = new Sentenciadevuelve();
+		// No usado
+		// TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());
+		// TemporalIF temporal = temporalFactory.create();
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		intermediateCodeBuilder.addQuadruple("DEVUELTO");
+		intermediateCodeBuilder.addQuadruple("DEVUELTO", labelFin); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		RESULT = sen; :}
 	| DEVUELVE expresion:exp SEMI_COLON {: 
 		Expresion expr = (Expresion) exp;
 		Sentencia sen = new Sentenciadevuelve(expr.getValor());
+		// No usado
+		// TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());
+		// TemporalIF temporal = temporalFactory.create();
+		LabelFactory labelFactory = new LabelFactory();
+		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
-		intermediateCodeBuilder.addQuadruple("DEVUELVE", expr.getTemporal()); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
+		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
+		intermediateCodeBuilder.addQuadruple("DEVUELTO", labelFin, expr.getTemporal()); // Tal vez deba ser "DEVUELTO" a menos que ponga comprobación.
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		System.out.println("READ> sentenciaDevuelve + expresion = " + expr.getValor()); 
 		RESULT = sen; :};
@@ -1883,7 +2088,11 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentmi
 
 		:};
 
-sentenciaLlamadaFuncion ::= llamadaFuncion SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); RESULT = null; :};
+sentenciaLlamadaFuncion ::= llamadaFuncion:fun SEMI_COLON {: System.out.println("READ> sentenciaLlamadaFuncion"); 
+	Expresion func = (Expresion) fun;
+	Sentencia sen = new Sentencia();
+	sen.setIntermediateCode(func.getIntermediateCode());
+	RESULT = sen; :};
 
 sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		Sentencia sen = new Sentencia();
@@ -1894,10 +2103,10 @@ sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF label = labelFactory.create();
-		TemporalIF temp = temporalFactory.create();
+		TemporalIF temporal = temporalFactory.create();
 
 		Value value = new Value(salida);
-		intermediateCodeBuilder.addQuadruple("WRSTR", temp, label);
+		intermediateCodeBuilder.addQuadruple("WRSTR", temporal, label);
 
 		listaCadenas.add(new Quadruple("CADENA", new Label(salida), label));
 
@@ -1915,7 +2124,7 @@ sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF label = labelFactory.create();
-		TemporalIF temp = temporalFactory.create();
+		TemporalIF temporal = temporalFactory.create();
 
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 

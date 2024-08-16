@@ -1,16 +1,19 @@
 /* MI CASO DE PRUEBA EXPERIMENTAL */
 
+#constante otra 420;
+
+entero hola () {
+    entero holatest = 58;
+    
+    devuelve 55;
+}
+
 vacio principal () {
-
-    tipo entero vector[3];
-
-    vector v1;
     
-    v1[2] = 22;
+    entero printest = 25;
 
-    escribeEnt(v1[0]);
-    
+    hola();
 
-devuelve;
+    devuelve;
 
 }

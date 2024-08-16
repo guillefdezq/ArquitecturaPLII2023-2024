@@ -16,8 +16,8 @@ public class SymbolVariable
 {  
    
 	private String valor;
-    private int address;
-	
+    private int address = 0;
+
     public int getAddress() {
         return address;
     }
@@ -33,6 +33,8 @@ public class SymbolVariable
 	public void setValor(String valor) {
 		this.valor = valor;
 	}
+
+
 	
     /**
      * Constructor for SymbolVariable.

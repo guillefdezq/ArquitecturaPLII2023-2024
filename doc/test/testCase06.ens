@@ -1,0 +1,104 @@
+; Quadruple - [AXIOM null, null, null]
+AXIOM: NOP
+BR /PRINCIPAL
+
+; Quadruple - [INL L_incrementa, null, null]
+L_incrementa: NOP
+
+; Quadruple - [VARSUBPROGRAMA x, -4, null]
+MOVE #-4[.IX], #-7[.IX]
+; Quadruple - [PUNTERO_FUNCION T_5, 13, null]
+SUB .IX, #13
+MOVE .A, .SP
+
+; Quadruple - [MV T_0, x, null]
+MOVE #-7[.IX], #-8[.IX]
+; Quadruple - [MV T_1, 1, null]
+MOVE #1, #-9[.IX]
+; Quadruple - [ADD T_2, T_0, T_1]
+ADD #-8[.IX], #-9[.IX]
+MOVE .A , #-10[.IX]
+
+; Quadruple - [MV x, T_2, null]
+MOVE #-10[.IX], #-7[.IX]
+; Quadruple - [MV T_3, x, null]
+MOVE #-7[.IX], #-11[.IX]
+; Quadruple - [MV c, T_3, null]
+MOVE #-11[.IX], #-6[.IX]
+; Quadruple - [MV T_4, c, null]
+MOVE #-6[.IX], #-12[.IX]
+; Quadruple - [DEVUELTO L_FIN_FUN_1, T_4, null]
+MOVE #-12[.IX], #-0[.IX]
+BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
+L_FIN_FUN_1: NOP
+SUB .IX, #6
+MOVE .A, .SP
+RET
+
+
+
+
+; Quadruple - [PRINCIPAL null, null, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas
+MOVE .SP, .IX  ;guarda el valor de SP en R0
+PUSH #-1       ;valor de retorno
+PUSH .IX       ;enlace de control
+PUSH .SR       ;estado mÃ¡quina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [PUNTERO_PRINCIPAL T_5, 11, null]
+SUB .IX, #11
+MOVE .A, .SP
+
+; Quadruple - [VARLOCAL a, 0, null]
+MOVE #0, #-4[.IX]
+; Quadruple - [VARLOCAL b, 0, null]
+MOVE #0, #-5[.IX]
+; Quadruple - [MV T_0, 2, null]
+MOVE #2, #-6[.IX]
+; Quadruple - [MV a, T_0, null]
+MOVE #-6[.IX], #-4[.IX]
+; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
+; sin declarar?
+
+; Quadruple - [INICIO_FUNCION null, null, null]
+MOVE .SP, .R0  ;guarda el valor de SP en R0 para guardar EC y establecer aquÃ­ IX(nuevo EA)
+PUSH #-1       ;valor de retorno
+PUSH .R0       ;enlace de control
+PUSH .SR       ;estado mÃ¡quina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [MV T_1, a, null]
+MOVE #-4[.IX], #-7[.IX]
+; Quadruple - [PARAM T_1, null, null]
+PUSH #-7[.IX]
+
+; Quadruple - [CALL L_incrementa, null, null]
+MOVE .R0, .IX         ; Guarda el valor de R0 en IX
+CALL /L_incrementa            ; Guarda PC y salta
+MOVE #0[.IX], .R9     ; Guarda retorno
+MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
+; Puede que algo este mal configurado...
+; Necesario: Recuperacion de la pila a su sitio original
+
+; Quadruple - [VALOR_RETORNO T_2, null, null]
+MOVE .R9, #-8[.IX]
+
+; Quadruple - [MV b, T_2, null]
+MOVE #-8[.IX], #-5[.IX]
+; Quadruple - [MV T_3, b, null]
+MOVE #-5[.IX], #-9[.IX]
+; Quadruple - [WRINT T_3, null, null]
+WRINT #-9[.IX] 
+WRCHAR #10 
+
+; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
+BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_2, null, null]
+L_FIN_FUN_2: HALT
+

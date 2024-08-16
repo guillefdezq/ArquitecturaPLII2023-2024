@@ -1,13 +1,19 @@
 ; Quadruple - [AXIOM null, null, null]
+AXIOM: NOP
+BR /PRINCIPAL
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-;MOVE .SP, .IX  ;guarda el valor de SP en IX
-;PUSH #-1       ;valor de retorno
-;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado máquina
-;PUSH .IX       ;enlace de acceso
+MOVE .SP, .IX  ;guarda el valor de SP en R0
+PUSH #-1       ;valor de retorno
+PUSH .IX       ;enlace de control
+PUSH .SR       ;estado mÃ¡quina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [PUNTERO_PRINCIPAL T_9, 17, null]
+SUB .IX, #17
+MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL c, 0, null]
 MOVE #0, #-4[.IX]
@@ -39,8 +45,11 @@ MOVE #-4[.IX], #-15[.IX]
 WRINT #-15[.IX] 
 WRCHAR #10 
 
-; Quadruple - [DEVUELTO null, null, null]
-HALT
+; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
+BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
+L_FIN_FUN_1: HALT
 
 ; Quadruple - [CADENA v1\n, L_0, null]
 L_0: DATA "v1\n"

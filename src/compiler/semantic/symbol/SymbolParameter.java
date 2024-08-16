@@ -12,9 +12,28 @@ import es.uned.lsi.compiler.semantic.type.TypeIF;
 //       Include properties to characterize parameters
 
 public class SymbolParameter
-    extends SymbolBase
+    extends SymbolVariable      // Realmente es una copia de SymbolVariable, podría haberlo extendido, pero así será más fácil.
 {  
-   
+
+    private String valor;
+    private int address = 0;
+
+    public int getAddress() {
+        return address;
+    }
+
+    public void setAddress(int address) {
+        this.address = address;
+    }
+
+    public String getValor() {
+		return valor;
+	}
+
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+
     /**
      * Constructor for SymbolParameter.
      * @param scope The declaration scope.

@@ -1,13 +1,19 @@
 ; Quadruple - [AXIOM null, null, null]
+AXIOM: NOP
+BR /PRINCIPAL
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-;MOVE .SP, .IX  ;guarda el valor de SP en IX
-;PUSH #-1       ;valor de retorno
-;PUSH .IX       ;enlace de control
-;PUSH .SR       ;estado máquina
-;PUSH .IX       ;enlace de acceso
+MOVE .SP, .IX  ;guarda el valor de SP en R0
+PUSH #-1       ;valor de retorno
+PUSH .IX       ;enlace de control
+PUSH .SR       ;estado mÃ¡quina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [PUNTERO_PRINCIPAL T_15, 26, null]
+SUB .IX, #26
+MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]
 MOVE #0, #-4[.IX]
@@ -29,12 +35,12 @@ MOVE #-4[.IX], #-9[.IX]
 MOVE #-5[.IX], #-10[.IX]
 ; Quadruple - [EQ T_4, T_2, T_3]
 CMP #-9[.IX], #-10[.IX]
-BZ /L_13
-BNZ /L_14
-L_13: MOVE #1, #-11[.IX]
-BR /L_15
-L_14: MOVE #0, #-11[.IX]
-L_15: NOP
+BZ /L_15
+BNZ /L_16
+L_15: MOVE #1, #-11[.IX]
+BR /L_17
+L_16: MOVE #0, #-11[.IX]
+L_17: NOP
 
 ; Quadruple - [BRF T_4, L_3, null]
 CMP #-11[.IX], #0
@@ -70,12 +76,12 @@ MOVE #-4[.IX], #-13[.IX]
 MOVE #5, #-14[.IX]
 ; Quadruple - [LS T_8, T_6, T_7]
 CMP #-13[.IX], #-14[.IX]
-BZ /L_17
-BP /L_17
-L_16: MOVE #1, #-15[.IX]
-BR /L_18
-L_17: MOVE #0, #-15[.IX]
-L_18: NOP
+BZ /L_19
+BP /L_19
+L_18: MOVE #1, #-15[.IX]
+BR /L_20
+L_19: MOVE #0, #-15[.IX]
+L_20: NOP
 
 ; Quadruple - [BRF T_8, L_6, null]
 CMP #-15[.IX], #0
@@ -148,8 +154,11 @@ L_10: NOP
 ; Quadruple - [DVLP Alternativas, Final, null]
 ; sin declarar?
 
-; Quadruple - [DEVUELTO null, null, null]
-HALT
+; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
+BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
+L_FIN_FUN_1: HALT
 
 ; Quadruple - [CADENA si bien\n, L_0, null]
 L_0: DATA "si bien\n"
