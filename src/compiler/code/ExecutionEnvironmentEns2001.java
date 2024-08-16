@@ -328,6 +328,8 @@ public class ExecutionEnvironmentEns2001
             
         } else if (quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
+            String o1 = operacion(quadruple.getFirstOperand());
+            //b.append("MOVE " + o1 + ", " + r + "\n");
             b.append("PUSH " + r + "\n");
         } else if (quadruple.getOperation().equals("CALL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS - DEBERÍA SER CALL f
             String r = operacion(quadruple.getResult());
