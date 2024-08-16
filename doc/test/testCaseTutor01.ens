@@ -15,22 +15,22 @@ SUB .IX, #11
 MOVE .A, .SP
 
 ; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-25[.IX]
+MOVE #1, #-24[.IX]
 ; Quadruple - [MV c, T_0, null]
-MOVE #-25[.IX], #-22[.IX]
+MOVE #-24[.IX], #-22[.IX]
 ; Quadruple - [WRSTR T_1, L_0, null]
 WRSTR /L_0 
 
 ; Quadruple - [MV T_2, c, null]
-MOVE #-22[.IX], #-27[.IX]
+MOVE #-22[.IX], #-26[.IX]
 ; Quadruple - [WRINT T_2, null, null]
-WRINT #-27[.IX] 
+WRINT #-26[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [MV T_0, 1, null]
-MOVE #1, #-24[.IX]
+MOVE #1, #-23[.IX]
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, T_0, null]
-MOVE #-24[.IX], #-0[.IX]
+MOVE #-23[.IX], #-0[.IX]
 BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
 
 ; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
@@ -51,12 +51,12 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_2, 9, null]
-SUB .IX, #9
+; Quadruple - [PUNTERO_PRINCIPAL T_2, 11, null]
+SUB .IX, #11
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]
-MOVE #0, #-9[.IX]
+MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCALVECTOR lista3, 4, null]
 ; sin declarar?
 
@@ -71,9 +71,9 @@ PUSH .SR       ;estado mÃ¡quina
 PUSH .IX       ;enlace de acceso
 
 ; Quadruple - [MV T_0, a, null]
-MOVE #-9[.IX], #-14[.IX]
+MOVE #-4[.IX], #-9[.IX]
 ; Quadruple - [PARAM T_0, null, null]
-PUSH #-14[.IX]
+PUSH #-9[.IX]
 
 ; Quadruple - [CALL L_incrementa, null, null]
 MOVE .R0, .IX         ; Guarda el valor de R0 en IX
@@ -85,10 +85,10 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Necesario: Recuperacion de la pila a su sitio original
 
 ; Quadruple - [VALOR_RETORNO T_1, null, null]
-MOVE .R9, #-15[.IX]
+MOVE .R9, #-10[.IX]
 
 ; Quadruple - [MV a, T_1, null]
-MOVE #-15[.IX], #-9[.IX]
+MOVE #-10[.IX], #-4[.IX]
 ; Quadruple - [DEVUELTO L_FIN_FUN_4, null, null]
 BR /L_FIN_FUN_4    ;rescata de la pila el contenido del contador de programa
 

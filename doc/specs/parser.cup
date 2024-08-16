@@ -683,7 +683,6 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		
 		System.out.println("listScopeHijos en funcion normal sin borrar " + listScopeHijos);
 
-		boolean fueraInteres = false;
 		for (int i = 0 ; i < scopeManager.getAllScopes().size() ; i++) {
 			if (i < scope.getId()) listScopeHijos.remove(0);
 		}
@@ -701,15 +700,14 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}
 
-		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
-			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
-			if (temporal instanceof Temporal) {
-				((Temporal) temporal).setAddress(direccion);
-				//direccion += temporal.getType().getSize();
-				direccion += ((Temporal) temporal).getSize();
-			}
-		}
-
+		//	for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+		//		TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
+		//		if (temporal instanceof Temporal) {
+		//			((Temporal) temporal).setAddress(direccion);
+		//			//direccion += temporal.getType().getSize();
+		//			direccion += ((Temporal) temporal).getSize();
+		//		}
+		//	}
 		
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
@@ -739,7 +737,8 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		for (int i=0; i<scope.getSymbolTable().getSymbols().size(); i++) {
 			SymbolIF symbol = scope.getSymbolTable().getSymbols().get(i);
 			if (symbol instanceof SymbolParameter) {
-				int valor = (((SymbolParameter)symbol).getValor() != null) ? Integer.parseInt(((SymbolParameter)symbol).getValor()) : 0;
+				// int valor = (((SymbolParameter)symbol).getValor() != null) ? Integer.parseInt(((SymbolParameter)symbol).getValor()) : 0;
+				// ^^^^^^^^^	La linea anterior no se utiliza...
 				Variable variable = new Variable(symbol.getName(), symbol.getScope());
 				// intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", temporal, direccionParams);
 				intermediateCodeBuilder.addQuadruple("VARSUBPROGRAMA", variable, direccionParams);
@@ -748,9 +747,30 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}
 
-		int tamanoRA = scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size() + 5;  // Para que es el +5? El +5 es para reservar los elementos comunes del registro de activacion
+		//int tamanoRA = scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size() + 5;  // Para que es el +5? El +5 es para reservar los elementos comunes del registro de activacion
+		int tamanoRA = direccion;
 
 		intermediateCodeBuilder.addQuadruple("PUNTERO_FUNCION", temporal, tamanoRA);
+		
+		for (ScopeIF tempScope: listScopeHijos) {
+			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
+				SymbolIF symbol = tempScope.getSymbolTable().getSymbols().get(i);
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				int valor;
+				System.out.println("	 symbol.getName() = " + symbol.getName());
+				System.out.println("     symbol.getType() = " + symbol.getType());
+				if ((symbol.getType() instanceof TypeSimple) && (symbol instanceof SymbolVariable) && !(symbol instanceof SymbolParameter)) {
+					valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+				System.out.println(" D E B U G");
+					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
+				} else if ((symbol.getType() instanceof TypeArray)) {
+					String valores = ((SymbolVariable)symbol).getValor();
+					int size = ((TypeArray)symbol.getType()).getSize();
+					intermediateCodeBuilder.addQuadruple("VARLOCALVECTOR", variable, size);
+				}
+			}
+		}
+
 		intermediateCodeBuilder.addQuadruples(((Sentencia) fun1).getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("FIN_FUNCION", labelFin, params.size()+5);
 
@@ -875,14 +895,14 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}
 		}
 
-		for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
-			TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
-			if (temporal instanceof Temporal) {
-				((Temporal) temporal).setAddress(direccion);
-				//direccion += temporal.getType().getSize();
-				direccion += ((Temporal) temporal).getSize();
-			}
-		}
+		// 	for (int i = 0 ; i < scope.getTemporalTable().getTemporals().size(); i++) {
+		// 		TemporalIF temporal = scope.getTemporalTable().getTemporals().get(i);
+		// 		if (temporal instanceof Temporal) {
+		// 			((Temporal) temporal).setAddress(direccion);
+		// 			//direccion += temporal.getType().getSize();
+		// 			direccion += ((Temporal) temporal).getSize();
+		// 		}
+		// 	}
 
 		
 		for (ScopeIF tempScope: listScopeHijos) {
@@ -899,7 +919,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
 
-			int tamanoRA = scope.getSymbolTable().getSize() + scope.getTemporalTable().getSize() + 4;
+			//int tamanoRA = scope.getSymbolTable().getSize() + scope.getTemporalTable().getSize() + 4;
+			int tamanoRA = direccion;
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
@@ -972,13 +993,13 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		int direccion = 4;
 		
-		for (int i = 0; i < sTable.getSymbols().size(); i++) {
-			SymbolIF symbol = sTable.getSymbols().get(i);
-			if (symbol instanceof SymbolVariable) {
-				((SymbolVariable) symbol).setAddress(direccion);
-				direccion += symbol.getType().getSize();
-			}			
-		}
+		// 	for (int i = 0; i < sTable.getSymbols().size(); i++) {
+		// 		SymbolIF symbol = sTable.getSymbols().get(i);
+		// 		if (symbol instanceof SymbolVariable) {
+		// 			((SymbolVariable) symbol).setAddress(direccion);
+		// 			direccion += symbol.getType().getSize();
+		// 		}			
+		// 	}
 
 
 		DevScopes devScopes = new DevScopes(scopeManager);		/// Recuerda borrar esto ¬_¬'
@@ -1032,21 +1053,22 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
 
-			int tamanoRA = scope.getSymbolTable().getSize() + scope.getTemporalTable().getSize() + 4;
+			//int tamanoRA = scope.getSymbolTable().getSize() + scope.getTemporalTable().getSize() + 4;
+			int tamanoRA = direccion;
 			TemporalFactory temporalFactory = new TemporalFactory(scope);
 			TemporalIF temporal = temporalFactory.create();
 			intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
 
 		//  Duplicado, ya se realiza esta acción abajo
 		//
-		//for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
-		//	symbol = scope.getSymbolTable().getSymbols().get(i);
-		//	if (symbol instanceof SymbolVariable) {
-		//		Variable variable = new Variable(symbol.getName(), symbol.getScope());
-		//		intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
-		//		System.out.println("VARLOCAL>");
+		//	for (int i = 0; i < scope.getSymbolTable().getSymbols().size(); i++) {
+		//		symbol = scope.getSymbolTable().getSymbols().get(i);
+		//		if (symbol instanceof SymbolVariable) {
+		//			Variable variable = new Variable(symbol.getName(), symbol.getScope());
+		//			intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, 0);
+		//			System.out.println("VARLOCAL>");
+		//		}
 		//	}
-		//}
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {

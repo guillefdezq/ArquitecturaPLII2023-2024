@@ -2,36 +2,15 @@
 
 #constante otra 420;
 
-vacio hola () {
-    entero todo;
-    entero mal;
-    mientras (todo < 5) {
-        mal = 0;
-        mientras (mal < 4) {
-            entero a;
-            escribeEnt(mal);
-            mal++;
-        }
-        todo++;
-    }
-    devuelve;
+entero hola () {
+    entero holatest = 58;
+    
+    devuelve 55;
 }
 
 vacio principal () {
     
-    entero nada;
-    entero bien;
-    mientras (nada  < 5) {
-        bien = 0;
-        mientras (bien < 4) {
-            entero b;
-            escribeEnt(bien);
-            bien++;
-        }
-        nada++;
-    }
-    
-    escribe("SEPARACION");
+    entero printest = 25;
 
     hola();
 
