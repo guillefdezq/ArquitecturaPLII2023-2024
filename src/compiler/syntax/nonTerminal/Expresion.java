@@ -18,7 +18,7 @@ public class Expresion extends NonTerminal {
   protected String valor;
 
   // para vectores
-  protected int indice;
+  protected Object indice;
   protected String nombreVector;
   // ----------
 
@@ -96,11 +96,11 @@ public class Expresion extends NonTerminal {
     } else return null;
   }
 
-  public int getIndice() {
+  public Object getIndice() {
       return indice;
   }
 
-  public void setIndice(int indice) {
+  public void setIndice(Object indice) {
       this.indice = indice;
   }
 

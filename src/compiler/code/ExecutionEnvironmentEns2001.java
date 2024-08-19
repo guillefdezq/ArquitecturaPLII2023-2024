@@ -7,6 +7,7 @@ import compiler.intermediate.Label;
 import compiler.intermediate.Temporal;
 import compiler.intermediate.Value;
 import compiler.intermediate.Variable;
+import compiler.semantic.symbol.SymbolVariable;
 import compiler.semantic.type.TypeSimple;
 import compiler.syntax.nonTerminal.Expresion;
 import es.uned.lsi.compiler.code.ExecutionEnvironmentIF;
@@ -18,6 +19,7 @@ import es.uned.lsi.compiler.intermediate.OperandIF;
 import es.uned.lsi.compiler.intermediate.QuadrupleIF;
 import es.uned.lsi.compiler.intermediate.TemporalFactory;
 import es.uned.lsi.compiler.intermediate.VariableIF;
+import es.uned.lsi.compiler.semantic.ScopeIF;
 
 /**
  * Class for the ENS2001 Execution environment.
@@ -113,7 +115,7 @@ public class ExecutionEnvironmentEns2001
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("MOVE " + o1 + ", " + r);
         } else if (quadruple.getOperation().equals("STP")) {
-            //"STP", variable, expr.getTemporal(), refexpr.getIndice()
+            //"STP", variable, expr.getTemporal(), refexpr.getTemporal()
             //      resultado, primer operando,     segundo operando    
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
@@ -125,17 +127,53 @@ public class ExecutionEnvironmentEns2001
             // MOVE acumulador, resultado  -> MOVE .a, r
 
             System.out.println("STP: " + o1 + ", " + o2 + ", " + r + ", ");
+             
+            // int direccion = ((Variable) quadruple.getResult()).getAddress();
+            // int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
+            // int total = direccion + adicion;
+            // 
+            // System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
+            // 
+            // b.append("MOVE " + o1 + ", #-" + total + "[.IX]\n");  
 
-            int direccion = ((Variable) quadruple.getResult()).getAddress();
-            int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
-            int total = direccion + adicion;
+            Variable var = (Variable) quadruple.getResult();
+            int rdir = var.getAddress();
+            String varname = var.getName();
+            ScopeIF varscope = var.getScope();
+            SymbolVariable variable = (SymbolVariable) varscope.getSymbolTable().getSymbol(varname);
+            int typesize = variable.getType().getSize();
+            
+            LabelFactory labelFactory = new LabelFactory();
+            LabelIF labelExito = labelFactory.create();
+            LabelIF labelFallo = labelFactory.create();
+            LabelIF labelFin = labelFactory.create();
 
-            System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
+            b.append("CMP " + o2 + ", #" + typesize + "\n");    // indice < tamaño ?
+            b.append("BZ /" + labelFallo.toString() + "\n");
+            b.append("BP /" + labelFallo.toString() + "\n");
 
-            b.append("MOVE " + o1 + ", #-" + total + "[.IX]\n");  
+            // No es posible utilizar números negativos
+            // b.append("CMP #-1, " + o2 + "\n");                  // -1 < tamaño?
+            // b.append("BZ /" + labelFallo.toString() + "\n");
+            // b.append("BP /" + labelFallo.toString() + "\n");
+
+
+            b.append(labelExito + ": NOP\n");
+
+            b.append("ADD #" + rdir + ", " + o2 + "\n");
+            b.append("SUB .IX, .A\n");
+            b.append("MOVE " + o1 + ", [.A]\n"); 
+
+            b.append("BR /" + labelFin + "\n");
+
+            b.append(labelFallo + ": NOP\n");
+            b.append("WRINT #403\n");
+            b.append("HALT\n");
+
+            b.append(labelFin + ": NOP\n");
             
         } else if (quadruple.getOperation().equals("MVP")) {
-            //("MVP", temporal, variable, expr.getIndice())
+            //("MVP", temporal, variable, expr.getTemporal())
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
@@ -144,17 +182,44 @@ public class ExecutionEnvironmentEns2001
 
             // ADD indice, dirvariable     -> ADD  o2, o1 
             // MOVE acumulador, resultado  -> MOVE .a, r
-
+            
             System.out.println("MVP: " + o1 + ", " + o2 + ", " + r + ", ");
 
-            int direccion = ((Variable) quadruple.getFirstOperand()).getAddress();
-            int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
-            int total = direccion + adicion;
+            // int direccion = ((Variable) quadruple.getFirstOperand()).getAddress();
+            // int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
+            // int total = direccion + adicion;
+            // System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
+            // b.append("MOVE #-" + total + "[.IX], " + r + "\n");  
             
-            System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
             
-            b.append("MOVE #-" + total + "[.IX], " + r + "\n");  
+            // String o2dir = ((Value) quadruple.getSecondOperand()).getValue().toString();
+            
+            Variable var = (Variable) quadruple.getFirstOperand();
+            int o1dir = var.getAddress();
+            String varname = var.getName();
+            ScopeIF varscope = var.getScope();
+            SymbolVariable variable = (SymbolVariable) varscope.getSymbolTable().getSymbol(varname);
+            int typesize = variable.getType().getSize();
+            
+            LabelFactory labelFactory = new LabelFactory();
+            LabelIF labelFallo = labelFactory.create();
+            LabelIF labelFin = labelFactory.create();
 
+            b.append("CMP " + o2 + ", #" + typesize + "\n");    // indice < tamaño ?
+            b.append("BZ /" + labelFallo.toString() + "\n");
+            b.append("BP /" + labelFallo.toString() + "\n");
+            
+            b.append("ADD #" + o1dir + ", " + o2 + "\n");
+            b.append("SUB .IX, .A\n");
+            b.append("MOVE [.A], " + r + "\n"); 
+
+            b.append("BR /" + labelFin + "\n");
+
+            b.append(labelFallo + ": NOP\n");
+            b.append("WRINT #404\n");
+            b.append("HALT\n");
+
+            b.append(labelFin + ": NOP\n");
 
         } else if (quadruple.getOperation().equals("ADD")) {
             String r = operacion(quadruple.getResult());

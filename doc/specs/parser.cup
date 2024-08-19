@@ -1520,7 +1520,8 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: Sy
 
 		exprN.setTipo(scopeManager.searchType("ENTERO"));	// Debería retirar el atributo de tipo. No se llega a utilizar.
 		exprN.setValor(numero);
-		exprN.setIndice(Integer.parseInt(expr.getValor()));
+		//exprN.setIndice(Integer.parseInt(expr.getValor()));
+		exprN.setIndice(expr.getTemporal());
 		exprN.setNombreVector(identificador);
 		TemporalFactory temporalFactory = new TemporalFactory(scope);
 		TemporalIF temporal = temporalFactory.create();
@@ -1809,13 +1810,17 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: System.out.pr
 			SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(refexpr.getNombreVector());
 			if(sym.getType() instanceof TypeArray) {
 				SymbolVariable vari = (SymbolVariable) sym;
+
+				/*  Tipo de comprobación invalidada, se utilizará cuádrupla
 				int indice = refexpr.getIndice();
 				if (vari.getType().getSize() < indice) {
 					semanticErrorManager.semanticFatalError("La variable " + refexpr.getNombreVector() + " no tiene tantos elementos. Equivalente a un IndexOutOfBoundsException.");
 				}
+				*/
 
 				String[] vector = vari.getValor().split(",");
 				String valorAGuardar = expr.getValor();
+				int indice = 0;  // está claro que no es esta la posición, pero debido a cambios, este valor es un señuelo
 				vector[indice] = valorAGuardar;
 				String nuevoVector = String.join(",", vector);
 				System.out.println(nuevoVector);
@@ -1884,13 +1889,17 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 			SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(refexpr.getNombreVector());
 			if(sym.getType() instanceof TypeArray) {
 				SymbolVariable vari = (SymbolVariable) sym;
+
+				/*  Tipo de comprobación invalidada, se utilizará cuádrupla
 				int indice = refexpr.getIndice();
 				if (vari.getType().getSize() < indice) {
 					semanticErrorManager.semanticFatalError("La variable " + refexpr.getNombreVector() + " no tiene tantos elementos. Equivalente a un IndexOutOfBoundsException.");
 				}
+				*/
 
 				String[] vector = vari.getValor().split(",");
 				String valorAGuardar = Integer.toString(Integer.parseInt(expr.getValor())+Integer.parseInt(refexpr.getValor()));
+				int indice = 0;  // está claro que no es esta la posición, pero debido a cambios, este valor es un señuelo
 				vector[indice] = valorAGuardar;
 				String nuevoVector = String.join(",", vector);
 				System.out.println(nuevoVector);
@@ -1901,7 +1910,7 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: Syst
 				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
 				intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 				intermediateCodeBuilder.addQuadruple("ADD", variable, variable, expr.getTemporal());
-				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getIndice());
+				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getTemporal());
 
 
 				System.out.println("ASIG> vector " + variable.getName() + "[" + indice + "] = " + valorAGuardar);

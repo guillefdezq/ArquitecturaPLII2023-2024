@@ -2,27 +2,6 @@
 AXIOM: NOP
 BR /PRINCIPAL
 
-; Quadruple - [INL L_hola, null, null]
-L_hola: NOP
-
-; Quadruple - [PUNTERO_FUNCION T_0, 6, null]
-SUB .IX, #6
-MOVE .A, .SP
-
-; Quadruple - [VARLOCAL holatest, 58, null]
-MOVE #58, #-5[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
-
-; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 5, null]
-L_FIN_FUN_1: NOP
-SUB .IX, #5
-MOVE .A, .SP
-RET
-
-
-
-
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
@@ -32,34 +11,137 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_1, 6, null]
-SUB .IX, #6
+; Quadruple - [PUNTERO_PRINCIPAL T_7, 25, null]
+SUB .IX, #25
 MOVE .A, .SP
 
-; Quadruple - [VARLOCAL printest, 25, null]
-MOVE #25, #-4[.IX]
-; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
+; Quadruple - [VARLOCAL a, 0, null]
+MOVE #0, #-4[.IX]
+; Quadruple - [VARLOCALVECTOR v, 3, null]
 ; sin declarar?
 
-; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
-PUSH #-1       ;valor de retorno
-PUSH .IY       ;enlace de control
-PUSH .SR       ;estado maquina
-PUSH .IX       ;enlace de acceso
+; Quadruple - [DVLP Mientras, Inicio, null]
+; sin declarar?
 
-; Quadruple - [CALL L_hola, null, null]
-MOVE .IY, .IX         ; Guarda el valor de IY en IX
-CALL /L_hola            ; Guarda PC y salta
-MOVE #0[.IX], .R9     ; Guarda retorno
-MOVE #-1[.IX], .SP    ; Restaura enlace de control
-MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
-; Puede que algo este mal configurado...
-; Necesario: Recuperacion de la pila a su sitio original
+; Quadruple - [INL L_0, null, null]
+L_0: NOP
 
-; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
-BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [MV T_0, a, null]
+MOVE #-4[.IX], #-8[.IX]
+; Quadruple - [MV T_1, 4, null]
+MOVE #4, #-9[.IX]
+; Quadruple - [LS T_2, T_0, T_1]
+CMP #-8[.IX], #-9[.IX]
+BZ /L_8
+BP /L_8
+L_7: MOVE #1, #-10[.IX]
+BR /L_9
+L_8: MOVE #0, #-10[.IX]
+L_9: NOP
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_2, null, null]
-L_FIN_FUN_2: HALT
+; Quadruple - [BRF T_2, L_1, null]
+CMP #-10[.IX], #0
+BZ /L_1
+
+; Quadruple - [MV T_0, a, null]
+MOVE #-4[.IX], #-15[.IX]
+; Quadruple - [MV T_2, a, null]
+MOVE #-4[.IX], #-17[.IX]
+; Quadruple - [MV T_3, 55, null]
+MOVE #55, #-18[.IX]
+; Quadruple - [ADD T_4, T_2, T_3]
+ADD #-17[.IX], #-18[.IX]
+MOVE .A , #-19[.IX]
+
+; Quadruple - [STP v, T_4, T_0]
+CMP #-15[.IX], #3
+BZ /L_11
+BP /L_11
+L_10: NOP
+ADD #5, #-15[.IX]
+SUB .IX, .A
+MOVE #-19[.IX], [.A]
+BR /L_12
+L_11: NOP
+WRINT #403
+HALT
+L_12: NOP
+
+; Quadruple - [ADD a, a, 1]
+ADD #-4[.IX], #1
+MOVE .A , #-4[.IX]
+
+; Quadruple - [BR L_0, null, null]
+BR /L_0
+
+; Quadruple - [INL L_1, null, null]
+L_1: NOP
+
+; Quadruple - [DVLP Mientras, Final, null]
+; sin declarar?
+
+; Quadruple - [MV T_3, 0, null]
+MOVE #0, #-11[.IX]
+; Quadruple - [MV a, T_3, null]
+MOVE #-11[.IX], #-4[.IX]
+; Quadruple - [DVLP Mientras, Inicio, null]
+; sin declarar?
+
+; Quadruple - [INL L_3, null, null]
+L_3: NOP
+
+; Quadruple - [MV T_4, a, null]
+MOVE #-4[.IX], #-12[.IX]
+; Quadruple - [MV T_5, 4, null]
+MOVE #4, #-13[.IX]
+; Quadruple - [LS T_6, T_4, T_5]
+CMP #-12[.IX], #-13[.IX]
+BZ /L_14
+BP /L_14
+L_13: MOVE #1, #-14[.IX]
+BR /L_15
+L_14: MOVE #0, #-14[.IX]
+L_15: NOP
+
+; Quadruple - [BRF T_6, L_4, null]
+CMP #-14[.IX], #0
+BZ /L_4
+
+; Quadruple - [MV T_0, a, null]
+MOVE #-4[.IX], #-21[.IX]
+; Quadruple - [MVP T_1, v, T_0]
+CMP #-21[.IX], #3
+BZ /L_16
+BP /L_16
+ADD #5, #-21[.IX]
+SUB .IX, .A
+MOVE [.A], #-22[.IX]
+BR /L_17
+L_16: NOP
+WRINT #404
+HALT
+L_17: NOP
+
+; Quadruple - [WRINT T_1, null, null]
+WRINT #-22[.IX] 
+WRCHAR #10 
+
+; Quadruple - [ADD a, a, 1]
+ADD #-4[.IX], #1
+MOVE .A , #-4[.IX]
+
+; Quadruple - [BR L_3, null, null]
+BR /L_3
+
+; Quadruple - [INL L_4, null, null]
+L_4: NOP
+
+; Quadruple - [DVLP Mientras, Final, null]
+; sin declarar?
+
+; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
+BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
+L_FIN_FUN_1: HALT
 
