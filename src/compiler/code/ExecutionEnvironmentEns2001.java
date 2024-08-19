@@ -142,35 +142,10 @@ public class ExecutionEnvironmentEns2001
             ScopeIF varscope = var.getScope();
             SymbolVariable variable = (SymbolVariable) varscope.getSymbolTable().getSymbol(varname);
             int typesize = variable.getType().getSize();
-            
-            LabelFactory labelFactory = new LabelFactory();
-            LabelIF labelExito = labelFactory.create();
-            LabelIF labelFallo = labelFactory.create();
-            LabelIF labelFin = labelFactory.create();
-
-            b.append("CMP " + o2 + ", #" + typesize + "\n");    // indice < tamaño ?
-            b.append("BZ /" + labelFallo.toString() + "\n");
-            b.append("BP /" + labelFallo.toString() + "\n");
-
-            // No es posible utilizar números negativos
-            // b.append("CMP #-1, " + o2 + "\n");                  // -1 < tamaño?
-            // b.append("BZ /" + labelFallo.toString() + "\n");
-            // b.append("BP /" + labelFallo.toString() + "\n");
-
-
-            b.append(labelExito + ": NOP\n");
 
             b.append("ADD #" + rdir + ", " + o2 + "\n");
             b.append("SUB .IX, .A\n");
             b.append("MOVE " + o1 + ", [.A]\n"); 
-
-            b.append("BR /" + labelFin + "\n");
-
-            b.append(labelFallo + ": NOP\n");
-            b.append("WRINT #403\n");
-            b.append("HALT\n");
-
-            b.append(labelFin + ": NOP\n");
             
         } else if (quadruple.getOperation().equals("MVP")) {
             //("MVP", temporal, variable, expr.getTemporal())
@@ -201,25 +176,9 @@ public class ExecutionEnvironmentEns2001
             SymbolVariable variable = (SymbolVariable) varscope.getSymbolTable().getSymbol(varname);
             int typesize = variable.getType().getSize();
             
-            LabelFactory labelFactory = new LabelFactory();
-            LabelIF labelFallo = labelFactory.create();
-            LabelIF labelFin = labelFactory.create();
-
-            b.append("CMP " + o2 + ", #" + typesize + "\n");    // indice < tamaño ?
-            b.append("BZ /" + labelFallo.toString() + "\n");
-            b.append("BP /" + labelFallo.toString() + "\n");
-            
             b.append("ADD #" + o1dir + ", " + o2 + "\n");
             b.append("SUB .IX, .A\n");
             b.append("MOVE [.A], " + r + "\n"); 
-
-            b.append("BR /" + labelFin + "\n");
-
-            b.append(labelFallo + ": NOP\n");
-            b.append("WRINT #404\n");
-            b.append("HALT\n");
-
-            b.append(labelFin + ": NOP\n");
 
         } else if (quadruple.getOperation().equals("ADD")) {
             String r = operacion(quadruple.getResult());
