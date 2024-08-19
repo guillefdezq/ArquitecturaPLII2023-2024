@@ -2,9 +2,6 @@
 AXIOM: NOP
 BR /PRINCIPAL
 
-; Quadruple - [VARGLOBAL TAM, 0, null]
-; sin declarar?
-
 ; Quadruple - [INL L_incrementa, null, null]
 L_incrementa: NOP
 

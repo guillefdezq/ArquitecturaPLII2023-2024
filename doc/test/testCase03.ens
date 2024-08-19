@@ -2,12 +2,6 @@
 AXIOM: NOP
 BR /PRINCIPAL
 
-; Quadruple - [VARGLOBAL VERDADERO, 0, null]
-; sin declarar?
-
-; Quadruple - [VARGLOBAL FALSO, 0, null]
-; sin declarar?
-
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
