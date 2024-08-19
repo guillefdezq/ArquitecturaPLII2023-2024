@@ -1,0 +1,28 @@
+; Quadruple - [AXIOM null, null, null]
+AXIOM: NOP
+BR /PRINCIPAL
+
+; Quadruple - [PRINCIPAL null, null, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas
+MOVE .SP, .IX  ;guarda el valor de SP en IY
+PUSH #-1       ;valor de retorno
+PUSH .IX       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [PUNTERO_PRINCIPAL T_1, 5, null]
+SUB .IX, #5
+MOVE .A, .SP
+
+; Quadruple - [WRSTR T_0, L_0, null]
+WRSTR /L_0 
+
+; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
+BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
+L_FIN_FUN_1: HALT
+
+; Quadruple - [CADENA imprime\n, L_0, null]
+L_0: DATA "imprime\n"

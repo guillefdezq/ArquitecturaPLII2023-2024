@@ -5,7 +5,7 @@
 vacio hola () {
     entero holatest = 58;
     
-    devuelve;
+    escribeEnt(holatest);
 }
 
 vacio principal () {

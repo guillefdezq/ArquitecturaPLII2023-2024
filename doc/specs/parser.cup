@@ -807,17 +807,27 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 				break;
 			}
 		}
-		
-		if (((SymbolIF) func0) instanceof SymbolFunction) {
-			if (devuelto.getFirstOperand() == null) {
-				semanticErrorManager.semanticFatalError("Funcion " + identificador + " no devuelve valor.");
+
+		if (devuelto == null) {
+			semanticErrorManager.semanticFatalError("Falta asignar una instrucción devuelto en " + (simboloFuncion instanceof SymbolProcedure ? "el procedimiento" : " la función") + " " + identificador + ".");
+		}
+
+		try {
+			if (((SymbolIF) func0) instanceof SymbolFunction) {
+				if (devuelto.getFirstOperand() == null) {
+					semanticErrorManager.semanticFatalError("Funcion " + identificador + " no devuelve valor.");
+				}
+			} else if (((SymbolIF) func0) instanceof SymbolProcedure) {
+				if (devuelto.getFirstOperand() != null) {
+					semanticErrorManager.semanticFatalError("Procedimiento " + identificador + " devuelve valor.");
+				}
+			} else {
+				semanticErrorManager.semanticFatalError("ERROR INESPERADO EN LA LINEA 821");
 			}
-		} else if (((SymbolIF) func0) instanceof SymbolProcedure) {
-			if (devuelto.getFirstOperand() != null) {
-				semanticErrorManager.semanticFatalError("Procedimiento " + identificador + " devuelve valor.");
-			}
-		} else {
-			semanticErrorManager.semanticFatalError("ERROR INESPERADO EN LA LINEA 821");
+		} catch (Exception e) {
+			System.out.println("Estado inalcanzable, ya se ha asignado una comprobación anteriormente en las líneas 811.");
+			semanticErrorManager.semanticFatalError("Falta asignar una instrucción devuelto en la función/procedimiento " + identificador);
+			e.printStackTrace();
 		}
 
 
