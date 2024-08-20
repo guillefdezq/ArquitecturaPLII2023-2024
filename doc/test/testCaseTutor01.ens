@@ -7,8 +7,8 @@ L_incrementa: NOP
 
 ; Quadruple - [VARSUBPROGRAMA x, -4, null]
 MOVE #-4[.IX], #-17[.IX]
-; Quadruple - [PUNTERO_FUNCION T_1, 28, null]
-SUB .IX, #28
+; Quadruple - [PUNTERO_FUNCION T_1, 26, null]
+SUB .IX, #26
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]
@@ -25,13 +25,13 @@ MOVE #0, #-22[.IX]
 MOVE #1, #-24[.IX]
 ; Quadruple - [MV c, T_0, null]
 MOVE #-24[.IX], #-22[.IX]
-; Quadruple - [WRSTR T_1, L_0, null]
+; Quadruple - [WRSTR L_0, null, null]
 WRSTR /L_0 
 
-; Quadruple - [MV T_2, c, null]
-MOVE #-22[.IX], #-26[.IX]
-; Quadruple - [WRINT T_2, null, null]
-WRINT #-26[.IX] 
+; Quadruple - [MV T_1, c, null]
+MOVE #-22[.IX], #-25[.IX]
+; Quadruple - [WRINT T_1, null, null]
+WRINT #-25[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [MV T_0, 1, null]

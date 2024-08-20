@@ -11,26 +11,26 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_6, 10, null]
-SUB .IX, #10
+; Quadruple - [PUNTERO_PRINCIPAL T_2, 6, null]
+SUB .IX, #6
 MOVE .A, .SP
 
-; Quadruple - [WRSTR T_0, L_0, null]
+; Quadruple - [WRSTR L_0, null, null]
 WRSTR /L_0 
 
-; Quadruple - [MV T_1, 1, null]
-MOVE #1, #-5[.IX]
-; Quadruple - [WRINT T_1, null, null]
-WRINT #-5[.IX] 
+; Quadruple - [MV T_0, 1, null]
+MOVE #1, #-4[.IX]
+; Quadruple - [WRINT T_0, null, null]
+WRINT #-4[.IX] 
 WRCHAR #10 
 
-; Quadruple - [WRSTR T_3, L_2, null]
+; Quadruple - [WRSTR L_2, null, null]
 WRSTR /L_2 
 
-; Quadruple - [MV T_4, 0, null]
-MOVE #0, #-8[.IX]
-; Quadruple - [WRINT T_4, null, null]
-WRINT #-8[.IX] 
+; Quadruple - [MV T_1, 0, null]
+MOVE #0, #-5[.IX]
+; Quadruple - [WRINT T_1, null, null]
+WRINT #-5[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]

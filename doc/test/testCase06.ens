@@ -51,8 +51,8 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_5, 11, null]
-SUB .IX, #11
+; Quadruple - [PUNTERO_PRINCIPAL T_4, 10, null]
+SUB .IX, #10
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]

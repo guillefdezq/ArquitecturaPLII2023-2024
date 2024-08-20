@@ -11,8 +11,8 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_5, 12, null]
-SUB .IX, #12
+; Quadruple - [PUNTERO_PRINCIPAL T_4, 11, null]
+SUB .IX, #11
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 30, null]
@@ -35,9 +35,9 @@ CMP #-7[.IX], #0
 BZ /L_1
 
 ; Quadruple - [MV T_0, 37, null]
-MOVE #37, #-10[.IX]
+MOVE #37, #-9[.IX]
 ; Quadruple - [MV a, T_0, null]
-MOVE #-10[.IX], #-4[.IX]
+MOVE #-9[.IX], #-4[.IX]
 ; Quadruple - [BR L_0, null, null]
 BR /L_0
 
@@ -45,9 +45,9 @@ BR /L_0
 L_1: NOP
 
 ; Quadruple - [MV T_0, 57, null]
-MOVE #57, #-11[.IX]
+MOVE #57, #-10[.IX]
 ; Quadruple - [MV a, T_0, null]
-MOVE #-11[.IX], #-4[.IX]
+MOVE #-10[.IX], #-4[.IX]
 ; Quadruple - [INL L_0, null, null]
 L_0: NOP
 

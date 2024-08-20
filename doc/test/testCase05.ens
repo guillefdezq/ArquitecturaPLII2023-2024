@@ -11,8 +11,8 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_21, 27, null]
-SUB .IX, #27
+; Quadruple - [PUNTERO_PRINCIPAL T_17, 23, null]
+SUB .IX, #23
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]
@@ -53,38 +53,38 @@ MOVE .A , #-15[.IX]
 
 ; Quadruple - [MV a, T_9, null]
 MOVE #-15[.IX], #-4[.IX]
-; Quadruple - [WRSTR T_10, L_0, null]
+; Quadruple - [WRSTR L_0, null, null]
 WRSTR /L_0 
 
-; Quadruple - [MV T_11, a, null]
-MOVE #-4[.IX], #-17[.IX]
-; Quadruple - [WRINT T_11, null, null]
-WRINT #-17[.IX] 
+; Quadruple - [MV T_10, a, null]
+MOVE #-4[.IX], #-16[.IX]
+; Quadruple - [WRINT T_10, null, null]
+WRINT #-16[.IX] 
 WRCHAR #10 
 
-; Quadruple - [MV T_13, 3, null]
-MOVE #3, #-19[.IX]
-; Quadruple - [MV T_14, 3, null]
-MOVE #3, #-20[.IX]
-; Quadruple - [ADD T_15, T_13, T_14]
-ADD #-19[.IX], #-20[.IX]
+; Quadruple - [MV T_11, 3, null]
+MOVE #3, #-17[.IX]
+; Quadruple - [MV T_12, 3, null]
+MOVE #3, #-18[.IX]
+; Quadruple - [ADD T_13, T_11, T_12]
+ADD #-17[.IX], #-18[.IX]
+MOVE .A , #-19[.IX]
+
+; Quadruple - [MV T_14, 2, null]
+MOVE #2, #-20[.IX]
+; Quadruple - [MUL T_15, T_13, T_14]
+MUL #-19[.IX], #-20[.IX]
 MOVE .A , #-21[.IX]
 
-; Quadruple - [MV T_16, 2, null]
-MOVE #2, #-22[.IX]
-; Quadruple - [MUL T_17, T_15, T_16]
-MUL #-21[.IX], #-22[.IX]
-MOVE .A , #-23[.IX]
-
-; Quadruple - [MV a, T_17, null]
-MOVE #-23[.IX], #-4[.IX]
-; Quadruple - [WRSTR T_18, L_2, null]
+; Quadruple - [MV a, T_15, null]
+MOVE #-21[.IX], #-4[.IX]
+; Quadruple - [WRSTR L_2, null, null]
 WRSTR /L_2 
 
-; Quadruple - [MV T_19, a, null]
-MOVE #-4[.IX], #-25[.IX]
-; Quadruple - [WRINT T_19, null, null]
-WRINT #-25[.IX] 
+; Quadruple - [MV T_16, a, null]
+MOVE #-4[.IX], #-22[.IX]
+; Quadruple - [WRINT T_16, null, null]
+WRINT #-22[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]

@@ -103,7 +103,7 @@ terminal Token STRING;
 non terminal Program	 			program;
 non terminal Axiom		axiom;
 non terminal axiom1,listadoIDs1,id1,funcion1;
-non terminal funcion0;		// No puede ser symbolProcedure, debería ser función en todo caso...
+non terminal funcion0;											// No hay código intermedio
 non terminal Funcion  			funcionPrincipal;
 non terminal            		    epsilon;					// No hay código intermedio
 non terminal SeccionFunciones			seccionFunciones;
@@ -113,18 +113,18 @@ non terminal            		    declaracionParametros;		// No hay código intermed
 non terminal Parametro			        parametro;
 non terminal            			seccionConstantes;
 non terminal Declaracionconstante		declaracionConstante;
-non terminal            			seccionTipos;
-non terminal            			declaracionTipo;
+non terminal            			seccionTipos;				// No hay código intermedio
+non terminal            			declaracionTipo;			// No hay código intermedio
 non terminal            		    tamTipo; 					// No hay código intermedio
-non terminal            			seccionVariables;
+non terminal            			seccionVariables;			// No hay código intermedio	
 non terminal Declaracionvariable 		declaracionVariable;
 non terminal Listadoids		        	listadoIDs;
 non terminal Id                			id;
 non terminal Expresion		        	expresion;
-non terminal             	    	accesoVector;		// Implementación
+non terminal Expresion            	    	accesoVector;
 non terminal Expresion	    		llamadaFuncion;
 non terminal Sentencia           			bloque;
-non terminal            			listadoSentencias;
+non terminal Sentencia           			listadoSentencias;
 non terminal Sentencia			        sentencia;
 non terminal Sentencia           		    sentenciaIncremento;
 non terminal Sentencia           		    sentenciaAsignacion;
@@ -139,11 +139,11 @@ non terminal Sentencia           			sentenciaMientras;
 non terminal Sentencia           	        sentenciaLlamadaFuncion;
 non terminal ArrayList<Expresion>           		    parametros;
 non terminal Sentencia            			sentenciaSalida;
-non terminal            			opcionesEscribe;		// No tiene código intermedio
+non terminal            			opcionesEscribe;		// No hay código intermedio
 non terminal Expresion           			opcionesEscribeEnt;		
 non terminal Sentencia			sentenciaDevuelve;
-non terminal						abrirAmbito;
-non terminal						cerrarAmbito;
+non terminal						abrirAmbito;			// No hay código intermedio
+non terminal						cerrarAmbito;			// No hay código intermedio
 
 // Declaracion de relaciones de precedencia
 precedence left     AND_LOGICA;
