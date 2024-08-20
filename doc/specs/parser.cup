@@ -1601,8 +1601,8 @@ sentenciaIncremento ::= IDENTIFICADOR:ident AUTO_INCREMENTO SEMI_COLON {: if (de
 		// Código intermedio
 		ScopeIF scope = scopeManager.getCurrentScope();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
-		TemporalFactory temporalFactory = new TemporalFactory(scope);
-		TemporalIF temporal = temporalFactory.create();
+		// TemporalFactory temporalFactory = new TemporalFactory(scope);
+		// TemporalIF temporal = temporalFactory.create();
 		
 		Sentencia sentencia = new Sentencia();
 
