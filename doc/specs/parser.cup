@@ -419,7 +419,7 @@ declaracionConstante ::= CONSTANTE IDENTIFICADOR:id NUMERO:num SEMI_COLON {:
 		String valor = num.getLexema();
 		if (debugSout) System.out.println("CONS>existe? "+sTable.containsSymbol(nombre));
 		if (sTable.containsSymbol(nombre)) {
-			semanticErrorManager.semanticFatalError("Constante " + nombre + " ya declarada");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Constante " + nombre + " ya declarada previamente.");
 		} else {
 			//introducimos en la tabla de símbolos la constante con su ámbito, nombre, tipo y su valor
 			TypeIF tipo = scopeManager.searchType("ENTERO");
@@ -451,7 +451,7 @@ declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_
 		int tamano = Integer.parseInt(tam.toString());
 		
 		if (typeTable.containsType(nombre)) {
-			semanticErrorManager.semanticFatalError("Tipo " + nombre + " ya declarado.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Tipo " + nombre + " ya declarado.");
 		} else {			
 			TypeArray tsVector = new TypeArray (scope, nombre, tamano);	
 			typeTable.addType(nombre,tsVector);
@@ -466,12 +466,15 @@ declaracionTipo ::= TIPO ENTERO IDENTIFICADOR:id OPEN_BRACKET tamTipo:tam CLOSE_
 
 tamTipo ::= NUMERO:numero {: 
 		if (debugSout) System.out.println("READ> tamTipo = NUMERO = " + numero.getLexema()); 
-		if (!(Integer.parseInt(numero.getLexema()) > 0)) { semanticErrorManager.semanticFatalError("Tamaño de vector debe ser positivo"); }
+		if (!(Integer.parseInt(numero.getLexema()) > 0)) { semanticErrorManager.semanticFatalError("Error en la línea " + numero.getLine() + ", caracter " + numero.getColumn() + ". " + "Tamaño de vector debe ser positivo"); }
 		RESULT = numero.getLexema(); :}
  | IDENTIFICADOR:id {: 
 		String cadena = id.getLexema();
-		SymbolIF symbol = (SymbolIF) scopeManager.searchSymbol(cadena);
 		String numero = "";
+		if (!scopeManager.containsSymbol(cadena)) {
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "La variable con identificador " + cadena + " no existe.");
+		}
+		SymbolIF symbol = (SymbolIF) scopeManager.searchSymbol(cadena);
 		if (symbol instanceof SymbolVariable) {
 			SymbolVariable variable = (SymbolVariable) symbol;
 			numero = variable.getValor();
@@ -479,7 +482,7 @@ tamTipo ::= NUMERO:numero {:
 			SymbolConstant constant = (SymbolConstant) symbol;
 			numero = constant.getValor();
 		} else {
-			semanticErrorManager.semanticFatalError("La variable " + cadena + " no es una variable o constante");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "El identificador " + cadena + " no es una variable o constante.");
 		}
 		if (debugSout) System.out.println("READ> tamTipo = IDENTIFICADOR = " + numero);
  		RESULT = numero; :};
@@ -487,7 +490,7 @@ tamTipo ::= NUMERO:numero {:
 seccionVariables ::= seccionVariables declaracionVariable {: if (debugSout) System.out.println("READ> seccionVariables + recursion"); RESULT = null; :}
  | declaracionVariable {: if (debugSout) System.out.println("READ> seccionVariables"); RESULT = null; :};
 
-declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
+declaracionVariable ::= ENTERO:check listadoIDs:ids SEMI_COLON {:
 		if (debugSout) System.out.println("READ> declaracionVariable = ENTERO"); 
 
 		Declaracionvariable declVar = new Declaracionvariable((TypeSimple) scopeManager.searchType("ENTERO"), (Listadoids) ids);
@@ -504,7 +507,7 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 		for (Id id : identificadores) {
 			String nombre = id.getNombre(); 
 			if (sTable.containsSymbol(nombre)) {
-				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "Variable " + nombre + " ya declarada.");
 			} else {
 				TypeIF tipo = scopeManager.searchType("ENTERO");
 				SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
@@ -539,11 +542,11 @@ declaracionVariable ::= ENTERO listadoIDs:ids SEMI_COLON {:
 		for (Id id : identificadores) {
 			String nombre = id.getNombre();
 			if (sTable.containsSymbol(nombre)) {
-				semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+				semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "Variable " + nombre + " ya declarada.");
 			} else {
 				TypeIF tipo = scopeManager.searchType(ident.getLexema());
 				SymbolVariable simboloVariable = new SymbolVariable(scope, nombre, tipo);
-				if (id.getValor() != null) { semanticErrorManager.semanticFatalError("Declaraciones en vectores con valor no permitidas"); }
+				if (id.getValor() != null) { semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "Declaraciones en vectores con valor no permitidas."); }
 				int size = ((TypeArray)tipo).getSize();
 				String comas = "";
 				
@@ -792,18 +795,18 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		}
 
 		if (devuelto == null) 
-			semanticErrorManager.semanticFatalError("Falta asignar una instrucción devuelto en " + (simboloFuncion instanceof SymbolProcedure ? "el procedimiento" : " la función") + " " + identificador + ".");
+			semanticErrorManager.semanticFatalError("Error en " + (simboloFuncion instanceof SymbolProcedure ? "el procedimiento" : " la función") + identificador + ". Falta asignar una instrucción devuelto");
 
 			if (((SymbolIF) func0) instanceof SymbolFunction) {
 				if (devuelto.getFirstOperand() == null) {
-					semanticErrorManager.semanticFatalError("Funcion " + identificador + " no devuelve valor.");
+					semanticErrorManager.semanticFatalError("Error en la funcion " + identificador + ". Funcion " + identificador + " no devuelve valor.");
 				}
 			} else if (((SymbolIF) func0) instanceof SymbolProcedure) {
 				if (devuelto.getFirstOperand() != null) {
-					semanticErrorManager.semanticFatalError("Procedimiento " + identificador + " devuelve valor.");
+					semanticErrorManager.semanticFatalError("Error en el procedimiento " + identificador + ". Procedimiento " + identificador + " devuelve valor.");
 				}
 			} else {
-				semanticErrorManager.semanticFatalError("ERROR INESPERADO EN LA LINEA 821");
+				semanticErrorManager.semanticFatalError("Error en la funcion/procedimiento " + identificador + ". ERROR INESPERADO EN LA LINEA 821. No se ha podido detectar el tipo de retorno.");
 			}
 
 
@@ -837,7 +840,7 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: if (debugSout) System.out.printl
 
 		String nombre = id.getLexema(); 
 		if (sTable.containsSymbol(nombre)) {
-			semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Variable " + nombre + " ya declarada");
 		} else {
 			TypeIF tipo = scopeManager.searchType("ENTERO");
 			SymbolParameter simboloParametro = new SymbolParameter(scope, nombre, tipo);
@@ -859,7 +862,7 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: if (debugSout) System.out.printl
 
 		String nombre = id.getLexema(); 
 		if (sTable.containsSymbol(nombre)) {
-			semanticErrorManager.semanticFatalError("Variable " + nombre + " ya declarada");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Variable " + nombre + " ya declarada");
 		} else {
 			TypeIF tipo = scopeManager.searchType(ident.getLexema());
 			SymbolParameter simboloParametro = new SymbolParameter(scope, nombre, tipo);
@@ -1115,7 +1118,7 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 		Expresion expr = new Expresion();
 		expr.setIdentificador(identificador);
 		if(!(scopeManager.containsSymbol(identificador))) {
-			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "La variable " + identificador + " no existe");
 		}
 		
 		SymbolIF symbol = scopeManager.searchSymbol(identificador);
@@ -1147,7 +1150,7 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 			intermediateCodeBuilder.addQuadruple("MV", temporal, variable);
 			numero = parameter.getValor();
 		} else {
-			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable o constante");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "El identificador " + identificador + " no es una variable o constante");
 		}
 
 		if (numero == null) {
@@ -1166,16 +1169,16 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
  		Expresion expr = (Expresion) exp;
 		if (debugSout) System.out.println("(EX)> (" + expr.getValor() + ")");
 		RESULT = expr; :}  /// DUDA: Debería crear un ámbito aquí?
- 	|  expresion:a PLUS expresion:b {: if (debugSout) System.out.println("READ> expresion = PLUS"); 
+ 	|  expresion:a PLUS:check expresion:b {: if (debugSout) System.out.println("READ> expresion = PLUS"); 
 			Expresion expr = new Expresion();
 			Expresion expra = (Expresion) a;
 			Expresion exprb = (Expresion) b;
 			if (!(expra.getTipo().equals(exprb.getTipo()))) {
-				semanticErrorManager.semanticFatalError("La expresión de suma requiere que los operandos sean del mismo tipo");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión de suma requiere que los operandos sean del mismo tipo");
 			} else if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
-				semanticErrorManager.semanticFatalError("La expresión de suma requiere el operando izquierdo sea de tipo entero");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión de suma requiere el operando izquierdo sea de tipo entero");
 			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
-				semanticErrorManager.semanticFatalError("La expresión de suma requiere el operando derecho sea de tipo entero");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión de suma requiere el operando derecho sea de tipo entero");
 			}
 			ScopeIF scope = scopeManager.getCurrentScope();
 			IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
@@ -1195,16 +1198,16 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 			if (debugSout) System.out.println("EXP+> " + expra.getValor() + "+" + exprb.getValor() + "=" + expr.getValor());
 			if (debugSout) System.out.println("     QUAD>" + expr.getIntermediateCode());  
 			RESULT = expr; :}
- 	|  expresion:a MULT expresion:b {: if (debugSout) System.out.println("READ> expresion = MULT");
+ 	|  expresion:a MULT:check expresion:b {: if (debugSout) System.out.println("READ> expresion = MULT");
 			Expresion expr = new Expresion();
 			Expresion expra = (Expresion) a;
 			Expresion exprb = (Expresion) b;
 			if (!(expra.getTipo().equals(exprb.getTipo()))) {
-				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere que los operandos sean del mismo tipo");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión de multiplicación requiere que los operandos sean del mismo tipo");
 			} else if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
-				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere el operando izquierdo sea de tipo entero");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión de multiplicación requiere el operando izquierdo sea de tipo entero");
 			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
-				semanticErrorManager.semanticFatalError("La expresión de multiplicación requiere el operando derecho sea de tipo entero");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión de multiplicación requiere el operando derecho sea de tipo entero");
 			}
 
 			ScopeIF scope = scopeManager.getCurrentScope();
@@ -1224,12 +1227,12 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 			if (debugSout) System.out.println("EXP*> " + expra.getValor() + "*" + exprb.getValor() + "=" + expr.getValor());
 			if (debugSout) System.out.println("     QUAD>" + expr.getIntermediateCode());  
 			RESULT = expr; :}
- 	|  expresion:exp AUTO_INCREMENTO {: if (debugSout) System.out.println("READ> expresion = AUTO_INCREMENTO");
+ 	|  expresion:exp AUTO_INCREMENTO:check {: if (debugSout) System.out.println("READ> expresion = AUTO_INCREMENTO");
 		
 		Expresion expr = (Expresion) exp;
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
-			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "No se puede incrementar una variable de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
 
 		ScopeIF scope = scopeManager.getCurrentScope();
@@ -1252,10 +1255,10 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 		if (debugSout) System.out.println("     QUAD>" + expr.getIntermediateCode());  
 		
 		RESULT = expr; :}
- 	|  NEGACION expresion:exp {: if (debugSout) System.out.println("READ> expresion = NEGACION"); 
+ 	|  NEGACION:check expresion:exp {: if (debugSout) System.out.println("READ> expresion = NEGACION"); 
 			Expresion expr = (Expresion) exp;
 			if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
-				semanticErrorManager.semanticFatalError("No se puede negar una variable de tipo " + expr.getTipo().getName() + ", únicamente usando enteros.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "No se puede negar una variable de tipo " + expr.getTipo().getName() + ", únicamente usando enteros.");
 			}
 
 			ScopeIF scope = scopeManager.getCurrentScope();
@@ -1274,12 +1277,12 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 			expr.setValor((Integer.parseInt(expr.getValor()) == 0)?"1":"0");
 			if (debugSout) System.out.println("EXP-> " + expr.getValor());
 			RESULT = expr; :}
- 	|  expresion:a LOWER_THAN expresion:b {: if (debugSout) System.out.println("READ> expresion = LOWER_THAN "); 
+ 	|  expresion:a LOWER_THAN:check expresion:b {: if (debugSout) System.out.println("READ> expresion = LOWER_THAN "); 
 			Expresion expr = new Expresion();
 			Expresion expra = (Expresion) a;
 			Expresion exprb = (Expresion) b;
 			if (!(expra.getTipo().equals(exprb.getTipo()))) {
-				semanticErrorManager.semanticFatalError("La expresión de igualdad requiere que los operandos sean del mismo tipo");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión de igualdad requiere que los operandos sean del mismo tipo");
 			}
 
 			ScopeIF scope = scopeManager.getCurrentScope();
@@ -1299,12 +1302,12 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 			if (debugSout) System.out.println("EXP<> " + expra.getValor() + "<" + exprb.getValor() + "=" + expr.getValor());
 			if (debugSout) System.out.println("     QUAD>" + expr.getIntermediateCode());  
 			RESULT = expr; :}
- 	|  expresion:a EQUAL expresion:b {: if (debugSout) System.out.println("READ> expresion = EQUAL "); 
+ 	|  expresion:a EQUAL:check expresion:b {: if (debugSout) System.out.println("READ> expresion = EQUAL "); 
 			Expresion expr = new Expresion();
 			Expresion expra = (Expresion) a;
 			Expresion exprb = (Expresion) b;
 			if (!(expra.getTipo().equals(exprb.getTipo()))) {
-				semanticErrorManager.semanticFatalError("La expresión de igualdad requiere que los operandos sean del mismo tipo");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión de igualdad requiere que los operandos sean del mismo tipo");
 			}
 
 			ScopeIF scope = scopeManager.getCurrentScope();
@@ -1324,13 +1327,13 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 			if (debugSout) System.out.println("EX==> " + expra.getValor() + "==" + exprb.getValor() + "=" + expr.getValor());
 			if (debugSout) System.out.println("     QUAD>" + expr.getIntermediateCode());  
 			RESULT = expr; :}
- 	|  expresion:a AND_LOGICA expresion:b {: if (debugSout) System.out.println("READ> expresion = AND_LOGICA "); Expresion expr = new Expresion();
+ 	|  expresion:a AND_LOGICA:check expresion:b {: if (debugSout) System.out.println("READ> expresion = AND_LOGICA "); Expresion expr = new Expresion();
 			Expresion expra = (Expresion) a;
 			Expresion exprb = (Expresion) b;
 			if (!(expra.getTipo().equals(scopeManager.searchType("ENTERO")))) {
-				semanticErrorManager.semanticFatalError("La expresión AND requiere el operando izquierdo sea de tipo lógico");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión AND requiere el operando izquierdo sea de tipo lógico");
 			} else if (!(exprb.getTipo().equals(scopeManager.searchType("ENTERO")))) {
-				semanticErrorManager.semanticFatalError("La expresión AND requiere el operando derecho sea de tipo lógico");
+				semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La expresión AND requiere el operando derecho sea de tipo lógico");
 			}
 
 			ScopeIF scope = scopeManager.getCurrentScope();
@@ -1386,7 +1389,7 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 			RESULT = expr; 
 			:};
 
-accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: if (debugSout) System.out.println("READ> accesoVector");
+accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET:vectorSize expresion:exp CLOSE_BRACKET {: if (debugSout) System.out.println("READ> accesoVector");
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 
@@ -1395,7 +1398,7 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: if
 		if (debugSout) System.out.println(identificador);
 		Expresion exprN = new Expresion();
 		if(!(scopeManager.containsSymbol(identificador))) {
-			semanticErrorManager.semanticFatalError("La variable " + identificador + " no existe");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "La variable " + identificador + " no existe");
 		}
 		
 		SymbolIF symbol = scopeManager.searchSymbol(identificador);
@@ -1406,19 +1409,19 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: if
 		SymbolVariable symbolvariable = (SymbolVariable) symbol;
 		if (symbol instanceof SymbolVariable) {
 			if (!(symbolvariable.getType() instanceof TypeArray)) {
-				semanticErrorManager.semanticFatalError("La variable " + identificador + " no es un vector.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "La variable " + identificador + " no es de tipo vector.");
 			}
 			if (symbolvariable.getType().getSize() <= Integer.parseInt(expr.getValor())) {
-				semanticErrorManager.semanticFatalError("La variable " + identificador + " no tiene tantos elementos. Rango admitido entre 0 y " + (symbolvariable.getType().getSize() - 1) + ". Equivalente a un IndexOutOfBoundsException.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Error en la línea " + vectorSize.getLine() + ", caracter " + vectorSize.getColumn() + ". " + "La variable " + identificador + " no tiene tantos elementos. Rango admitido entre 0 y " + (symbolvariable.getType().getSize() - 1) + ". Equivalente a un IndexOutOfBoundsException.");
 			}
 			if (0 > Integer.parseInt(expr.getValor())) {
 				// Estado inalcanzable: no se puede utilizar enteros negativos.
-				semanticErrorManager.semanticFatalError("Imposible utilizar un indice negativo. Rango admitido entre 0 y " + (symbolvariable.getType().getSize() - 1) + ". Equivalente a un IndexOutOfBoundsException.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Error en la línea " + vectorSize.getLine() + ", caracter " + vectorSize.getColumn() + ". " + "Imposible utilizar un indice negativo. Rango admitido entre 0 y " + (symbolvariable.getType().getSize() - 1) + ". Equivalente a un IndexOutOfBoundsException.");
 			}
 			exprN.setSymbolVariableIdentificador(symbolvariable);
 			numero = symbolvariable.getValor().split(",")[Integer.parseInt(expr.getValor())];
 		} else {
-			semanticErrorManager.semanticFatalError("La variable " + identificador + " no es una variable.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "El identificador " + identificador + " no es una variable.");
 		}
 
 		if (debugSout) System.out.println("READ> expresion = accesoVector "+ symbol.getName() +" @pos"+ expr.getValor() +" = " + numero + " " + symbol.getType() + " ");
@@ -1445,17 +1448,17 @@ accesoVector ::= IDENTIFICADOR:id OPEN_BRACKET expresion:exp CLOSE_BRACKET {: if
 
 // DUDA: es necesario poner aquí ámbito?
 // IDEA: para los parámetros crear variables del tipo nombreFunción+Parametro+nombreParámetro o bien, crear en el no terminal un booleano que compruebe si es parámetro y su posición en la función.
-llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: if (debugSout) System.out.println("READ> llamadaFuncion = conParametros");
+llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY:check parametros:params CLOSE_KEY {: if (debugSout) System.out.println("READ> llamadaFuncion = conParametros");
 		ScopeIF scope = scopeManager.getCurrentScope();
 
 		if (!scopeManager.containsSymbol(ident.getLexema())) {
-			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no existe. DEBUG: llamadafuncion");
+			semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "El identificador " + ident.getLexema() + " no existe. DEBUG: llamadafuncion");
 		}
 		
 		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
 		
 		if (!(symbol instanceof SymbolFunction || symbol instanceof SymbolProcedure)) {
-			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no es una función o procedimiento.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "El identificador " + ident.getLexema() + " no es una función o procedimiento.");
 		}
 		
 		SymbolProcedure funcion = (SymbolProcedure) symbol;
@@ -1463,7 +1466,7 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: i
 		ArrayList<SymbolIF> listaParametros = (ArrayList<SymbolIF>) funcion.getParameters();		// Lista de parámetros de la función
 		ArrayList<Expresion> parametros = (ArrayList<Expresion>) params;		// Lista de parámetros de la declaración
 		if (listaParametros.size() != parametros.size()) {
-			semanticErrorManager.semanticFatalError("La función o procedimiento " + ident.getLexema() + " requiere " + listaParametros.size() + " parámetro(s)");
+			semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "La función o procedimiento " + ident.getLexema() + " requiere " + listaParametros.size() + " parámetro(s)");
 		}
 
 		ArrayList<Expresion> expresionesParametro = new ArrayList<Expresion>();
@@ -1512,13 +1515,13 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY parametros:params CLOSE_KEY {: i
 	 	ScopeIF scope = scopeManager.getCurrentScope();
 
 		if (!scopeManager.containsSymbol(ident.getLexema())) {
-			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no existe. DEBUG: llamadafuncion");
+			semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "El identificador " + ident.getLexema() + " no existe. DEBUG: llamadafuncion");
 		}
 		
 		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
 		
 		if (!(symbol instanceof SymbolFunction || symbol instanceof SymbolProcedure)) {
-			semanticErrorManager.semanticFatalError("El identificador " + ident.getLexema() + " no es una función o procedimiento.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "El identificador " + ident.getLexema() + " no es una función o procedimiento.");
 		}
 		
 		SymbolProcedure funcion = (SymbolProcedure) symbol;
@@ -1620,17 +1623,17 @@ sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: if (debugSout) System.out.println("
 		if (debugSout) System.out.println("READ> sentenciaDevuelve + expresion = " + expr.getValor()); 
 		RESULT = sen; :};
 
-sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaIncremento"); 
+sentenciaIncremento ::= IDENTIFICADOR:ident AUTO_INCREMENTO SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaIncremento"); 
 		
-		String nombre = (String) iden.getLexema();
+		String nombre = (String) ident.getLexema();
 		SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(nombre);
 		SymbolVariable vari = (SymbolVariable) sym;
 
 		if (sym.getType() != scopeManager.searchType("ENTERO")) {
-			semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
 		}
 		if (!(sym instanceof SymbolVariable)) {
-			semanticErrorManager.semanticFatalError("Sólamente se pueden incrementar variables, no constantes u otro tipo.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "Sólamente se pueden incrementar variables, no constantes u otro tipo.");
 		}
 
 		String valor = vari.getValor() + 1;
@@ -1658,7 +1661,8 @@ sentenciaIncremento ::= IDENTIFICADOR:iden AUTO_INCREMENTO SEMI_COLON {: if (deb
 		
 		 :};
 
-sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaAsignacion"); 
+// Provisional ASSIGN:id
+sentenciaAsignacion ::= ref:ref ASSIGN:id expresion:exp SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaAsignacion"); 
 
 		Sentenciaasignacion sentenciaAsignacion = new Sentenciaasignacion();
 
@@ -1671,17 +1675,17 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: if (debugSout
 		if (ref instanceof SymbolIF) {			// código del identificadores
 			SymbolIF sym = (SymbolIF) ref;
 			if (!(sym instanceof SymbolVariable)) {
-				semanticErrorManager.semanticFatalError("No se puede asignar un valor a una variable de tipo " + sym.getType().getName());
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede asignar un valor a una variable de tipo " + sym.getType().getName());
 			}
 
 			if (sym.getType() != scopeManager.searchType("ENTERO")) {
-				semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
 			}
 
 			SymbolVariable vari = (SymbolVariable) sym;
 
 			if (sym.getType() != expr.getTipo()) {
-				semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
 			}
 			
 			Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
@@ -1711,10 +1715,10 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: if (debugSout
 
 				if (debugSout) System.out.println("ASIG> vector " + vari.getName() + "[" + indice + "] = " + valorAGuardar);
 			} else {
-				semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto.");
 			}
 
-		} else { semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto."); }
+		} else { semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto."); }
 
 		sentenciaAsignacion.setIntermediateCode(intermediateCodeBuilder.create());
 		if (debugSout) System.out.println("     QUAD>" + expr.getIntermediateCode());  
@@ -1722,7 +1726,7 @@ sentenciaAsignacion ::= ref:ref ASSIGN expresion:exp SEMI_COLON {: if (debugSout
 		:};
 ref ::= IDENTIFICADOR:ident {: if (debugSout) System.out.println("READ> ref"); 
 		if (!(scopeManager.containsSymbol(ident.getLexema()))) {
-			semanticErrorManager.semanticFatalError("No se encuentra la variable " + ident.getLexema());
+			semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "No se encuentra la variable " + ident.getLexema());
 		}
 		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
 		RESULT = symbol; :}
@@ -1730,7 +1734,8 @@ ref ::= IDENTIFICADOR:ident {: if (debugSout) System.out.println("READ> ref");
 		RESULT = exp;	// Paso directamente la expresión
  		 :};
 
-sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaAsignacionSuma");
+// Provisional ASSIGN_SUMA:id
+sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA:id expresion:exp SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaAsignacionSuma");
 		Expresion expr = (Expresion) exp;
 		Sentencia sen = new Sentencia();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
@@ -1740,17 +1745,17 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: if (
 		if (ref instanceof SymbolIF) {			// código del identificadores
 			SymbolIF sym = (SymbolIF) ref;
 			if (!(sym instanceof SymbolVariable)) {
-				semanticErrorManager.semanticFatalError("No se puede asignar un valor a una variable de tipo " + sym.getType().getName());
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede asignar un valor a una variable de tipo " + sym.getType().getName());
 			}
 
 			if (sym.getType() != scopeManager.searchType("ENTERO")) {
-				semanticErrorManager.semanticFatalError("No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
 			}
 
 			SymbolVariable vari = (SymbolVariable) sym;
 
 			if (sym.getType() != expr.getTipo()) {
-				semanticErrorManager.semanticFatalError("No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede asignar un valor de tipo " + expr.getTipo().getName() + " a una variable de tipo " + sym.getType().getName());
 			}
 
 			Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
@@ -1781,22 +1786,22 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA expresion:exp SEMI_COLON {: if (
 
 				if (debugSout) System.out.println("ASIG> vector " + variable.getName() + "[" + indice + "] = " + valorAGuardar);
 			} else {
-				semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto.");
 			}
 
-		} else { semanticErrorManager.semanticFatalError("Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto."); }
+		} else { semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Ha ocurrido un error grave en la sentencia de asignación. No se ha detectado el tipo correcto."); }
 
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
 		RESULT = sen; :};
 
 // ATENTO! No hace falta poner aquí ninguna apertura o cierre de ámbito, ya lo hace sentencia con bloque.
-sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO sentencia:sentsino {: if (debugSout) System.out.println("READ> sentenciaSi + SINO"); 
+sentenciaSi ::= SI OPEN_KEY:check expresion:exp CLOSE_KEY sentencia:sentsi SINO sentencia:sentsino {: if (debugSout) System.out.println("READ> sentenciaSi + SINO"); 
 		Expresion expr = (Expresion) exp;
 		Sentencia sentenciasi = (Sentencia) sentsi;
 		Sentencia sentenciasino = (Sentencia) sentsino;
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
-			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
 		
 		ScopeIF scope=scopeManager.getCurrentScope();
@@ -1818,12 +1823,12 @@ sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO senten
 		if (debugSout) System.out.println("     QUAD>" + sentenciasSi.getIntermediateCode());  
 
 		RESULT = sentenciasSi; :}
-	 | SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi {: if (debugSout) System.out.println("READ> sentenciaSi");
+	 | SI OPEN_KEY:check expresion:exp CLOSE_KEY sentencia:sentsi {: if (debugSout) System.out.println("READ> sentenciaSi");
 		Expresion expr = (Expresion) exp;
 		Sentencia sentenciasi = (Sentencia) sentsi;
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
-			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
 
 		ScopeIF scope=scopeManager.getCurrentScope();
@@ -1844,7 +1849,7 @@ sentenciaSi ::= SI OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentsi SINO senten
 		RESULT = sentenciasSi; :};
 	
 // 'Ergo', aquí tampoco hace falta, al usar bloque directamente.
-sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARENTHESIS casosAlternativa:casosAlter porDefecto:porD CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> sentenciaAlternativas"); 
+sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY:check expresion:exp CLOSE_KEY OPEN_PARENTHESIS casosAlternativa:casosAlter porDefecto:porD CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> sentenciaAlternativas"); 
 		Expresion expr = (Expresion) exp;
 		Casosalternativa casos = (Casosalternativa) casosAlter;
 		ArrayList<LabelIF> labels = new ArrayList<LabelIF>();
@@ -1854,7 +1859,7 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY expresion:exp CLOSE_KEY OPEN_PARE
 		if (debugSout) System.out.println((porDefecto != null)? "POR DEFECTO" : "SIN POR DEFECTO");
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
-			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
 
 
@@ -1955,12 +1960,12 @@ porDefecto ::= PORDEFECTO TWO_POINTS bloque:bloq CORTE SEMI_COLON {: if (debugSo
 	RESULT = porDefecto; :}
  | epsilon {: if (debugSout) System.out.println("READ> porDefecto = epsilon"); RESULT = null; :};
 
-sentenciaMientras ::= MIENTRAS OPEN_KEY expresion:exp CLOSE_KEY sentencia:sentmien {: if (debugSout) System.out.println("READ> sentenciaMientras");   // En teoría es la misma estructura que 'si'
+sentenciaMientras ::= MIENTRAS OPEN_KEY:check expresion:exp CLOSE_KEY sentencia:sentmien {: if (debugSout) System.out.println("READ> sentenciaMientras");   // En teoría es la misma estructura que 'si'
 		Expresion expr = (Expresion) exp;
 		Sentencia sentenciasmientras = (Sentencia) sentmien;
 
 		if (expr.getTipo() != scopeManager.searchType("ENTERO")) {
-			semanticErrorManager.semanticFatalError("No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
+			semanticErrorManager.semanticFatalError("Error en la línea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "No se puede comparar un valor de tipo " + expr.getTipo().getName() + ", únicamente enteros.");
 		}
 
 		ScopeIF scope=scopeManager.getCurrentScope();
@@ -2047,9 +2052,10 @@ opcionesEscribeEnt ::= epsilon {:
 		if (debugSout) System.out.println("READ> opcionesEscribeEnt = epsilon");
 		RESULT = null;
  :}
- | expresion:expr {:
+ | expresion:expr {:		// Provisional
 		Expresion expresion = (Expresion) expr;
 		if (expresion.getTipo() != scopeManager.searchType("ENTERO")) {
+			//semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "Únicamente se pueden imprimir valores enteros.");
 			semanticErrorManager.semanticFatalError("Únicamente se pueden imprimir valores enteros.");
 		}
 

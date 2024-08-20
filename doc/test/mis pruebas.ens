@@ -11,83 +11,40 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_18, 27, null]
-SUB .IX, #27
+; Quadruple - [PUNTERO_PRINCIPAL T_9, 16, null]
+SUB .IX, #16
 MOVE .A, .SP
 
-; Quadruple - [VARLOCAL a, 0, null]
-MOVE #0, #-4[.IX]
-; Quadruple - [VARLOCAL b, 0, null]
-MOVE #0, #-5[.IX]
 ; Quadruple - [VARLOCALVECTOR v, 3, null]
 ; sin declarar?
 
 ; Quadruple - [MV T_0, 0, null]
-MOVE #0, #-9[.IX]
+MOVE #0, #-7[.IX]
 ; Quadruple - [MV T_2, 1, null]
-MOVE #1, #-11[.IX]
+MOVE #1, #-9[.IX]
 ; Quadruple - [STP v, T_2, T_0]
-ADD #6, #-9[.IX]
+ADD #4, #-7[.IX]
 SUB .IX, .A
-MOVE #-11[.IX], [.A]
+MOVE #-9[.IX], [.A]
 
 ; Quadruple - [MV T_3, 1, null]
-MOVE #1, #-12[.IX]
+MOVE #1, #-10[.IX]
 ; Quadruple - [MV T_5, 2, null]
-MOVE #2, #-14[.IX]
+MOVE #2, #-12[.IX]
 ; Quadruple - [STP v, T_5, T_3]
-ADD #6, #-12[.IX]
+ADD #4, #-10[.IX]
 SUB .IX, .A
-MOVE #-14[.IX], [.A]
+MOVE #-12[.IX], [.A]
 
 ; Quadruple - [MV T_6, 2, null]
-MOVE #2, #-15[.IX]
+MOVE #2, #-13[.IX]
 ; Quadruple - [MV T_8, 3, null]
-MOVE #3, #-17[.IX]
+MOVE #3, #-15[.IX]
 ; Quadruple - [STP v, T_8, T_6]
-ADD #6, #-15[.IX]
+ADD #4, #-13[.IX]
 SUB .IX, .A
-MOVE #-17[.IX], [.A]
+MOVE #-15[.IX], [.A]
 
-; Quadruple - [MV T_9, 0, null]
-MOVE #0, #-18[.IX]
-; Quadruple - [MV a, T_9, null]
-MOVE #-18[.IX], #-4[.IX]
-; Quadruple - [MV T_10, a, null]
-MOVE #-4[.IX], #-19[.IX]
-; Quadruple - [ADD T_11, T_10, 1]
-ADD #-19[.IX], #1
-MOVE .A , #-20[.IX]
-
-; Quadruple - [MVP T_12, v, T_11]
-ADD #6, #-20[.IX]
-SUB .IX, .A
-MOVE [.A], #-21[.IX]
-
-; Quadruple - [MV b, T_12, null]
-MOVE #-21[.IX], #-5[.IX]
-; Quadruple - [MV T_13, a, null]
-MOVE #-4[.IX], #-22[.IX]
-; Quadruple - [MVP T_14, v, T_13]
-ADD #6, #-22[.IX]
-SUB .IX, .A
-MOVE [.A], #-23[.IX]
-
-; Quadruple - [MV b, T_14, null]
-MOVE #-23[.IX], #-5[.IX]
-; Quadruple - [MV T_15, a, null]
-MOVE #-4[.IX], #-24[.IX]
-; Quadruple - [MVP T_16, v, T_15]
-ADD #6, #-24[.IX]
-SUB .IX, .A
-MOVE [.A], #-25[.IX]
-
-; Quadruple - [ADD T_17, T_16, 1]
-ADD #-25[.IX], #1
-MOVE .A , #-26[.IX]
-
-; Quadruple - [MV b, T_17, null]
-MOVE #-26[.IX], #-5[.IX]
 ; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
 L_FIN_FUN_1: HALT
 

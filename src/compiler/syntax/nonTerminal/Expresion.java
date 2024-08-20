@@ -4,6 +4,7 @@ package compiler.syntax.nonTerminal;
 import compiler.CompilerContext;
 import compiler.semantic.symbol.SymbolVariable;
 import es.uned.lsi.compiler.intermediate.TemporalIF;
+import es.uned.lsi.compiler.lexical.TokenIF;
 import es.uned.lsi.compiler.semantic.ScopeIF;
 import es.uned.lsi.compiler.semantic.ScopeManagerIF;
 import es.uned.lsi.compiler.semantic.SemanticErrorManager;
@@ -17,7 +18,17 @@ public class Expresion extends NonTerminal {
   protected String identificador;
   protected String valor;
 
-  // para vectores
+  protected TokenIF token;
+
+  public TokenIF getToken() {
+    return token;
+}
+
+public void setToken(TokenIF token) {
+    this.token = token;
+}
+
+// para vectores
   protected Object indice;
   protected String nombreVector;
   // ----------

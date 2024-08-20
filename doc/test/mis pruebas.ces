@@ -1,11 +1,5 @@
 vacio principal () {
-
-tipo entero vector [3];
-vector v;
-entero a, b;
-v [0] = 1; v [1] = 2; v[2] = 3;
-a = 0;
-b = v[a++]; 
-b = v[a]; 
-b = v[a]++;
+    tipo entero vector [3];
+    vector v;
+    v [0] = 1; v [1] = 2; v[2] = 3;    
 }
