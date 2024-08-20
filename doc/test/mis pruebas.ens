@@ -11,39 +11,13 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_9, 16, null]
-SUB .IX, #16
+; Quadruple - [PUNTERO_PRINCIPAL T_0, 4, null]
+SUB .IX, #4
 MOVE .A, .SP
 
-; Quadruple - [VARLOCALVECTOR v, 3, null]
-; sin declarar?
-
-; Quadruple - [MV T_0, 0, null]
-MOVE #0, #-7[.IX]
-; Quadruple - [MV T_2, 1, null]
-MOVE #1, #-9[.IX]
-; Quadruple - [STP v, T_2, T_0]
-ADD #4, #-7[.IX]
-SUB .IX, .A
-MOVE #-9[.IX], [.A]
-
-; Quadruple - [MV T_3, 1, null]
-MOVE #1, #-10[.IX]
-; Quadruple - [MV T_5, 2, null]
-MOVE #2, #-12[.IX]
-; Quadruple - [STP v, T_5, T_3]
-ADD #4, #-10[.IX]
-SUB .IX, .A
-MOVE #-12[.IX], [.A]
-
-; Quadruple - [MV T_6, 2, null]
-MOVE #2, #-13[.IX]
-; Quadruple - [MV T_8, 3, null]
-MOVE #3, #-15[.IX]
-; Quadruple - [STP v, T_8, T_6]
-ADD #4, #-13[.IX]
-SUB .IX, .A
-MOVE #-15[.IX], [.A]
+; Quadruple - [WRINT null, null, null]
+WRINT null 
+WRCHAR #10 
 
 ; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
 L_FIN_FUN_1: HALT

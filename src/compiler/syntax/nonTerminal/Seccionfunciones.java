@@ -5,16 +5,16 @@
   import compiler.semantic.symbol.SymbolVariable;
   import es.uned.lsi.compiler.semantic.type.TypeIF;
 
-  public class Seccionfunciones extends NonTerminal {
+  public class SeccionFunciones extends NonTerminal {
 
     protected SymbolVariable symbolVariableIdentificador;
     protected Temporal temporal;
 
-    public Seccionfunciones() {
+    public SeccionFunciones() {
       super();
     }
 
-    public Seccionfunciones(SymbolVariable symbolVariableIdentificador) {
+    public SeccionFunciones(SymbolVariable symbolVariableIdentificador) {
       this();
       this.symbolVariableIdentificador = symbolVariableIdentificador;
     }

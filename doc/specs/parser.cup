@@ -103,83 +103,45 @@ terminal Token STRING;
 non terminal Program	 			program;
 non terminal Axiom		axiom;
 non terminal axiom1,listadoIDs1,id1,funcion1;
-non terminal funcion0;
-non terminal              			funcionPrincipal;
-// non terminal FuncionPrincipal  			funcionPrincipal;
-// non terminal            		    epsilon;
-non terminal Epsilon		        	epsilon;
-non terminal            			seccionFunciones;
-// non terminal SeccionFunciones			seccionFunciones;
-non terminal                    	funcion;
-// non terminal Funcion        			funcion;
-non terminal            			seccionParametros;
-// non terminal SeccionParametros			seccionParametros;
-non terminal            		    declaracionParametros;
-// non terminal DeclaracionParametros		declaracionParametros;
-non terminal            			parametro;
-// non terminal Parametro			        parametro;
+non terminal funcion0;		// No puede ser symbolProcedure, debería ser función en todo caso...
+non terminal Funcion  			funcionPrincipal;
+non terminal            		    epsilon;					// No hay código intermedio
+non terminal SeccionFunciones			seccionFunciones;
+non terminal Funcion        			funcion;
+non terminal            			seccionParametros;			// No hay código intermedio
+non terminal            		    declaracionParametros;		// No hay código intermedio
+non terminal Parametro			        parametro;
 non terminal            			seccionConstantes;
-// non terminal SeccionConstantes			seccionConstantes;
-// non terminal            		    declaracionConstante;
 non terminal Declaracionconstante		declaracionConstante;
 non terminal            			seccionTipos;
-// non terminal SeccionTipos			    seccionTipos;
 non terminal            			declaracionTipo;
-// non terminal DeclaracionTipo			declaracionTipo;
-non terminal            		    tamTipo;
-// non terminal TamTipo		        	tamTipo;
+non terminal            		    tamTipo; 					// No hay código intermedio
 non terminal            			seccionVariables;
-// non terminal SeccionVariables			seccionVariables;
-//non terminal             		    declaracionVariable;
 non terminal Declaracionvariable 		declaracionVariable;
-non terminal            		    listadoIDs;
-// non terminal ListadoIDs		        	listadoIDs;
-non terminal                        id;
-// non terminal Id                			id;
-non terminal            		    expresion;
-// non terminal Expresion		        	expresion;
-non terminal             	    	accesoVector;
-// non terminal AccesoVector 	    		accesoVector;
-non terminal            	    	llamadaFuncion;
-// non terminal LlamadaFuncion	    		llamadaFuncion;
-non terminal            			bloque;
-// non terminal Bloque			            bloque;
+non terminal Listadoids		        	listadoIDs;
+non terminal Id                			id;
+non terminal Expresion		        	expresion;
+non terminal             	    	accesoVector;		// Implementación
+non terminal Expresion	    		llamadaFuncion;
+non terminal Sentencia           			bloque;
 non terminal            			listadoSentencias;
-// non terminal ListadoSentencias			listadoSentencias;
-non terminal            			sentencia;
-// non terminal Sentencia			        sentencia;
-non terminal            		    sentenciaIncremento;
-// non terminal SentenciaIncremento		sentenciaIncremento;
-non terminal            		    sentenciaAsignacion;
-// non terminal SentenciaAsignacion		sentenciaAsignacion;
-non terminal            			ref;
-// non terminal Ref			            ref;
-non terminal            	        sentenciaAsignacionSuma;
-// non terminal SentenciaAsignacionSuma	sentenciaAsignacionSuma;
-non terminal            		    sentenciaSi;
-// non terminal SentenciaSi		    	sentenciaSi;
-non terminal            		    sentenciaAlternativas;
-// non terminal SentenciaAlternativas		sentenciaAlternativas;
-non terminal            			casosAlternativa;
-// non terminal CasosAlternativa			casosAlternativa;
-non terminal            			casoAlt; 
-// non terminal CasoAlt			        casoAlt; 
-non terminal            			porDefecto;
-// non terminal PorDefecto			        porDefecto;
-non terminal            			sentenciaMientras;
-// non terminal SentenciaMientras			sentenciaMientras;
-non terminal            	        sentenciaLlamadaFuncion;
-// non terminal SentenciaLlamadaFuncion	sentenciaLlamadaFuncion;
-non terminal            		    parametros;
-// non terminal Parametros		        	parametros;
-non terminal            			sentenciaSalida;
-// non terminal SentenciaSalida			sentenciaSalida;
-non terminal            			opcionesEscribe;
-// non terminal OpcionesEscribe			opcionesEscribe;
-non terminal            			opcionesEscribeEnt;
-// non terminal OpcionesEscribeEnt			opcionesEscribeEnt;
-non terminal            			sentenciaDevuelve;
-// non terminal SentenciaDevuelve			sentenciaDevuelve;
+non terminal Sentencia			        sentencia;
+non terminal Sentencia           		    sentenciaIncremento;
+non terminal Sentencia           		    sentenciaAsignacion;
+non terminal            			ref;		// Necesita implementación
+non terminal Sentencia           	        sentenciaAsignacionSuma;
+non terminal Sentencia           		    sentenciaSi;
+non terminal Sentencia           		    sentenciaAlternativas;
+non terminal Casosalternativa			casosAlternativa;
+non terminal Casoalt			        casoAlt; 
+non terminal Pordefecto			        porDefecto;
+non terminal Sentencia           			sentenciaMientras;
+non terminal Sentencia           	        sentenciaLlamadaFuncion;
+non terminal ArrayList<Expresion>           		    parametros;
+non terminal Sentencia            			sentenciaSalida;
+non terminal            			opcionesEscribe;		// Necesita implementación
+non terminal            			opcionesEscribeEnt;		// Necesita implementación
+non terminal Sentencia			sentenciaDevuelve;
 non terminal						abrirAmbito;
 non terminal						cerrarAmbito;
 
@@ -294,7 +256,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		ScopeIF thisScope = scopeManager.getCurrentScope();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(thisScope);
 
-		intermediateCodeBuilder.addQuadruple("AXIOM");		/// Puede ser que esto no sea necesario
+		intermediateCodeBuilder.addQuadruple("AXIOM");
 
 		int direccionGlobal=10000;		//// Las variables globales deberían colocarse desde aquí
 
@@ -386,10 +348,8 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 
-		/// Se siente muy vacío... no debería contener código intermedio? Tal vez sea necesario para añadir las cuádruplas de las funciones y parámetros
-
 		Program ax1 = new Program();
-		Seccionfunciones sf = (Seccionfunciones) secFun;
+		SeccionFunciones sf = (SeccionFunciones) secFun;
 		ax1.setIntermediateCode(sf.getIntermediateCode());
 
 		RESULT = ax1; 
@@ -400,7 +360,7 @@ axiom1 ::= seccionVariables:secVar seccionFunciones:secFun {:
 		ScopeIF scope = scopeManager.getCurrentScope();
 
 		Program ax1 = new Program();
-		Seccionfunciones sf = (Seccionfunciones) secFun;
+		SeccionFunciones sf = (SeccionFunciones) secFun;
 		ax1.setIntermediateCode(sf.getIntermediateCode());
 
 		RESULT = ax1; 
@@ -621,7 +581,7 @@ id1 ::= epsilon {:
 seccionFunciones ::= funcion:fun seccionFunciones:secFun {: 
 		if (debugSout) System.out.println("READ> seccionFunciones = funciones extra"); 
 		Funcion f = (Funcion) fun;
-		Seccionfunciones sf = (Seccionfunciones) secFun;
+		SeccionFunciones sf = (SeccionFunciones) secFun;
 		List<QuadrupleIF> intermediateCode = f.getIntermediateCode(); // se busca "la primera funcion" antes de las demás
 		intermediateCode.addAll(sf.getIntermediateCode()); // las demás funciones se añaden a continuación
 		sf.setIntermediateCode(intermediateCode);
@@ -630,7 +590,7 @@ seccionFunciones ::= funcion:fun seccionFunciones:secFun {:
                       | funcionPrincipal:funPrin {: 
 		if (debugSout) System.out.println("READ> seccionFunciones = funcion principal"); 
 		Funcion fp = (Funcion) funPrin;
-		Seccionfunciones sf = new Seccionfunciones();
+		SeccionFunciones sf = new SeccionFunciones();
 		sf.setIntermediateCode(fp.getIntermediateCode());
 		if (debugSout) System.out.println("     QUAD>" + sf.getIntermediateCode());
 		RESULT = sf; 
@@ -823,7 +783,7 @@ funcion1 ::= listadoSentencias:listsent CLOSE_PARENTHESIS {: if (debugSout) Syst
 seccionParametros ::= declaracionParametros:params {: if (debugSout) System.out.println("READ> seccionParametros = sí"); RESULT = params; :}
  | epsilon {: if (debugSout) System.out.println("READ> seccionParametros = no"); RESULT = new ArrayList<SymbolIF>(); :};
 
-declaracionParametros  ::= parametro:param {: if (debugSout) System.out.println("READ> declaracionParametros = uno/ultimo");
+declaracionParametros ::= parametro:param {: if (debugSout) System.out.println("READ> declaracionParametros = uno/ultimo");
 		ArrayList<SymbolIF> params = new ArrayList<SymbolIF>();
 		params.add(0,((Parametro) param).getSymbolParametroIdentificador());
 		 RESULT = params; :}
@@ -1566,8 +1526,8 @@ parametros ::= expresion:exp {: if (debugSout) System.out.println("READ> paramet
 		params.add((Expresion) exp);
  		RESULT = params; :};
 
-bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias:sen cerrarAmbito CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> bloque = OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS"); RESULT = sen; :}
- 	|  OPEN_PARENTHESIS abrirAmbito listadoSentencias:sen cerrarAmbito CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = sen; :};
+bloque ::= OPEN_PARENTHESIS abrirAmbito seccionVariables listadoSentencias:sen cerrarAmbito CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> bloque = OPEN_PARENTHESIS seccionVariables listadoSentencias CLOSE_PARENTHESIS"); RESULT = (Sentencia) sen; :}
+ 	|  OPEN_PARENTHESIS abrirAmbito listadoSentencias:sen cerrarAmbito CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> bloque = OPEN_PARENTHESIS listadoSentencias CLOSE_PARENTHESIS"); RESULT = (Sentencia) sen; :};
 
 listadoSentencias ::= listadoSentencias:listSent sentencia:sent {: if (debugSout) System.out.println("READ> listadoSentencias = listadoSentencias sentencia"); 
 		Sentencia ls = (Sentencia) listSent;
@@ -1586,16 +1546,16 @@ listadoSentencias ::= listadoSentencias:listSent sentencia:sent {: if (debugSout
 		RESULT = s; 
 		:};
 
-sentencia ::= sentenciaDevuelve:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = sen; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
-	| sentenciaIncremento:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaIncremento"); RESULT = sen; :}
-	| sentenciaAsignacion:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = sen; :}
-	| sentenciaAsignacionSuma:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = sen; :}
-	| sentenciaSi:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaSi"); RESULT = sen; :}
-	| sentenciaAlternativas:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = sen; :}
-	| sentenciaMientras:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaMientras"); RESULT = sen; :}
-	| sentenciaLlamadaFuncion:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = sen; :}
-	| sentenciaSalida:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaSalida"); RESULT = sen; :}
-	| bloque:sen {: if (debugSout) System.out.println("READ> sentencia = bloque"); RESULT = sen; :};
+sentencia ::= sentenciaDevuelve:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaDevuelve"); RESULT = (Sentencia) sen; :}  // Debería devuelve tener alguna forma de terminar la ejecución?
+	| sentenciaIncremento:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaIncremento"); RESULT = (Sentencia) sen; :}
+	| sentenciaAsignacion:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaAsignacion"); RESULT = (Sentencia) sen; :}
+	| sentenciaAsignacionSuma:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaAsignacionSuma"); RESULT = (Sentencia) sen; :}
+	| sentenciaSi:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaSi"); RESULT = (Sentencia) sen; :}
+	| sentenciaAlternativas:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaAlternativas"); RESULT = (Sentencia) sen; :}
+	| sentenciaMientras:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaMientras"); RESULT = (Sentencia) sen; :}
+	| sentenciaLlamadaFuncion:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaLlamadaFuncion"); RESULT = (Sentencia) sen; :}
+	| sentenciaSalida:sen {: if (debugSout) System.out.println("READ> sentencia = sentenciaSalida"); RESULT = (Sentencia) sen; :}
+	| bloque:sen {: if (debugSout) System.out.println("READ> sentencia = bloque"); RESULT = (Sentencia) sen; :};
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaDevuelve = vacío"); 
 		Sentencia sen = new Sentenciadevuelve();
@@ -2023,12 +1983,10 @@ sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 	| ESCRIBE_ENT OPEN_KEY opcionesEscribeEnt:exp CLOSE_KEY SEMI_COLON {: 
 		Sentencia sen = new Sentencia();
 		Expresion expr = (Expresion) exp;
-		String salida = expr.getValor() + "\\n";
-		TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());		
+		String salida = expr.getValor() + "\\n";	
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF label = labelFactory.create();
-		TemporalIF temporal = temporalFactory.create();
 
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 
@@ -2050,7 +2008,7 @@ opcionesEscribe ::= epsilon {:
  :};
 opcionesEscribeEnt ::= epsilon {:
 		if (debugSout) System.out.println("READ> opcionesEscribeEnt = epsilon");
-		RESULT = null;
+		RESULT = new Expresion();
  :}
  | expresion:expr {:		// Provisional
 		Expresion expresion = (Expresion) expr;

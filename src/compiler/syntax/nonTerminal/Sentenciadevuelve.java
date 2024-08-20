@@ -1,4 +1,4 @@
-
+// NO SE UTILIZA!
   package compiler.syntax.nonTerminal;
 
   import compiler.intermediate.Temporal;

@@ -1,3 +1,4 @@
+// NO SE UTILIZA!
 // Es MUY probable que borre esta clase
 
 
