@@ -11,120 +11,83 @@ PUSH .IX       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_7, 25, null]
-SUB .IX, #25
+; Quadruple - [PUNTERO_PRINCIPAL T_18, 27, null]
+SUB .IX, #27
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL a, 0, null]
 MOVE #0, #-4[.IX]
+; Quadruple - [VARLOCAL b, 0, null]
+MOVE #0, #-5[.IX]
 ; Quadruple - [VARLOCALVECTOR v, 3, null]
 ; sin declarar?
 
-; Quadruple - [DVLP Mientras, Inicio, null]
-; sin declarar?
-
-; Quadruple - [INL L_0, null, null]
-L_0: NOP
-
-; Quadruple - [MV T_0, a, null]
-MOVE #-4[.IX], #-8[.IX]
-; Quadruple - [MV T_1, 3, null]
-MOVE #3, #-9[.IX]
-; Quadruple - [LS T_2, T_0, T_1]
-CMP #-8[.IX], #-9[.IX]
-BZ /L_8
-BP /L_8
-L_7: MOVE #1, #-10[.IX]
-BR /L_9
-L_8: MOVE #0, #-10[.IX]
-L_9: NOP
-
-; Quadruple - [BRF T_2, L_1, null]
-CMP #-10[.IX], #0
-BZ /L_1
-
-; Quadruple - [MV T_0, a, null]
-MOVE #-4[.IX], #-15[.IX]
-; Quadruple - [MV T_2, a, null]
-MOVE #-4[.IX], #-17[.IX]
-; Quadruple - [MV T_3, 55, null]
-MOVE #55, #-18[.IX]
-; Quadruple - [ADD T_4, T_2, T_3]
-ADD #-17[.IX], #-18[.IX]
-MOVE .A , #-19[.IX]
-
-; Quadruple - [STP v, T_4, T_0]
-ADD #5, #-15[.IX]
+; Quadruple - [MV T_0, 0, null]
+MOVE #0, #-9[.IX]
+; Quadruple - [MV T_2, 1, null]
+MOVE #1, #-11[.IX]
+; Quadruple - [STP v, T_2, T_0]
+ADD #6, #-9[.IX]
 SUB .IX, .A
-MOVE #-19[.IX], [.A]
+MOVE #-11[.IX], [.A]
 
-; Quadruple - [ADD a, a, 1]
-ADD #-4[.IX], #1
-MOVE .A , #-4[.IX]
-
-; Quadruple - [BR L_0, null, null]
-BR /L_0
-
-; Quadruple - [INL L_1, null, null]
-L_1: NOP
-
-; Quadruple - [DVLP Mientras, Final, null]
-; sin declarar?
-
-; Quadruple - [MV T_3, 0, null]
-MOVE #0, #-11[.IX]
-; Quadruple - [MV a, T_3, null]
-MOVE #-11[.IX], #-4[.IX]
-; Quadruple - [DVLP Mientras, Inicio, null]
-; sin declarar?
-
-; Quadruple - [INL L_3, null, null]
-L_3: NOP
-
-; Quadruple - [MV T_4, a, null]
-MOVE #-4[.IX], #-12[.IX]
-; Quadruple - [MV T_5, 3, null]
-MOVE #3, #-13[.IX]
-; Quadruple - [LS T_6, T_4, T_5]
-CMP #-12[.IX], #-13[.IX]
-BZ /L_11
-BP /L_11
-L_10: MOVE #1, #-14[.IX]
-BR /L_12
-L_11: MOVE #0, #-14[.IX]
-L_12: NOP
-
-; Quadruple - [BRF T_6, L_4, null]
-CMP #-14[.IX], #0
-BZ /L_4
-
-; Quadruple - [MV T_0, a, null]
-MOVE #-4[.IX], #-21[.IX]
-; Quadruple - [MVP T_1, v, T_0]
-ADD #5, #-21[.IX]
+; Quadruple - [MV T_3, 1, null]
+MOVE #1, #-12[.IX]
+; Quadruple - [MV T_5, 2, null]
+MOVE #2, #-14[.IX]
+; Quadruple - [STP v, T_5, T_3]
+ADD #6, #-12[.IX]
 SUB .IX, .A
-MOVE [.A], #-22[.IX]
+MOVE #-14[.IX], [.A]
 
-; Quadruple - [WRINT T_1, null, null]
-WRINT #-22[.IX] 
-WRCHAR #10 
+; Quadruple - [MV T_6, 2, null]
+MOVE #2, #-15[.IX]
+; Quadruple - [MV T_8, 3, null]
+MOVE #3, #-17[.IX]
+; Quadruple - [STP v, T_8, T_6]
+ADD #6, #-15[.IX]
+SUB .IX, .A
+MOVE #-17[.IX], [.A]
 
-; Quadruple - [ADD a, a, 1]
-ADD #-4[.IX], #1
-MOVE .A , #-4[.IX]
+; Quadruple - [MV T_9, 0, null]
+MOVE #0, #-18[.IX]
+; Quadruple - [MV a, T_9, null]
+MOVE #-18[.IX], #-4[.IX]
+; Quadruple - [MV T_10, a, null]
+MOVE #-4[.IX], #-19[.IX]
+; Quadruple - [ADD T_11, T_10, 1]
+ADD #-19[.IX], #1
+MOVE .A , #-20[.IX]
 
-; Quadruple - [BR L_3, null, null]
-BR /L_3
+; Quadruple - [MVP T_12, v, T_11]
+ADD #6, #-20[.IX]
+SUB .IX, .A
+MOVE [.A], #-21[.IX]
 
-; Quadruple - [INL L_4, null, null]
-L_4: NOP
+; Quadruple - [MV b, T_12, null]
+MOVE #-21[.IX], #-5[.IX]
+; Quadruple - [MV T_13, a, null]
+MOVE #-4[.IX], #-22[.IX]
+; Quadruple - [MVP T_14, v, T_13]
+ADD #6, #-22[.IX]
+SUB .IX, .A
+MOVE [.A], #-23[.IX]
 
-; Quadruple - [DVLP Mientras, Final, null]
-; sin declarar?
+; Quadruple - [MV b, T_14, null]
+MOVE #-23[.IX], #-5[.IX]
+; Quadruple - [MV T_15, a, null]
+MOVE #-4[.IX], #-24[.IX]
+; Quadruple - [MVP T_16, v, T_15]
+ADD #6, #-24[.IX]
+SUB .IX, .A
+MOVE [.A], #-25[.IX]
 
-; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [ADD T_17, T_16, 1]
+ADD #-25[.IX], #1
+MOVE .A , #-26[.IX]
 
+; Quadruple - [MV b, T_17, null]
+MOVE #-26[.IX], #-5[.IX]
 ; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
 L_FIN_FUN_1: HALT
 

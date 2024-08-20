@@ -24,16 +24,20 @@ MOVE #0, #-4[.IX]
 MOVE #1, #-8[.IX]
 ; Quadruple - [MV T_2, 7, null]
 MOVE #7, #-10[.IX]
-; Quadruple - [STP v1, T_2, 1]
-MOVE #-10[.IX], #-6[.IX]
+; Quadruple - [STP v1, T_2, T_0]
+ADD #5, #-8[.IX]
+SUB .IX, .A
+MOVE #-10[.IX], [.A]
 
 ; Quadruple - [WRSTR T_3, L_0, null]
 WRSTR /L_0 
 
 ; Quadruple - [MV T_4, 1, null]
 MOVE #1, #-12[.IX]
-; Quadruple - [MVP T_5, v1, 1]
-MOVE #-6[.IX], #-13[.IX]
+; Quadruple - [MVP T_5, v1, T_4]
+ADD #5, #-12[.IX]
+SUB .IX, .A
+MOVE [.A], #-13[.IX]
 
 ; Quadruple - [WRINT T_5, null, null]
 WRINT #-13[.IX] 

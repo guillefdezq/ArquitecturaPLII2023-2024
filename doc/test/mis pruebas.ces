@@ -1,26 +1,11 @@
-/* MI CASO DE PRUEBA EXPERIMENTAL */
-
 vacio principal () {
-    
-    tipo entero vector[3];
-    entero a;
 
-
-    vector v;
-    
-    mientras (a<3) {
-        v[a] = a +55;
-        a++;
-    }
-    
-    a = 0;
-
-    mientras (a<3) {
-        escribeEnt(v[a]);
-        a++;
-    }
-    
-
-    devuelve;
-
+tipo entero vector [3];
+vector v;
+entero a, b;
+v [0] = 1; v [1] = 2; v[2] = 3;
+a = 0;
+b = v[a++]; 
+b = v[a]; 
+b = v[a]++;
 }

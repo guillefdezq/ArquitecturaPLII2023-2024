@@ -126,7 +126,7 @@ public class ExecutionEnvironmentEns2001
             // ADD indice, dirvariable     -> ADD  o2, o1 
             // MOVE acumulador, resultado  -> MOVE .a, r
 
-            System.out.println("STP: " + o1 + ", " + o2 + ", " + r + ", ");
+            // System.out.println("STP: " + o1 + ", " + o2 + ", " + r + ", ");
              
             // int direccion = ((Variable) quadruple.getResult()).getAddress();
             // int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
@@ -158,7 +158,7 @@ public class ExecutionEnvironmentEns2001
             // ADD indice, dirvariable     -> ADD  o2, o1 
             // MOVE acumulador, resultado  -> MOVE .a, r
             
-            System.out.println("MVP: " + o1 + ", " + o2 + ", " + r + ", ");
+            // System.out.println("MVP: " + o1 + ", " + o2 + ", " + r + ", ");
 
             // int direccion = ((Variable) quadruple.getFirstOperand()).getAddress();
             // int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
