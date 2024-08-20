@@ -128,7 +128,7 @@ non terminal Sentencia           			listadoSentencias;
 non terminal Sentencia			        sentencia;
 non terminal Sentencia           		    sentenciaIncremento;
 non terminal Sentencia           		    sentenciaAsignacion;
-non terminal            			ref;		// Necesita implementación
+non terminal Ref           			ref;
 non terminal Sentencia           	        sentenciaAsignacionSuma;
 non terminal Sentencia           		    sentenciaSi;
 non terminal Sentencia           		    sentenciaAlternativas;
@@ -1622,18 +1622,19 @@ sentenciaIncremento ::= IDENTIFICADOR:ident AUTO_INCREMENTO SEMI_COLON {: if (de
 		 :};
 
 // Provisional ASSIGN:id
-sentenciaAsignacion ::= ref:ref ASSIGN:id expresion:exp SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaAsignacion"); 
+sentenciaAsignacion ::= ref:refe ASSIGN:id expresion:exp SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaAsignacion"); 
 
 		Sentenciaasignacion sentenciaAsignacion = new Sentenciaasignacion();
 
 		Expresion expr = (Expresion) exp;
 
-
 		ScopeIF scope = scopeManager.getCurrentScope();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		if (ref instanceof SymbolIF) {			// código del identificadores
-			SymbolIF sym = (SymbolIF) ref;
+		Ref ref = (Ref) refe;
+
+		if (!ref.isExpresion()) {			// código del identificadores
+			SymbolIF sym = ref.getSymbol();
 			if (!(sym instanceof SymbolVariable)) {
 				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede asignar un valor a una variable de tipo " + sym.getType().getName());
 			}
@@ -1655,8 +1656,8 @@ sentenciaAsignacion ::= ref:ref ASSIGN:id expresion:exp SEMI_COLON {: if (debugS
 			//vari.setValor(expr.getValor());
 			if (debugSout) System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
 
-		} else if (ref instanceof Expresion) {			// código del vector
-			Expresion refexpr = (Expresion) ref;
+		} else if (ref.isExpresion()) {			// código del vector
+			Expresion refexpr = ref.getExpresion();
 			SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(refexpr.getNombreVector());
 			if(sym.getType() instanceof TypeArray) {
 				SymbolVariable vari = (SymbolVariable) sym;
@@ -1689,21 +1690,21 @@ ref ::= IDENTIFICADOR:ident {: if (debugSout) System.out.println("READ> ref");
 			semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "No se encuentra la variable " + ident.getLexema());
 		}
 		SymbolIF symbol = scopeManager.searchSymbol(ident.getLexema());
-		RESULT = symbol; :}
+		RESULT = new Ref(symbol); :}
  | accesoVector:exp {: 
-		RESULT = exp;	// Paso directamente la expresión
+		RESULT = new Ref((Expresion) exp);	// Paso directamente la expresión
  		 :};
 
 // Provisional ASSIGN_SUMA:id
-sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA:id expresion:exp SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaAsignacionSuma");
+sentenciaAsignacionSuma ::= ref:refe ASSIGN_SUMA:id expresion:exp SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaAsignacionSuma");
 		Expresion expr = (Expresion) exp;
 		Sentencia sen = new Sentencia();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
+		
+		Ref ref = (Ref) refe;
 
-		// dividir en instancias de expresión o símbolo
-
-		if (ref instanceof SymbolIF) {			// código del identificadores
-			SymbolIF sym = (SymbolIF) ref;
+		if (!ref.isExpresion()) {			// código del identificadores
+			SymbolIF sym = ref.getSymbol();
 			if (!(sym instanceof SymbolVariable)) {
 				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede asignar un valor a una variable de tipo " + sym.getType().getName());
 			}
@@ -1724,8 +1725,8 @@ sentenciaAsignacionSuma ::= ref:ref ASSIGN_SUMA:id expresion:exp SEMI_COLON {: i
 
 			if (debugSout) System.out.println("ASIG> " + vari.getName() + " = " + expr.getValor());
 
-		} else if (ref instanceof Expresion) {			// código del vector
-			Expresion refexpr = (Expresion) ref;
+		} else if (ref.isExpresion()) {			// código del vector
+			Expresion refexpr = ref.getExpresion();
 			SymbolIF sym = (SymbolIF) scopeManager.searchSymbol(refexpr.getNombreVector());
 			if(sym.getType() instanceof TypeArray) {
 				SymbolVariable vari = (SymbolVariable) sym;

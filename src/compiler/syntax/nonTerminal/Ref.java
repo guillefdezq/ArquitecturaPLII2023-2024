@@ -4,38 +4,57 @@
   import compiler.intermediate.Temporal;
   import compiler.semantic.symbol.SymbolVariable;
 import es.uned.lsi.compiler.lexical.TokenIF;
+import es.uned.lsi.compiler.semantic.symbol.SymbolIF;
 import es.uned.lsi.compiler.semantic.type.TypeIF;
 
   public class Ref extends NonTerminal {
 
     protected SymbolVariable symbolVariableIdentificador;
     protected Temporal temporal;
-    protected Object pasarObjeto;
-    protected TokenIF token;
-
-    public Ref (Object pasarObjeto, TokenIF token) {
-      this.token = token;
-      this.pasarObjeto = pasarObjeto;
+    
+    protected SymbolIF symbol;
+    protected Expresion expresion;
+    protected boolean isExpresion = false;
+    
+    
+    public boolean isExpresion() {
+      return isExpresion;
     }
 
-    public TokenIF getToken() {
-      return token;
+    public void setExpresion(boolean isExpresion) {
+      this.isExpresion = isExpresion;
     }
 
-    public void setToken(TokenIF token) {
-      this.token = token;
+    public Expresion getExpresion() {
+      return expresion;
     }
 
-    public Object getPasarObjeto() {
-      return pasarObjeto;
+    public void setExpresion(Expresion expresion) {
+      this.isExpresion = true;
+      this.expresion = expresion;
+    }
+    
+    public SymbolIF getSymbol() {
+      return symbol;
     }
 
-    public void setPasarObjeto(Object pasarObjeto) {
-      this.pasarObjeto = pasarObjeto;
+    public void setSymbol(SymbolIF symbol) {
+      this.symbol = symbol;
     }
 
     public Ref() {
       super();
+    }
+
+    public Ref(Expresion expresion) {
+      this();
+      this.expresion = expresion;
+      this.isExpresion = true;
+    }
+
+    public Ref(SymbolIF symbol) { 
+      this();
+      this.symbol = symbol;
     }
 
     public Ref(SymbolVariable symbolVariableIdentificador) {
