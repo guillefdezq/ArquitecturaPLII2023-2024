@@ -139,8 +139,8 @@ non terminal Sentencia           			sentenciaMientras;
 non terminal Sentencia           	        sentenciaLlamadaFuncion;
 non terminal ArrayList<Expresion>           		    parametros;
 non terminal Sentencia            			sentenciaSalida;
-non terminal            			opcionesEscribe;		// Necesita implementación
-non terminal            			opcionesEscribeEnt;		// Necesita implementación
+non terminal            			opcionesEscribe;		// No tiene código intermedio
+non terminal Expresion           			opcionesEscribeEnt;		
 non terminal Sentencia			sentenciaDevuelve;
 non terminal						abrirAmbito;
 non terminal						cerrarAmbito;
@@ -1961,7 +1961,7 @@ sentenciaLlamadaFuncion ::= llamadaFuncion:fun SEMI_COLON {: if (debugSout) Syst
 sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		Sentencia sen = new Sentencia();
 		String salida = (String) expr;
-		salida = salida.substring(1, salida.length() - 1) + "\\n";
+		salida = (salida == null) ? "\\n" : salida.substring(1, salida.length() - 1) + "\\n";
 		
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		LabelFactory labelFactory = new LabelFactory();

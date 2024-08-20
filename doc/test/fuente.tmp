@@ -15,10 +15,12 @@ PUSH .IX       ;enlace de acceso
 SUB .IX, #4
 MOVE .A, .SP
 
-; Quadruple - [WRINT null, null, null]
-WRCHAR #10 
+; Quadruple - [WRSTR L_0, null, null]
+WRSTR /L_0 
 
 ; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
 L_FIN_FUN_1: HALT
 
+; Quadruple - [CADENA \n, L_0, null]
+L_0: DATA "\n"
 
