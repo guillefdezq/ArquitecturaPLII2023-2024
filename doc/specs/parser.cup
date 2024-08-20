@@ -1962,15 +1962,13 @@ sentenciaSalida ::=ESCRIBE OPEN_KEY opcionesEscribe:expr CLOSE_KEY SEMI_COLON {:
 		Sentencia sen = new Sentencia();
 		String salida = (String) expr;
 		salida = salida.substring(1, salida.length() - 1) + "\\n";
-
-		TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());		
+		
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF label = labelFactory.create();
-		TemporalIF temporal = temporalFactory.create();
 
 		Value value = new Value(salida);
-		intermediateCodeBuilder.addQuadruple("WRSTR", temporal, label);
+		intermediateCodeBuilder.addQuadruple("WRSTR", label);
 
 		listaCadenas.add(new Quadruple("CADENA", new Label(salida), label));
 

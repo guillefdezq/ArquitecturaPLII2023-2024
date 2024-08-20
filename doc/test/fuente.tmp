@@ -16,7 +16,6 @@ SUB .IX, #4
 MOVE .A, .SP
 
 ; Quadruple - [WRINT null, null, null]
-WRINT null 
 WRCHAR #10 
 
 ; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]

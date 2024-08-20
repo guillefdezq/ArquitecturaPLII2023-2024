@@ -430,12 +430,11 @@ public class ExecutionEnvironmentEns2001
             String r = operacion(quadruple.getResult());
             b.append("BNZ /" + r.toString() + "\n");
         } else if (quadruple.getOperation().equals("WRSTR")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            // String r = operacion(quadruple.getResult());
-            String o1 = operacion(quadruple.getFirstOperand());
-            b.append("WRSTR /" + o1 + " \n");
+            String r = operacion(quadruple.getResult());
+            if (r != null) b.append("WRSTR /" + r + " \n");
         } else if (quadruple.getOperation().equals("WRINT")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
-            b.append("WRINT " + r + " \n");
+            if (r != null) b.append("WRINT " + r + " \n");
             b.append("WRCHAR #10 \n");
         } else {
             b.append("; sin declarar?\n");
