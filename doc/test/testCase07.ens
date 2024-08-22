@@ -5,9 +5,10 @@ BR /PRINCIPAL
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-MOVE .SP, .IX  ;guarda el valor de SP en IY
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+MOVE .IX, .IY  ;guarda el valor de IX en IY
 PUSH #-1       ;valor de retorno
-PUSH .IX       ;enlace de control
+PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
@@ -42,7 +43,7 @@ BR /L_17
 L_16: MOVE #0, #-11[.IX]
 L_17: NOP
 
-; Quadruple - [BRF T_4, L_3, null]
+; Quadruple - [BZ T_4, L_3, null]
 CMP #-11[.IX], #0
 BZ /L_3
 
@@ -64,9 +65,6 @@ L_2: NOP
 ; Quadruple - [WRSTR L_4, null, null]
 WRSTR /L_4 
 
-; Quadruple - [DVLP Mientras, Inicio, null]
-; sin declarar?
-
 ; Quadruple - [INL L_5, null, null]
 L_5: NOP
 
@@ -83,7 +81,7 @@ BR /L_20
 L_19: MOVE #0, #-14[.IX]
 L_20: NOP
 
-; Quadruple - [BRF T_7, L_6, null]
+; Quadruple - [BZ T_7, L_6, null]
 CMP #-14[.IX], #0
 BZ /L_6
 
@@ -103,9 +101,6 @@ BR /L_5
 ; Quadruple - [INL L_6, null, null]
 L_6: NOP
 
-; Quadruple - [DVLP Mientras, Final, null]
-; sin declarar?
-
 ; Quadruple - [WRSTR L_7, null, null]
 WRSTR /L_7 
 
@@ -113,9 +108,6 @@ WRSTR /L_7
 MOVE #2, #-18[.IX]
 ; Quadruple - [MV dia, T_11, null]
 MOVE #-18[.IX], #-6[.IX]
-; Quadruple - [DVLP Alternativas, Inicio, null]
-; sin declarar?
-
 ; Quadruple - [MV T_12, dia, null]
 MOVE #-6[.IX], #-19[.IX]
 ; Quadruple - [INL L_11, null, null]
@@ -150,9 +142,6 @@ BR /L_10
 
 ; Quadruple - [INL L_10, null, null]
 L_10: NOP
-
-; Quadruple - [DVLP Alternativas, Final, null]
-; sin declarar?
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
 BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa

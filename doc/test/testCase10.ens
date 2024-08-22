@@ -37,9 +37,10 @@ RET
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-MOVE .SP, .IX  ;guarda el valor de SP en IY
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+MOVE .IX, .IY  ;guarda el valor de IX en IY
 PUSH #-1       ;valor de retorno
-PUSH .IX       ;enlace de control
+PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
@@ -67,9 +68,6 @@ MOVE #-9[.IX], #-5[.IX]
 MOVE #1, #-10[.IX]
 ; Quadruple - [MV uno, T_2, null]
 MOVE #-10[.IX], #-6[.IX]
-; Quadruple - [DVLP Mientras, Inicio, null]
-; sin declarar?
-
 ; Quadruple - [INL L_9, null, null]
 L_9: NOP
 
@@ -86,7 +84,7 @@ BR /L_17
 L_16: MOVE #0, #-13[.IX]
 L_17: NOP
 
-; Quadruple - [BRF T_5, L_10, null]
+; Quadruple - [BZ T_5, L_10, null]
 CMP #-13[.IX], #0
 BZ /L_10
 
@@ -103,7 +101,7 @@ BR /L_20
 L_19: MOVE #0, #-16[.IX]
 L_20: NOP
 
-; Quadruple - [BRF T_2, L_5, null]
+; Quadruple - [BZ T_2, L_5, null]
 CMP #-16[.IX], #0
 BZ /L_5
 
@@ -127,9 +125,6 @@ MOVE #-4[.IX], #-17[.IX]
 ; Quadruple - [WRINT T_3, null, null]
 WRINT #-17[.IX] 
 WRCHAR #10 
-
-; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
-; sin declarar?
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
 MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
@@ -171,9 +166,6 @@ BR /L_9
 
 ; Quadruple - [INL L_10, null, null]
 L_10: NOP
-
-; Quadruple - [DVLP Mientras, Final, null]
-; sin declarar?
 
 ; Quadruple - [MV T_0, 1, null]
 MOVE #1, #-22[.IX]

@@ -1,0 +1,10 @@
+tipo entero vector[2];
+
+vacio test (vector x) {
+    devuelve;
+}
+
+vacio principal () {
+    test(0);
+    devuelve;
+}

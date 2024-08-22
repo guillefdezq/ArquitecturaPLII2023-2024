@@ -1,0 +1,17 @@
+entero factorial(entero n) {
+    entero resultado = 1;
+    entero i = 1;
+    mientras (i < n+1) {
+        resultado = resultado * i;
+        i = i + 1;
+    }
+    devuelve resultado;
+}
+
+vacio principal() {
+    entero num = 5;
+    entero resultadoFactorial;
+    resultadoFactorial = factorial(num);
+    escribeEnt(resultadoFactorial); /* Debería escribir 120 */
+    devuelve;
+}

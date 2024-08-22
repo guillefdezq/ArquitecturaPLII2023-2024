@@ -1,0 +1,26 @@
+#constante VERDADERO 1;
+#constante FALSO 0;
+#constante TAM 5;
+
+tipo entero vector[TAM];
+
+entero suma;
+entero mayorDiez = 69;
+
+entero funSuma(entero x, entero y) {
+    entero suma;
+    suma = x + y;
+    devuelve suma;
+}
+
+vacio principal() {
+    entero a = 3, b = 4;
+    suma = funSuma(a, b);
+    mayorDiez = !(suma < 10);
+    si (mayorDiez == VERDADERO) {
+        escribe("mayor");
+    } sino {
+        escribe("menor");
+    }
+    devuelve;
+}

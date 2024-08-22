@@ -1,0 +1,4 @@
+vacio principal() {
+    escribe("Hola, mundo!"); /* Deberia imprimir Hola, mundo! */
+    devuelve;
+}

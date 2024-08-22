@@ -1,0 +1,11 @@
+#constante UNO 1;
+#constante DOS 2;
+
+vacio principal() {
+    entero a = 1;
+    entero a = 2; /* Error semántico: identificador duplicado */
+    b = 3; /* Error semántico: variable no declarada */
+    entero c;
+    c = 4;
+    devuelve;
+}

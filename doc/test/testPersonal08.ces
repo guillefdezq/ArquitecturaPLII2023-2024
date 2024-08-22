@@ -1,0 +1,11 @@
+#constante UNO 1;
+entero 1variable; // Error léxico detectado como sintáctico por la gramática: identificador no puede comenzar con un dígito
+
+vacio principal() {
+    entero resultado;
+    1variable = 10; // Error léxico detectado como sintáctico por la gramática: identificador no puede comenzar con un dígito
+    resultado = 1variable + 20;
+    escribeEnt(resultado);
+    devuelve;
+}
+

@@ -104,7 +104,6 @@ public class ExecutionEnvironmentEns2001
     @Override
     public final String translate (QuadrupleIF quadruple)
     {      
-        //TODO: Student work  // RE: oki doki!
 
         StringBuffer b = new StringBuffer();
         b.append("; " + quadruple.toString() + "\n");
@@ -312,9 +311,9 @@ public class ExecutionEnvironmentEns2001
             b.append(labelFin.toString() + ": NOP\n");
 
         } else if (quadruple.getOperation().equals("AXIOM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            b.append("AXIOM: NOP\n");
+            b.append("AXIOM: BR /PRINCIPAL\n");
             //b.append("CALL /PRINCIPAL\n");
-            b.append("BR /PRINCIPAL\n");
+            b.append("\n");
             //b.append("HALT\n");
         } else if (quadruple.getOperation().equals("CADENA")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             String r = operacion(quadruple.getResult());
@@ -326,14 +325,13 @@ public class ExecutionEnvironmentEns2001
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("MOVE " + o1 + ", " + r);        
             //b.append("PUSH " + o1 + "\n");
-        // } else if (quadruple.getOperation().equals("VARLOCAL") || quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-        //     b.append("; sin declarar\n");
         } else if (quadruple.getOperation().equals("PRINCIPAL")) {      // Equivalente a STARTGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
             b.append("PRINCIPAL: NOP\n");
             b.append("; Por implementar correctamente, relacionado con subprogramas\n");
-            b.append("MOVE .SP, .IX  ;guarda el valor de SP en IY\n");
+            b.append("MOVE .SP, .IX  ;guarda el valor de SP en IX\n");
+            b.append("MOVE .IX, .IY  ;guarda el valor de IX en IY\n");
             b.append("PUSH #-1       ;valor de retorno\n");
-            b.append("PUSH .IX       ;enlace de control\n");
+            b.append("PUSH .IY       ;enlace de control\n");
             b.append("PUSH .SR       ;estado maquina\n");
             b.append("PUSH .IX       ;enlace de acceso\n");
             
@@ -421,7 +419,7 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("BR")) {
             String r = operacion(quadruple.getResult());
             b.append("BR /" + r.toString() + "\n");
-        } else if (quadruple.getOperation().equals("BRF")) {
+        } else if (quadruple.getOperation().equals("BZ")) {
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("CMP " + r + ", #0\n");   /// CUIDADO, me da la sensación de que faltan ciertos parámetros para que sea exacto.

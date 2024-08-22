@@ -1,0 +1,63 @@
+#constante VERDADERO 1;
+#constante FALSO 0;
+#constante TAM 7;
+
+tipo entero vector[TAM];
+
+entero funSuma(entero x, entero y) {
+    entero suma;
+    suma = x + y;
+    devuelve suma;
+}
+
+vacio principal() {
+    entero a = 1, b = 2;
+    entero mayorDiez;
+    entero i;
+    vector v;
+
+    entero suma;
+    suma = funSuma(a, b);
+    mayorDiez = !(suma < 10);
+
+    si (mayorDiez == VERDADERO) {
+        escribe("mayor");
+    } sino {
+        escribe("menor");
+    }
+
+    mientras (i < TAM) {
+        escribeEnt(v[i]);
+        i++;
+    }
+    
+    i = 0;
+
+    escribe ("--");
+
+    mientras (i < TAM) {
+        v[i] = i;
+        i++;
+    }
+
+    i = 0;
+
+    mientras (i < TAM) {
+        escribeEnt(v[i]);
+        i++;
+    }
+
+    alternativas (a) {
+        caso 1:
+            { escribe("uno"); }
+            corte;
+        caso 2:
+            { escribe("dos"); }
+            corte;
+        pordefecto:
+            { escribe("otro"); }
+            corte;
+    }
+
+    devuelve;
+}

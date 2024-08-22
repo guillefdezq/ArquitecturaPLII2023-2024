@@ -1,0 +1,11 @@
+#constante UNO 1;
+#constante DOS 2;
+
+vacio principal() {
+    entero a = 1;
+    entero b = 2;
+    a = b + 3; /* Correcto */
+    a = b + ;  /* Error sintáctico: falta un operando */
+    a = b + "texto"; /* Error semántico: tipo incorrecto, 
+    pero es sintáctico por no estar comprendida en la gramática */
+}

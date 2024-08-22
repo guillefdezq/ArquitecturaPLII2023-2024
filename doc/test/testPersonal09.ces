@@ -1,0 +1,12 @@
+#constante UNO 1;
+entero variable1;
+entero Variable2;
+
+vacio principal() {
+    entero resultado;
+    variable1 = 10;
+    Variable2 = 20;
+    resultado = variable1 + Variable2;
+    escribeEnt(resultado); /* Debería escribir 30 */
+    devuelve;
+}

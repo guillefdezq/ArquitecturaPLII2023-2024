@@ -5,9 +5,10 @@ BR /PRINCIPAL
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-MOVE .SP, .IX  ;guarda el valor de SP en IY
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+MOVE .IX, .IY  ;guarda el valor de IX en IY
 PUSH #-1       ;valor de retorno
-PUSH .IX       ;enlace de control
+PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
@@ -30,7 +31,7 @@ BR /L_7
 L_6: MOVE #0, #-7[.IX]
 L_7: NOP
 
-; Quadruple - [BRF T_2, L_1, null]
+; Quadruple - [BZ T_2, L_1, null]
 CMP #-7[.IX], #0
 BZ /L_1
 

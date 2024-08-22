@@ -49,6 +49,12 @@ CADENA=\".*\"
                            yybegin(COMMENT);
                            anidamientoComentario++;
                          }
+
+        "*/"  {
+              anidamientoComentario--;
+              if ( anidamientoComentario < 0 )
+                lexicalErrorManager.lexicalFatalError ("Comentario no balanceado en línea " + ++yyline + ", columna " + ++yycolumn + ".");
+        }
           			       
         "+"              {  
                            Token token = new Token (sym.PLUS);
@@ -371,8 +377,8 @@ CADENA=\".*\"
 
      {ESPACIO_BLANCO} { }
                 .     { }
-     {fin} {
+     <<EOF>> {
             if ( anidamientoComentario != 0 )
-                lexicalErrorManager.lexicalError("Comentario no balanceado");
+                lexicalErrorManager.lexicalFatalError ("Comentario no balanceado: se ha alcanzado final de fichero.");
      }
 }

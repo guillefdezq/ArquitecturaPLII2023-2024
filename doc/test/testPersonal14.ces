@@ -1,0 +1,25 @@
+#constante si 1;        // Error sintáctico: se escribió una palabra reservada como nombre de variable
+#constante sino 0;      // Error sintáctico: se escribió una palabra reservada como nombre de variable
+
+tipo entero mientras;
+
+entero devuelve(entero caso, entero corte) {
+    entero si;
+    si = caso + corte;
+    devuelve si;
+}
+
+vacio principal() {
+    entero escribe = 1, escribeEnt = 2;
+    entero alternativas;
+    entero pordefecto;
+    mientras = devuelve(escribe, escribeEnt);
+
+    si (mientras == 1) {
+        escribe("error");
+    } sino {
+        escribe("error");
+    }
+
+    devuelve;
+}

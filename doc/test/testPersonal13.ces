@@ -1,0 +1,17 @@
+#constante TAM 3;
+tipo entero vector[TAM];
+
+vacio principal() {
+    entero a = 1, b = 2, c;
+    vector v;
+    v[0] = a + b; /* Suma = 3*/
+    v[1] = a * b; /* Producto = 2 */
+    v[2] = (a < b) && (b == 2); /* Operadores relacionales y lógicos = 1 */
+    c = v[0]++; /* Autoincremento = 4*/
+    si (v[2] == 1) { /* Comparación = Verdadero*/
+        escribe("Verdadero");
+    } sino {
+        escribe("Falso");
+    }
+    devuelve;
+}

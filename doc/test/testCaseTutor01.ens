@@ -52,9 +52,10 @@ RET
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP
 ; Por implementar correctamente, relacionado con subprogramas
-MOVE .SP, .IX  ;guarda el valor de SP en IY
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+MOVE .IX, .IY  ;guarda el valor de IX en IY
 PUSH #-1       ;valor de retorno
-PUSH .IX       ;enlace de control
+PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
@@ -65,9 +66,6 @@ MOVE .A, .SP
 ; Quadruple - [VARLOCAL a, 0, null]
 MOVE #0, #-4[.IX]
 ; Quadruple - [VARLOCALVECTOR lista3, 4, null]
-; sin declarar?
-
-; Quadruple - [DVLP STARTSUBPROGRAMA, null, null]
 ; sin declarar?
 
 ; Quadruple - [INICIO_FUNCION null, null, null]

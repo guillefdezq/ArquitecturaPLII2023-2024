@@ -1,0 +1,13 @@
+#constante VERDADERO 1;
+#constante FALSO 0; 
+
+vacio principal() {
+    /* Comentario externo
+        /* Comentario anidado 1 
+            /* Comentario anidado 1.1 */
+         /* Comentario anidado 1.2 */
+        */
+    */
+    escribe("Comentarios anidados correctamente");
+    devuelve;
+}

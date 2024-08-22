@@ -1,0 +1,13 @@
+#constante UNO 1;
+#constante DOS 2;
+
+entero suma(entero a, entero b) {
+    devuelve a + b;
+}
+
+vacio principal() {
+    entero resultado;
+    resultado = suma(UNO, DOS);
+    escribeEnt(resultado); /* Deberia imprimir 3 */
+    devuelve;
+}

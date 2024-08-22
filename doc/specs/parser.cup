@@ -35,7 +35,7 @@ action code {:
 	// Listado para las cadenas
 	List<QuadrupleIF> listaCadenas = new ArrayList<QuadrupleIF>();
 
-	boolean debugSout = false;	// Mostrar debug de las líneas System.out.println()
+	boolean debugSout = true;	// Mostrar debug de las líneas System.out.println()
 
 	int tamanodireccionprincipal = 4;
 
@@ -256,20 +256,26 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		ScopeIF thisScope = scopeManager.getCurrentScope();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(thisScope);
 
-		intermediateCodeBuilder.addQuadruple("AXIOM");
 
 		int direccionGlobal=10000;		//// Las variables globales deberían colocarse desde aquí
 
 		for(int i=0;i<thisScope.getSymbolTable().getSymbols().size();i++) {
 			SymbolIF symbol=thisScope.getSymbolTable().getSymbols().get(i);
 			if(symbol instanceof SymbolVariable) {
-				((SymbolVariable)symbol).setAddress(direccionGlobal);					/// No debería ser constante?		// Además las direcciones son machacadas por el bucle de a continuación.
+				((SymbolVariable)symbol).setAddress(direccionGlobal);
 				//Actualizamos el valor de direccionGlobal para el próximo símbolo 
 				direccionGlobal = direccionGlobal + symbol.getType().getSize();
 				if (debugSout) System.out.println("variable: " + symbol.getType());
 				if (debugSout) System.out.println("tamano: " + symbol.getType().getSize());
+				
+				Variable variable = new Variable(symbol.getName(), symbol.getScope());
+				int valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+
+				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
 			}
 		}
+		
+		intermediateCodeBuilder.addQuadruple("AXIOM");
 
 		List<ScopeIF> scopes = scopeManager.getAllScopes();
 
@@ -720,7 +726,6 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 				if (debugSout) System.out.println("     symbol.getType() = " + symbol.getType());
 				if ((symbol.getType() instanceof TypeSimple) && (symbol instanceof SymbolVariable) && !(symbol instanceof SymbolParameter)) {
 					valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
-				if (debugSout) System.out.println(" D E B U G");
 					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
 				} else if ((symbol.getType() instanceof TypeArray)) {
 					String valores = ((SymbolVariable)symbol).getValor();
@@ -907,7 +912,6 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 				if (debugSout) System.out.println("     symbol.getType() = " + symbol.getType());
 				if ((symbol.getType() instanceof TypeSimple) && (symbol instanceof SymbolVariable)) {
 					valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
-				if (debugSout) System.out.println(" D E B U G");
 					intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
 				} else if ((symbol.getType() instanceof TypeArray)) {
 					String valores = ((SymbolVariable)symbol).getValor();
@@ -1442,8 +1446,6 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY:check parametros:params CLOSE_KE
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		intermediateCodeBuilder.addQuadruple("DVLP", "STARTSUBPROGRAMA");
-
 		Value direccionesInvocador = new Value(scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size());
 		if (debugSout) System.out.println("Llamada tamano " + direccionesInvocador);
 
@@ -1489,8 +1491,6 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY:check parametros:params CLOSE_KE
 		Procedure procedure = new Procedure(funcion.getName(), funcion.getScope());
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
-
-		intermediateCodeBuilder.addQuadruple("DVLP", "STARTSUBPROGRAMA");
 
 		Value direccionesInvocador = new Value(scope.getSymbolTable().getSymbols().size() + scope.getTemporalTable().getTemporals().size());
 		if (debugSout) System.out.println("Llamada tamano " + direccionesInvocador);
@@ -1559,9 +1559,6 @@ sentencia ::= sentenciaDevuelve:sen {: if (debugSout) System.out.println("READ> 
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaDevuelve = vacío"); 
 		Sentencia sen = new Sentenciadevuelve();
-		// No usado
-		// TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());
-		// TemporalIF temporal = temporalFactory.create();
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
@@ -1571,9 +1568,6 @@ sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: if (debugSout) System.out.println("
 	| DEVUELVE expresion:exp SEMI_COLON {: 
 		Expresion expr = (Expresion) exp;
 		Sentencia sen = new Sentenciadevuelve(expr.getValor());
-		// No usado
-		// TemporalFactory temporalFactory = new TemporalFactory(scopeManager.getCurrentScope());
-		// TemporalIF temporal = temporalFactory.create();
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
@@ -1601,8 +1595,6 @@ sentenciaIncremento ::= IDENTIFICADOR:ident AUTO_INCREMENTO SEMI_COLON {: if (de
 		// Código intermedio
 		ScopeIF scope = scopeManager.getCurrentScope();
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
-		// TemporalFactory temporalFactory = new TemporalFactory(scope);
-		// TemporalIF temporal = temporalFactory.create();
 		
 		Sentencia sentencia = new Sentencia();
 
@@ -1772,7 +1764,7 @@ sentenciaSi ::= SI OPEN_KEY:check expresion:exp CLOSE_KEY sentencia:sentsi SINO 
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
-		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelElse);		// Ir al else si no coincide
+		intermediateCodeBuilder.addQuadruple("BZ", expr.getTemporal(), labelElse);		// Ir al else si no coincide
 		intermediateCodeBuilder.addQuadruples(sentenciasi.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BR", labelFinal); //me salgo del if
 		intermediateCodeBuilder.addQuadruple("INL", labelElse);
@@ -1799,7 +1791,7 @@ sentenciaSi ::= SI OPEN_KEY:check expresion:exp CLOSE_KEY sentencia:sentsi SINO 
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
-		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelFinal);	// Salir si no coincide
+		intermediateCodeBuilder.addQuadruple("BZ", expr.getTemporal(), labelFinal);	// Salir si no coincide
 		intermediateCodeBuilder.addQuadruples(sentenciasi.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
 
@@ -1830,7 +1822,6 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY:check expresion:exp CLOSE_KEY OPE
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
-		intermediateCodeBuilder.addQuadruple("DVLP", "Alternativas", "Inicio");
 
 		if (porDefecto != null) 
 			casos.addPorDefecto(porDefecto);		// No sé si esto es posible de ejecutar...
@@ -1868,8 +1859,6 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY:check expresion:exp CLOSE_KEY OPE
 		}
 
 		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
-
-		intermediateCodeBuilder.addQuadruple("DVLP", "Alternativas", "Final");
 
 		Sentenciaalternativas sentAlternativas =new Sentenciaalternativas();
 		sentAlternativas.setIntermediateCode(intermediateCodeBuilder.create());
@@ -1935,15 +1924,13 @@ sentenciaMientras ::= MIENTRAS OPEN_KEY:check expresion:exp CLOSE_KEY sentencia:
 		LabelIF labelFinal=labelFactory.create();
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
-		intermediateCodeBuilder.addQuadruple("DVLP", "Mientras", "Inicio");
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
-		intermediateCodeBuilder.addQuadruple("BRF", expr.getTemporal(), labelFinal);	// Salir si no coincide
+		intermediateCodeBuilder.addQuadruple("BZ", expr.getTemporal(), labelFinal);	// Salir si no coincide
 		intermediateCodeBuilder.addQuadruples(sentenciasmientras.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("BR", labelInicio); //me salgo del if
 		intermediateCodeBuilder.addQuadruple("INL", labelFinal);
 
-		intermediateCodeBuilder.addQuadruple("DVLP", "Mientras", "Final");
 
 		Sentenciamientras sentenciaMientras =new Sentenciamientras(expr, sentenciasmientras);
 		sentenciaMientras.setIntermediateCode(intermediateCodeBuilder.create());

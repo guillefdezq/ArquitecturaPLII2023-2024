@@ -1,0 +1,9 @@
+#constante VERDADERO 1;
+#constante FALSO 0;
+
+vacio principal() {
+    /* Comentario mal balanceado */
+    /* Este comentario no está cerrado
+    escribe("Comentarios mal balanceados");
+    devuelve;
+}

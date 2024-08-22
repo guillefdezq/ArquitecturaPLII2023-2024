@@ -1,0 +1,13 @@
+#constante TAM 3;
+tipo entero vector[TAM];
+
+vacio principal() {
+    entero a = 1, b = 2, c;
+    vector v;
+    /* Todos los errores son sintácticos */
+    v[0] = a + ; /* Error: falta operando derecho */
+    v[1] = * b; /* Error: falta operando izquierdo */
+    v[2] = (a < b) && ; /* Error: falta operando derecho */
+    c = v[0] + +; /* Error: operador mal utilizado */
+    devuelve;
+}
