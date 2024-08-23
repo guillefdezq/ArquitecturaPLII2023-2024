@@ -114,66 +114,21 @@ public class ExecutionEnvironmentEns2001
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("MOVE " + o1 + ", " + r);
         } else if (quadruple.getOperation().equals("STP")) {
-            //"STP", variable, expr.getTemporal(), refexpr.getTemporal()
-            //      resultado, primer operando,     segundo operando    
-            String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
-            // se debe añadir el numero del indice a la posicion que se quiere modificar
-            // por tanto, se coge la dirección de la variable y se añade, sin más.
-
-            // ADD indice, dirvariable     -> ADD  o2, o1 
-            // MOVE acumulador, resultado  -> MOVE .a, r
-
-            // System.out.println("STP: " + o1 + ", " + o2 + ", " + r + ", ");
-             
-            // int direccion = ((Variable) quadruple.getResult()).getAddress();
-            // int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
-            // int total = direccion + adicion;
-            // 
-            // System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
-            // 
-            // b.append("MOVE " + o1 + ", #-" + total + "[.IX]\n");  
-
             Variable var = (Variable) quadruple.getResult();
             int rdir = var.getAddress();
-            String varname = var.getName();
-            ScopeIF varscope = var.getScope();
-            SymbolVariable variable = (SymbolVariable) varscope.getSymbolTable().getSymbol(varname);
-            int typesize = variable.getType().getSize();
 
             b.append("ADD #" + rdir + ", " + o2 + "\n");
             b.append("SUB .IX, .A\n");
             b.append("MOVE " + o1 + ", [.A]\n"); 
             
         } else if (quadruple.getOperation().equals("MVP")) {
-            //("MVP", temporal, variable, expr.getTemporal())
             String r = operacion(quadruple.getResult());
-            String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
-            // se debe añadir el numero del indice a la posicion que se quiere modificar
-            // por tanto, se coge la dirección de la variable y se añade, sin más.
-
-            // ADD indice, dirvariable     -> ADD  o2, o1 
-            // MOVE acumulador, resultado  -> MOVE .a, r
-            
-            // System.out.println("MVP: " + o1 + ", " + o2 + ", " + r + ", ");
-
-            // int direccion = ((Variable) quadruple.getFirstOperand()).getAddress();
-            // int adicion = Integer.parseInt(quadruple.getSecondOperand().toString());
-            // int total = direccion + adicion;
-            // System.out.println("Dir: " + direccion + ", Adic: " + adicion + "=" + total);
-            // b.append("MOVE #-" + total + "[.IX], " + r + "\n");  
-            
-            
-            // String o2dir = ((Value) quadruple.getSecondOperand()).getValue().toString();
             
             Variable var = (Variable) quadruple.getFirstOperand();
             int o1dir = var.getAddress();
-            String varname = var.getName();
-            ScopeIF varscope = var.getScope();
-            SymbolVariable variable = (SymbolVariable) varscope.getSymbolTable().getSymbol(varname);
-            int typesize = variable.getType().getSize();
             
             b.append("ADD #" + o1dir + ", " + o2 + "\n");
             b.append("SUB .IX, .A\n");
@@ -209,11 +164,9 @@ public class ExecutionEnvironmentEns2001
             b.append(labelFalso.toString() + ": MOVE #0, " + r + "\n");
             b.append(labelFin.toString() + ": NOP\n");
 
-        } else if (quadruple.getOperation().equals("CMP")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("CMP")) { 
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
-
-            LabelFactory labelFactory = new LabelFactory();
 
             b.append("CMP " + r + ", " + o1 + "\n");
 
@@ -226,7 +179,7 @@ public class ExecutionEnvironmentEns2001
 			LabelIF labelFalso = labelFactory.create();
             LabelIF labelFin = labelFactory.create();
 
-            b.append("CMP " + o1 + ", #0\n");       // Si es igual a falso=0, pasar a verdadero, cualquier otro valor a falso.
+            b.append("CMP " + o1 + ", #0\n");       
             b.append("BZ /" + labelVerdad.toString() + "\n");
             b.append("BNZ /" + labelFalso.toString() + "\n");
             b.append(labelVerdad.toString() + ": MOVE #1, " + r + "\n");
@@ -236,9 +189,7 @@ public class ExecutionEnvironmentEns2001
 
         } else if (quadruple.getOperation().equals("LS")) {
             
-            //("LS", temporal, expra.getTemporal(), exprb.getTemporal());
-
-            String r = operacion(quadruple.getResult());  // Temporal
+            String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
 
@@ -262,7 +213,7 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("AND")) {
             
 
-            String r = operacion(quadruple.getResult());  // Temporal
+            String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
 
@@ -279,8 +230,6 @@ public class ExecutionEnvironmentEns2001
             LabelIF labelVerdad = labelFactory.create();
 			LabelIF labelFalso = labelFactory.create();
             LabelIF labelFin = labelFactory.create();
-
-            // Voy a utilizar registros para este caso, pero no sé si puedo realmente utilizarlo.
 
             // conversion a logica binaria interna A
             b.append("CMP " + o1 + ", #0\n");
@@ -310,22 +259,19 @@ public class ExecutionEnvironmentEns2001
             b.append(labelFalso.toString() + ": MOVE #0, " + r + "\n");
             b.append(labelFin.toString() + ": NOP\n");
 
-        } else if (quadruple.getOperation().equals("AXIOM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("AXIOM")) {        
             b.append("AXIOM: BR /PRINCIPAL\n");
-            //b.append("CALL /PRINCIPAL\n");
             b.append("\n");
-            //b.append("HALT\n");
-        } else if (quadruple.getOperation().equals("CADENA")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("CADENA")) {       
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append(o1 + ": DATA \""+ r +"\"");
             return b.toString();
-        } else if (quadruple.getOperation().equals("VARLOCAL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("VARLOCAL")) {        
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("MOVE " + o1 + ", " + r);        
-            //b.append("PUSH " + o1 + "\n");
-        } else if (quadruple.getOperation().equals("PRINCIPAL")) {      // Equivalente a STARTGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("PRINCIPAL")) {    
             b.append("PRINCIPAL: NOP\n");
             b.append("; Por implementar correctamente, relacionado con subprogramas\n");
             b.append("MOVE .SP, .IX  ;guarda el valor de SP en IX\n");
@@ -335,29 +281,27 @@ public class ExecutionEnvironmentEns2001
             b.append("PUSH .SR       ;estado maquina\n");
             b.append("PUSH .IX       ;enlace de acceso\n");
             
-        } else if (quadruple.getOperation().equals("PUNTERO_PRINCIPAL")) {   // Equivalente a PUNTEROGLOBAL        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            String r = operacion(quadruple.getResult());        //// No utilizado?
+        } else if (quadruple.getOperation().equals("PUNTERO_PRINCIPAL")) {   
+            String r = operacion(quadruple.getResult());        
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("SUB .IX, " + o1 + "\n");
             b.append("MOVE .A, .SP\n");
 
-        } else if (quadruple.getOperation().equals("INICIO_FUNCION")) {     // Equivalente a STARTSUBPROGRAMA        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("INICIO_FUNCION")) {     
             b.append("MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)\n");
             b.append("PUSH #-1       ;valor de retorno\n");
             b.append("PUSH .IY       ;enlace de control\n");
             b.append("PUSH .SR       ;estado maquina\n");
             b.append("PUSH .IX       ;enlace de acceso\n");
             
-        } else if (quadruple.getOperation().equals("PARAM")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("PARAM")) {        
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
-            //b.append("MOVE " + o1 + ", " + r + "\n");
             b.append("PUSH " + r + "\n");
-        } else if (quadruple.getOperation().equals("CALL")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS - DEBERÍA SER CALL f
+        } else if (quadruple.getOperation().equals("CALL")) {        
             String r = operacion(quadruple.getResult());
             b.append("MOVE .IY, .IX         ; Guarda el valor de IY en IX\n");
             b.append("CALL /" + r + "            ; Guarda PC y salta\n");
-//            b.append("MOVE .IX, .IY         ; Restaura puntero pila\n");
             b.append("MOVE #0[.IX], .R9     ; Guarda retorno\n");
             b.append("MOVE #-1[.IX], .SP    ; Restaura enlace de control\n");
             b.append("MOVE #-3[.IX], .IX    ; Restaura enlace de acceso\n");
@@ -365,30 +309,28 @@ public class ExecutionEnvironmentEns2001
             b.append("; Necesario: Recuperacion de la pila a su sitio original\n");
             
             
-        } else if (quadruple.getOperation().equals("VARSUBPROGRAMA")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("VARSUBPROGRAMA")) {       
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
 
             b.append("MOVE " + o1 + "[.IX], " + r); 
-            //b.append("PUSH " + o1 + "[.IX]\n");
-            //b.append("PUSH #0\n");
 
-        } else if (quadruple.getOperation().equals("PUNTERO_FUNCION")) {       // Equivalente a PUNTEROSUBPROGRAMA       // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
-            // DUPLICADO DE PUNTERO_PRINCIPAL
-            String r = operacion(quadruple.getResult());    // No se usa tampoco...?
+        } else if (quadruple.getOperation().equals("PUNTERO_FUNCION")) {       
+            
+            String r = operacion(quadruple.getResult());    
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("SUB .IX, " + o1 + "\n");
             b.append("MOVE .A, .SP\n"); 
 
-        } else if (quadruple.getOperation().equals("VALOR_RETORNO")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("VALOR_RETORNO")) {        
             String r = operacion(quadruple.getResult());
             b.append("MOVE .R9, " + r + "\n");
 
-        } else if (quadruple.getOperation().equals("FIN_FUNCION")) {        // Equivalente a FINSUBPROGRAMA        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS - Puede ser RET x
+        } else if (quadruple.getOperation().equals("FIN_FUNCION")) {        
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append(r.toString() + ": NOP\n");
-            //b.append("SUB .IX, " + o1 + "\n");
+            
             b.append("SUB .IX, " + o1 + "\n");
             b.append("MOVE .A, .SP\n");
             b.append("RET\n\n\n\n");
@@ -396,22 +338,15 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("FIN_PRINCIPAL")) {
             String r = operacion(quadruple.getResult());
             b.append(r.toString() + ": HALT\n");
-            //b.append("HALT\n");
-            //b.append("MOVE #-2, .SP\n");
-            //b.append("RET\n");
-
-        } else if (quadruple.getOperation().equals("DEVUELTO")) {       /// Este es el conflicto         // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+            
+        } else if (quadruple.getOperation().equals("DEVUELTO")) {       
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
-            // b.append("MOVE .R1, "+ r +" ;inicio registro activación llamada\n"); // En qué línea va esto?
             
-            // La comprobación debería revisar si el puntero pila es el inicio, 65535 o cerca, para detener el flujo.
             if (o1 != null) {
                 b.append("MOVE " + o1 + ", #-0[.IX]\n");
             }
             
-            //b.append("SUB .IX, " + o1+ ";posiciona el puntero de pila SP para recuperar el contador del programa\n"); 
-            //b.append("MOVE .A, .SP\n");
             b.append("BR /" + r.toString() + "    ;rescata de la pila el contenido del contador de programa\n");
         } else if (quadruple.getOperation().equals("INL")) {
             String r = operacion(quadruple.getResult());
@@ -422,15 +357,15 @@ public class ExecutionEnvironmentEns2001
         } else if (quadruple.getOperation().equals("BZ")) {
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
-            b.append("CMP " + r + ", #0\n");   /// CUIDADO, me da la sensación de que faltan ciertos parámetros para que sea exacto.
+            b.append("CMP " + r + ", #0\n");   
             b.append("BZ /" + o1.toString() + "\n");
-        } else if (quadruple.getOperation().equals("BNZ")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("BNZ")) {        
             String r = operacion(quadruple.getResult());
             b.append("BNZ /" + r.toString() + "\n");
-        } else if (quadruple.getOperation().equals("WRSTR")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("WRSTR")) {        
             String r = operacion(quadruple.getResult());
             if (r != null) b.append("WRSTR /" + r + " \n");
-        } else if (quadruple.getOperation().equals("WRINT")) {        // NO APARECE EN LA TABLA DEL ED DE CUARTETOS
+        } else if (quadruple.getOperation().equals("WRINT")) {        
             String r = operacion(quadruple.getResult());
             if (r != null) b.append("WRINT " + r + " \n");
             b.append("WRCHAR #10 \n");
@@ -450,7 +385,7 @@ public class ExecutionEnvironmentEns2001
         } else if (o instanceof Temporal) {
             return "#-" + ((Temporal) o).getAddress() + "[.IX]";
         } else if (o instanceof Label) {
-            return "" + ((Label) o).getName() + "";  // tendría que ponerle / para que no tenga que repetirlo... algo en esta función está mal
+            return "" + ((Label) o).getName() + "";
         } return null;
     }
 }

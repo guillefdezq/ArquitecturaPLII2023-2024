@@ -47,16 +47,20 @@ vacio principal() {
         i++;
     }
 
-    alternativas (a) {
-        caso 1:
-            { escribe("uno"); }
-            corte;
-        caso 2:
-            { escribe("dos"); }
-            corte;
-        pordefecto:
-            { escribe("otro"); }
-            corte;
+    a = 0;
+    mientras (a < 4) {
+        alternativas (a) {
+            caso 1:
+                { escribe("uno"); }
+                corte;
+            caso 2:
+                { escribe("dos"); }
+                corte;
+            pordefecto:
+                { escribe("otro"); }
+                corte;
+        }
+        a++;
     }
 
     devuelve;

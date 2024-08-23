@@ -50,8 +50,8 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_22, 45, null]
-SUB .IX, #45
+; Quadruple - [PUNTERO_PRINCIPAL T_25, 49, null]
+SUB .IX, #49
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL suma, 0, null]
@@ -104,21 +104,21 @@ MOVE #-4[.IX], #-19[.IX]
 MOVE #10, #-20[.IX]
 ; Quadruple - [LS T_5, T_3, T_4]
 CMP #-19[.IX], #-20[.IX]
-BZ /L_28
-BP /L_28
-L_27: MOVE #1, #-21[.IX]
-BR /L_29
-L_28: MOVE #0, #-21[.IX]
-L_29: NOP
+BZ /L_30
+BP /L_30
+L_29: MOVE #1, #-21[.IX]
+BR /L_31
+L_30: MOVE #0, #-21[.IX]
+L_31: NOP
 
 ; Quadruple - [NEG T_6, T_5, null]
 CMP #-21[.IX], #0
-BZ /L_30
-BNZ /L_31
-L_30: MOVE #1, #-22[.IX]
-BR /L_32
-L_31: MOVE #0, #-22[.IX]
-L_32: NOP
+BZ /L_32
+BNZ /L_33
+L_32: MOVE #1, #-22[.IX]
+BR /L_34
+L_33: MOVE #0, #-22[.IX]
+L_34: NOP
 
 ; Quadruple - [MV mayorDiez, T_6, null]
 MOVE #-22[.IX], #-15[.IX]
@@ -128,12 +128,12 @@ MOVE #-15[.IX], #-23[.IX]
 MOVE #1, #-24[.IX]
 ; Quadruple - [EQ T_9, T_7, T_8]
 CMP #-23[.IX], #-24[.IX]
-BZ /L_33
-BNZ /L_34
-L_33: MOVE #1, #-25[.IX]
-BR /L_35
-L_34: MOVE #0, #-25[.IX]
-L_35: NOP
+BZ /L_35
+BNZ /L_36
+L_35: MOVE #1, #-25[.IX]
+BR /L_37
+L_36: MOVE #0, #-25[.IX]
+L_37: NOP
 
 ; Quadruple - [BZ T_9, L_7, null]
 CMP #-25[.IX], #0
@@ -163,26 +163,26 @@ MOVE #-14[.IX], #-26[.IX]
 MOVE #7, #-27[.IX]
 ; Quadruple - [LS T_12, T_10, T_11]
 CMP #-26[.IX], #-27[.IX]
-BZ /L_37
-BP /L_37
-L_36: MOVE #1, #-28[.IX]
-BR /L_38
-L_37: MOVE #0, #-28[.IX]
-L_38: NOP
+BZ /L_39
+BP /L_39
+L_38: MOVE #1, #-28[.IX]
+BR /L_40
+L_39: MOVE #0, #-28[.IX]
+L_40: NOP
 
 ; Quadruple - [BZ T_12, L_10, null]
 CMP #-28[.IX], #0
 BZ /L_10
 
 ; Quadruple - [MV T_0, i, null]
-MOVE #-14[.IX], #-38[.IX]
+MOVE #-14[.IX], #-41[.IX]
 ; Quadruple - [MVP T_1, v, T_0]
-ADD #7, #-38[.IX]
+ADD #7, #-41[.IX]
 SUB .IX, .A
-MOVE [.A], #-39[.IX]
+MOVE [.A], #-42[.IX]
 
 ; Quadruple - [WRINT T_1, null, null]
-WRINT #-39[.IX] 
+WRINT #-42[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [ADD i, i, 1]
@@ -211,25 +211,25 @@ MOVE #-14[.IX], #-30[.IX]
 MOVE #7, #-31[.IX]
 ; Quadruple - [LS T_16, T_14, T_15]
 CMP #-30[.IX], #-31[.IX]
-BZ /L_40
-BP /L_40
-L_39: MOVE #1, #-32[.IX]
-BR /L_41
-L_40: MOVE #0, #-32[.IX]
-L_41: NOP
+BZ /L_42
+BP /L_42
+L_41: MOVE #1, #-32[.IX]
+BR /L_43
+L_42: MOVE #0, #-32[.IX]
+L_43: NOP
 
 ; Quadruple - [BZ T_16, L_13, null]
 CMP #-32[.IX], #0
 BZ /L_13
 
 ; Quadruple - [MV T_0, i, null]
-MOVE #-14[.IX], #-40[.IX]
+MOVE #-14[.IX], #-43[.IX]
 ; Quadruple - [MV T_2, i, null]
-MOVE #-14[.IX], #-42[.IX]
+MOVE #-14[.IX], #-45[.IX]
 ; Quadruple - [STP v, T_2, T_0]
-ADD #7, #-40[.IX]
+ADD #7, #-43[.IX]
 SUB .IX, .A
-MOVE #-42[.IX], [.A]
+MOVE #-45[.IX], [.A]
 
 ; Quadruple - [ADD i, i, 1]
 ADD #-14[.IX], #1
@@ -254,26 +254,26 @@ MOVE #-14[.IX], #-34[.IX]
 MOVE #7, #-35[.IX]
 ; Quadruple - [LS T_20, T_18, T_19]
 CMP #-34[.IX], #-35[.IX]
-BZ /L_43
-BP /L_43
-L_42: MOVE #1, #-36[.IX]
-BR /L_44
-L_43: MOVE #0, #-36[.IX]
-L_44: NOP
+BZ /L_45
+BP /L_45
+L_44: MOVE #1, #-36[.IX]
+BR /L_46
+L_45: MOVE #0, #-36[.IX]
+L_46: NOP
 
 ; Quadruple - [BZ T_20, L_16, null]
 CMP #-36[.IX], #0
 BZ /L_16
 
 ; Quadruple - [MV T_0, i, null]
-MOVE #-14[.IX], #-43[.IX]
+MOVE #-14[.IX], #-46[.IX]
 ; Quadruple - [MVP T_1, v, T_0]
-ADD #7, #-43[.IX]
+ADD #7, #-46[.IX]
 SUB .IX, .A
-MOVE [.A], #-44[.IX]
+MOVE [.A], #-47[.IX]
 
 ; Quadruple - [WRINT T_1, null, null]
-WRINT #-44[.IX] 
+WRINT #-47[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [ADD i, i, 1]
@@ -286,13 +286,37 @@ BR /L_15
 ; Quadruple - [INL L_16, null, null]
 L_16: NOP
 
-; Quadruple - [MV T_21, a, null]
-MOVE #-5[.IX], #-37[.IX]
+; Quadruple - [MV T_21, 0, null]
+MOVE #0, #-37[.IX]
+; Quadruple - [MV a, T_21, null]
+MOVE #-37[.IX], #-5[.IX]
+; Quadruple - [INL L_25, null, null]
+L_25: NOP
+
+; Quadruple - [MV T_22, a, null]
+MOVE #-5[.IX], #-38[.IX]
+; Quadruple - [MV T_23, 4, null]
+MOVE #4, #-39[.IX]
+; Quadruple - [LS T_24, T_22, T_23]
+CMP #-38[.IX], #-39[.IX]
+BZ /L_48
+BP /L_48
+L_47: MOVE #1, #-40[.IX]
+BR /L_49
+L_48: MOVE #0, #-40[.IX]
+L_49: NOP
+
+; Quadruple - [BZ T_24, L_26, null]
+CMP #-40[.IX], #0
+BZ /L_26
+
+; Quadruple - [MV T_0, a, null]
+MOVE #-5[.IX], #-48[.IX]
 ; Quadruple - [INL L_22, null, null]
 L_22: NOP
 
-; Quadruple - [CMP T_21, 2, null]
-CMP #-37[.IX], #2
+; Quadruple - [CMP T_0, 2, null]
+CMP #-48[.IX], #2
 
 ; Quadruple - [BNZ L_23, null, null]
 BNZ /L_23
@@ -306,8 +330,8 @@ BR /L_21
 ; Quadruple - [INL L_23, null, null]
 L_23: NOP
 
-; Quadruple - [CMP T_21, 1, null]
-CMP #-37[.IX], #1
+; Quadruple - [CMP T_0, 1, null]
+CMP #-48[.IX], #1
 
 ; Quadruple - [BNZ L_24, null, null]
 BNZ /L_24
@@ -326,6 +350,16 @@ WRSTR /L_19
 
 ; Quadruple - [INL L_21, null, null]
 L_21: NOP
+
+; Quadruple - [ADD a, a, 1]
+ADD #-5[.IX], #1
+MOVE .A , #-5[.IX]
+
+; Quadruple - [BR L_25, null, null]
+BR /L_25
+
+; Quadruple - [INL L_26, null, null]
+L_26: NOP
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
 BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
