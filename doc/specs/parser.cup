@@ -280,7 +280,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		List<ScopeIF> scopes = scopeManager.getAllScopes();
 
 
-
+		
 		for (ScopeIF scope : scopes) {
 			int direccionRA = 4;
 			List<SymbolIF> symbols = scope.getSymbolTable().getSymbols();
@@ -312,18 +312,9 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 				direccionRA = direccionRA + ((Temporal) temporal).getSize();
 			}
 		}
+		
 
-		/*	Deshabilitado: nunca se hace referencia a estas constantes por dirección, sino por su valor copiado directamente en el código final.
-		for (int i = 0; i < thisScope.getSymbolTable().getSymbols().size(); i++) {
-			SymbolIF symbol = thisScope.getSymbolTable().getSymbols().get(i);
-			if (symbol instanceof SymbolConstant) {
-				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				intermediateCodeBuilder.addQuadruple("VARGLOBAL", variable, 0);
-			}
-		}
-		*/
-
-		// Axiom ax = new Axiom(); // No puedo declarar un abstracto, así que haré una subclase
+		// Axiom ax = new Axiom(); // No se puede declarar un abstracto, en su defecto se crea una clase que pueda propagar
 		AxiomaCompilador ax = new AxiomaCompilador();
 
 		/// Falta añadir tipos?
@@ -820,6 +811,10 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: if (debugSout) System.out.printl
 
 		:}
  | IDENTIFICADOR:ident IDENTIFICADOR:id {: if (debugSout) System.out.println("READ> parametro = identificador"); 
+
+		semanticErrorManager.semanticFatalError("Error en la línea " + ident.getLine() + ", caracter " + ident.getColumn() + ". " + "No se puede utilizar el tipo " + id.getLexema() + ", sólo enteros.");
+
+		// Borrar lo de a continuación
 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
@@ -1436,6 +1431,9 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY:check parametros:params CLOSE_KE
 		ArrayList<Expresion> expresionesParametro = new ArrayList<Expresion>();
 		for (int i = 0; i < parametros.size(); i++) {
 			Expresion parametro = parametros.get(i);
+			if (parametro.getTipo() != listaParametros.get(i).getType()) {
+				semanticErrorManager.semanticFatalError("Error en la linea " + check.getLine() + ", caracter " + check.getColumn() + ". " + "El parametro de la posicion numero " + (i + 1) + ", con tipo " + parametro.getTipo().getName() + " no coincide con el tipo de parametro " + listaParametros.get(i).getType().getName() + ".");
+			}
 			parametro.setIdentificador(listaParametros.get(i).getName());
 			expresionesParametro.add(parametro);
 			if (debugSout) System.out.println("Parametro> " + parametro.getValor() + " " + parametro.getIdentificador());

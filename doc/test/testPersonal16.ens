@@ -7,12 +7,9 @@ L_test: NOP
 
 ; Quadruple - [VARSUBPROGRAMA x, -4, null]
 MOVE #-4[.IX], #-6[.IX]
-; Quadruple - [PUNTERO_FUNCION T_0, 8, null]
-SUB .IX, #8
+; Quadruple - [PUNTERO_FUNCION T_0, 7, null]
+SUB .IX, #7
 MOVE .A, .SP
-
-; Quadruple - [VARLOCALVECTOR x, 2, null]
-; sin declarar?
 
 ; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
 BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
@@ -36,9 +33,12 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_2, 6, null]
-SUB .IX, #6
+; Quadruple - [PUNTERO_PRINCIPAL T_2, 8, null]
+SUB .IX, #8
 MOVE .A, .SP
+
+; Quadruple - [VARLOCALVECTOR v, 2, null]
+; sin declarar?
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
 MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
@@ -47,10 +47,10 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [MV T_0, 0, null]
-MOVE #0, #-4[.IX]
+; Quadruple - [MV T_0, v, null]
+MOVE #-4[.IX], #-6[.IX]
 ; Quadruple - [PARAM T_0, null, null]
-PUSH #-4[.IX]
+PUSH #-6[.IX]
 
 ; Quadruple - [CALL L_test, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX

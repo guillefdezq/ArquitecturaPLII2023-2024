@@ -1,10 +1,13 @@
 tipo entero vector[2];
 
-vacio test (vector x) {
+vacio test (entero x) {
     devuelve;
 }
 
 vacio principal () {
-    test(0);
+    
+    
+    vector v;
+    test(v);  /* No permitir pasar tipos no enteros */
     devuelve;
 }
