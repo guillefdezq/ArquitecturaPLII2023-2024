@@ -1,0 +1,29 @@
+vacio principal () {  /* Prueba falso con cero */
+    entero i = 0;
+        entero j;
+
+    mientras (i < 5) {
+        si (i) {
+            escribe("verdad");
+        } sino {
+            escribe("falso");
+        }
+        i++;
+    }
+
+    escribe("TEST");
+
+    i = 0;
+
+    mientras (i < 5) {
+        j = i;
+        escribeEnt(j);
+        mientras (j) {
+            escribe("verdad");
+            j = 0;
+        }
+        i++;
+    }
+
+    devuelve;
+}

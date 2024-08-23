@@ -3,4 +3,5 @@ vacio principal () {
     /* entero entero = 2; */ /* falla correctamente */
 
     escribeEnt(ENTERO);
+    devuelve;
 }

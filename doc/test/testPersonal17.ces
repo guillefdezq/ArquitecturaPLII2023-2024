@@ -4,4 +4,5 @@ vacio principal () {
 
     escribeEnt(i);
     escribeEnt(I);
+    devuelve;
 }

@@ -1,0 +1,15 @@
+#constante UNO 1;
+
+
+vacio principal () {
+    /* No se permite poner constantes aquí */
+    #constante DOS 2;
+
+    entero i = 1;
+    entero I = 2;
+
+    escribeEnt(i);
+    escribeEnt(I);
+
+    devuelve;
+}

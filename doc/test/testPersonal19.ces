@@ -10,4 +10,6 @@ vacio principal () {
     entero escribe;
 
     escribeEnt(i);
+    
+    devuelve;
 }

@@ -693,17 +693,17 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		if (devuelto == null) 
 			semanticErrorManager.semanticFatalError("Error en " + (simboloFuncion instanceof SymbolProcedure ? "el procedimiento" : " la función") + identificador + ". Falta asignar una instrucción devuelto");
 
-			if (((SymbolIF) func0) instanceof SymbolFunction) {
-				if (devuelto.getFirstOperand() == null) {
-					semanticErrorManager.semanticFatalError("Error en la funcion " + identificador + ". Funcion " + identificador + " no devuelve valor.");
-				}
-			} else if (((SymbolIF) func0) instanceof SymbolProcedure) {
-				if (devuelto.getFirstOperand() != null) {
-					semanticErrorManager.semanticFatalError("Error en el procedimiento " + identificador + ". Procedimiento " + identificador + " devuelve valor.");
-				}
-			} else {
-				semanticErrorManager.semanticFatalError("Error en la funcion/procedimiento " + identificador + ". ERROR INESPERADO EN LA LINEA 821. No se ha podido detectar el tipo de retorno.");
+		if (((SymbolIF) func0) instanceof SymbolFunction) {
+			if (devuelto.getFirstOperand() == null) {
+				semanticErrorManager.semanticFatalError("Error en la funcion " + identificador + ". Funcion " + identificador + " no devuelve valor.");
 			}
+		} else if (((SymbolIF) func0) instanceof SymbolProcedure) {
+			if (devuelto.getFirstOperand() != null) {
+				semanticErrorManager.semanticFatalError("Error en el procedimiento " + identificador + ". Procedimiento " + identificador + " devuelve valor.");
+			}
+		} else {
+			semanticErrorManager.semanticFatalError("Error en la funcion/procedimiento " + identificador + ". ERROR INESPERADO EN LA LINEA 821. No se ha podido detectar el tipo de retorno.");
+		}
 
 
 		RESULT = funcion; :};
@@ -857,6 +857,22 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		if (debugSout) System.out.println("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
 
+		QuadrupleIF devuelto = null;
+		
+		for (QuadrupleIF cuadrupla : fp.getIntermediateCode()) {
+			if (debugSout) System.out.println(cuadrupla.toString());
+			if (cuadrupla.getOperation().equals("DEVUELTO")) {
+				devuelto = cuadrupla;
+				break;
+			}
+		}
+
+		if (devuelto == null) 
+			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Falta asignar una instrucción devuelto.");
+		
+		if (devuelto.getFirstOperand() != null) 
+			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Principal devuelve valor.");
+
 		RESULT = fp; :}
 				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias:listsent CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> funcionPrincipal + seccion variables"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
@@ -953,6 +969,22 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		if (debugSout) System.out.println("Tabla de Tipos:      " + scopeManager.getCurrentScope().getTypeTable());
 		if (debugSout) System.out.println("Tabla de Temporales: " + scopeManager.getCurrentScope().getTemporalTable());
 		scopeManager.closeScope();
+
+		QuadrupleIF devuelto = null;
+		
+		for (QuadrupleIF cuadrupla : fp.getIntermediateCode()) {
+			if (debugSout) System.out.println(cuadrupla.toString());
+			if (cuadrupla.getOperation().equals("DEVUELTO")) {
+				devuelto = cuadrupla;
+				break;
+			}
+		}
+
+		if (devuelto == null) 
+			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Falta asignar una instrucción devuelto.");
+		
+		if (devuelto.getFirstOperand() != null) 
+			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Principal devuelve valor.");
 
 		RESULT = fp;  :};
 
@@ -1710,10 +1742,8 @@ sentenciaAlternativas ::= ALTENATIVAS OPEN_KEY:check expresion:exp CLOSE_KEY OPE
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 
 
-		if (porDefecto != null) {
-			System.out.println("BINGO!");
+		if (porDefecto != null) 
 			casos.addPorDefecto(porDefecto);
-		} else System.out.println("NO BINGO!");
 
 		
 		for (Casoalt casoalt : casos.getCasos()) 
