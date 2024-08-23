@@ -1,6 +1,6 @@
 ; Quadruple - [AXIOM null, null, null]
-AXIOM: NOP
-BR /PRINCIPAL
+AXIOM: BR /PRINCIPAL
+
 
 ; Quadruple - [INL L_suma, null, null]
 L_suma: NOP

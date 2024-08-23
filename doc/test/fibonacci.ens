@@ -1,6 +1,6 @@
 ; Quadruple - [AXIOM null, null, null]
-AXIOM: NOP
-BR /PRINCIPAL
+AXIOM: BR /PRINCIPAL
+
 
 ; Quadruple - [INL L_printfibo, null, null]
 L_printfibo: NOP

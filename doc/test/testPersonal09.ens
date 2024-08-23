@@ -1,6 +1,10 @@
+; Quadruple - [VARLOCAL variable1, 0, null]
+MOVE #0, /10000
+; Quadruple - [VARLOCAL Variable2, 0, null]
+MOVE #0, /10001
 ; Quadruple - [AXIOM null, null, null]
-AXIOM: NOP
-BR /PRINCIPAL
+AXIOM: BR /PRINCIPAL
+
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP

@@ -1,6 +1,6 @@
 ; Quadruple - [AXIOM null, null, null]
-AXIOM: NOP
-BR /PRINCIPAL
+AXIOM: BR /PRINCIPAL
+
 
 ; Quadruple - [PRINCIPAL null, null, null]
 PRINCIPAL: NOP

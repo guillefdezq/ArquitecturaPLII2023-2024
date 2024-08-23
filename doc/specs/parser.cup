@@ -269,7 +269,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 				if (debugSout) System.out.println("tamano: " + symbol.getType().getSize());
 				
 				Variable variable = new Variable(symbol.getName(), symbol.getScope());
-				int valor = ( ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
+				int valor = ( symbol.getType() instanceof TypeSimple && ((SymbolVariable)symbol).getValor() != null ) ? Integer.parseInt(((SymbolVariable)symbol).getValor()) : 0;
 
 				intermediateCodeBuilder.addQuadruple("VARLOCAL", variable, valor);
 			}
@@ -280,7 +280,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 		List<ScopeIF> scopes = scopeManager.getAllScopes();
 
 
-		
+		/*	Este código es repetido y no es útil.
 		for (ScopeIF scope : scopes) {
 			int direccionRA = 4;
 			List<SymbolIF> symbols = scope.getSymbolTable().getSymbols();
@@ -312,7 +312,7 @@ axiom ::=  seccionConstantes seccionTipos  axiom1:axi1 {:
 				direccionRA = direccionRA + ((Temporal) temporal).getSize();
 			}
 		}
-		
+		*/
 
 		// Axiom ax = new Axiom(); // No se puede declarar un abstracto, en su defecto se crea una clase que pueda propagar
 		AxiomaCompilador ax = new AxiomaCompilador();

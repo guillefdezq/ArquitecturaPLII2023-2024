@@ -1,6 +1,8 @@
+; Quadruple - [VARLOCAL lista1, 0, null]
+MOVE #0, /10000
 ; Quadruple - [AXIOM null, null, null]
-AXIOM: NOP
-BR /PRINCIPAL
+AXIOM: BR /PRINCIPAL
+
 
 ; Quadruple - [INL L_incrementa, null, null]
 L_incrementa: NOP
