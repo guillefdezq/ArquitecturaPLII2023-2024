@@ -12,7 +12,7 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_17, 23, null]
+; Quadruple - [PUNTERO_PRINCIPAL 23, null, null]
 SUB .IX, #23
 MOVE .A, .SP
 

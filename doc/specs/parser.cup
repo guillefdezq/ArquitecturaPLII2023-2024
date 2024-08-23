@@ -626,10 +626,6 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}		
 
-
-		TemporalFactory temporalFactory = new TemporalFactory(scope);
-		TemporalIF temporal = temporalFactory.create();
-
 		LabelFactory labelFactory = new LabelFactory();
 		LabelIF labelInicio = labelFactory.create(identificador);
 		LabelIF labelFin = labelFactory.create("FIN_" + identificadorFin);
@@ -648,9 +644,9 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}
 
-		int tamanoRA = direccion;
+		String tamanoRA = String.valueOf(direccion);
 
-		intermediateCodeBuilder.addQuadruple("PUNTERO_FUNCION", temporal, tamanoRA);
+		intermediateCodeBuilder.addQuadruple("PUNTERO_FUNCION", tamanoRA);
 		
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
@@ -816,11 +812,9 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
-
-		int tamanoRA = direccion;
-		TemporalFactory temporalFactory = new TemporalFactory(scope);
-		TemporalIF temporal = temporalFactory.create();
-		intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
+		
+		String tamanoRA = String.valueOf(direccion);
+		intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", tamanoRA);
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {
@@ -914,10 +908,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("PRINCIPAL");
 
-		int tamanoRA = direccion;
-		TemporalFactory temporalFactory = new TemporalFactory(scope);
-		TemporalIF temporal = temporalFactory.create();
-		intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", temporal, tamanoRA);
+		String tamanoRA = String.valueOf(direccion);
+		intermediateCodeBuilder.addQuadruple("PUNTERO_PRINCIPAL", tamanoRA);
 
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getSymbolTable().getSymbols().size(); i++) {

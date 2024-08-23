@@ -283,8 +283,7 @@ public class ExecutionEnvironmentEns2001
             
         } else if (quadruple.getOperation().equals("PUNTERO_PRINCIPAL")) {   
             String r = operacion(quadruple.getResult());        
-            String o1 = operacion(quadruple.getFirstOperand());
-            b.append("SUB .IX, " + o1 + "\n");
+            b.append("SUB .IX, " + r + "\n");
             b.append("MOVE .A, .SP\n");
 
         } else if (quadruple.getOperation().equals("INICIO_FUNCION")) {     
@@ -316,10 +315,9 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE " + o1 + "[.IX], " + r); 
 
         } else if (quadruple.getOperation().equals("PUNTERO_FUNCION")) {       
-            
             String r = operacion(quadruple.getResult());    
             String o1 = operacion(quadruple.getFirstOperand());
-            b.append("SUB .IX, " + o1 + "\n");
+            b.append("SUB .IX, " + r + "\n");
             b.append("MOVE .A, .SP\n"); 
 
         } else if (quadruple.getOperation().equals("VALOR_RETORNO")) {        

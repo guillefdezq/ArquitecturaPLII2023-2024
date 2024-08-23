@@ -13,7 +13,7 @@ MOVE #-5[.IX], #-9[.IX]
 MOVE #-6[.IX], #-11[.IX]
 ; Quadruple - [VARSUBPROGRAMA val2, -7, null]
 MOVE #-7[.IX], #-10[.IX]
-; Quadruple - [PUNTERO_FUNCION T_13, 26, null]
+; Quadruple - [PUNTERO_FUNCION 26, null, null]
 SUB .IX, #26
 MOVE .A, .SP
 
@@ -113,7 +113,7 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_5, 9, null]
+; Quadruple - [PUNTERO_PRINCIPAL 9, null, null]
 SUB .IX, #9
 MOVE .A, .SP
 

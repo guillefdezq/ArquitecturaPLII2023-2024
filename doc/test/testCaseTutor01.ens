@@ -9,7 +9,7 @@ L_incrementa: NOP
 
 ; Quadruple - [VARSUBPROGRAMA x, -4, null]
 MOVE #-4[.IX], #-17[.IX]
-; Quadruple - [PUNTERO_FUNCION T_1, 26, null]
+; Quadruple - [PUNTERO_FUNCION 26, null, null]
 SUB .IX, #26
 MOVE .A, .SP
 
@@ -61,7 +61,7 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_2, 11, null]
+; Quadruple - [PUNTERO_PRINCIPAL 11, null, null]
 SUB .IX, #11
 MOVE .A, .SP
 

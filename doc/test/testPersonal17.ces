@@ -1,0 +1,7 @@
+vacio principal () {
+    entero i = 1;
+    entero I = 2;
+
+    escribeEnt(i);
+    escribeEnt(I);
+}

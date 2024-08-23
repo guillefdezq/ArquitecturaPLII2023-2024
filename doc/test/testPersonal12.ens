@@ -7,7 +7,7 @@ L_factorial: NOP
 
 ; Quadruple - [VARSUBPROGRAMA n, -4, null]
 MOVE #-4[.IX], #-8[.IX]
-; Quadruple - [PUNTERO_FUNCION T_6, 21, null]
+; Quadruple - [PUNTERO_FUNCION 21, null, null]
 SUB .IX, #21
 MOVE .A, .SP
 
@@ -92,7 +92,7 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_3, 9, null]
+; Quadruple - [PUNTERO_PRINCIPAL 9, null, null]
 SUB .IX, #9
 MOVE .A, .SP
 

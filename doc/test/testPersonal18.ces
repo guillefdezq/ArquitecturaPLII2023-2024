@@ -1,0 +1,6 @@
+vacio principal () {
+    entero ENTERO = 1;
+    /* entero entero = 2; */ /* falla correctamente */
+
+    escribeEnt(ENTERO);
+}

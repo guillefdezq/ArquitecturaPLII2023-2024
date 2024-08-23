@@ -9,7 +9,7 @@ L_funSuma: NOP
 MOVE #-4[.IX], #-8[.IX]
 ; Quadruple - [VARSUBPROGRAMA y, -5, null]
 MOVE #-5[.IX], #-9[.IX]
-; Quadruple - [PUNTERO_FUNCION T_4, 14, null]
+; Quadruple - [PUNTERO_FUNCION 14, null, null]
 SUB .IX, #14
 MOVE .A, .SP
 
@@ -50,7 +50,7 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL T_25, 49, null]
+; Quadruple - [PUNTERO_PRINCIPAL 49, null, null]
 SUB .IX, #49
 MOVE .A, .SP
 
