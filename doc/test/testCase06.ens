@@ -29,12 +29,12 @@ MOVE #-7[.IX], #-11[.IX]
 MOVE #-11[.IX], #-6[.IX]
 ; Quadruple - [MV T_4, c, null]
 MOVE #-6[.IX], #-12[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_1, T_4, null]
+; Quadruple - [DEVUELTO L_FIN_incrementa, T_4, null]
 MOVE #-12[.IX], #-0[.IX]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+BR /L_FIN_incrementa    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
-L_FIN_FUN_1: NOP
+; Quadruple - [FIN_FUNCION L_FIN_incrementa, 6, null]
+L_FIN_incrementa: NOP
 SUB .IX, #6
 MOVE .A, .SP
 RET
@@ -96,9 +96,9 @@ MOVE #-5[.IX], #-9[.IX]
 WRINT #-9[.IX] 
 WRCHAR #10 
 
-; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
-BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [DEVUELTO L_FIN_principal, null, null]
+BR /L_FIN_principal    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_2, null, null]
-L_FIN_FUN_2: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 

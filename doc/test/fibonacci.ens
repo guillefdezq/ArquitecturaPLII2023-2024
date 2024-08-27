@@ -91,11 +91,11 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Quadruple - [INL L_2, null, null]
 L_2: NOP
 
-; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [DEVUELTO L_FIN_printfibo, null, null]
+BR /L_FIN_printfibo    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 9, null]
-L_FIN_FUN_1: NOP
+; Quadruple - [FIN_FUNCION L_FIN_printfibo, 9, null]
+L_FIN_printfibo: NOP
 SUB .IX, #9
 MOVE .A, .SP
 RET
@@ -153,9 +153,9 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
 
-; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
-BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [DEVUELTO L_FIN_principal, null, null]
+BR /L_FIN_principal    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_2, null, null]
-L_FIN_FUN_2: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 

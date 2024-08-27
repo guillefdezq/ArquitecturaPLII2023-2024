@@ -388,8 +388,8 @@ WRSTR /L_28
 ; Quadruple - [INL L_29, null, null]
 L_29: NOP
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
-L_FIN_FUN_1: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA el 3\n, L_0, null]
 L_0: DATA "el 3\n"

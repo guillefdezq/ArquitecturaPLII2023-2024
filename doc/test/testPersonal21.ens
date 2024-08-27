@@ -140,11 +140,11 @@ BR /L_11
 ; Quadruple - [INL L_12, null, null]
 L_12: NOP
 
-; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [DEVUELTO L_FIN_principal, null, null]
+BR /L_FIN_principal    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
-L_FIN_FUN_1: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA verdad\n, L_0, null]
 L_0: DATA "verdad\n"

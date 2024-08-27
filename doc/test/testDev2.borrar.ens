@@ -222,8 +222,8 @@ BR /L_11
 ; Quadruple - [INL L_12, null, null]
 L_12: NOP
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
-L_FIN_FUN_1: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA Entro en Loop\n, L_5, null]
 L_5: DATA "Entro en Loop\n"

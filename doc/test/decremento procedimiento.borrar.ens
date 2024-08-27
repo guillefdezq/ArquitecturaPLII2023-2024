@@ -34,8 +34,8 @@ MOVE #-7[.IX], #-11[.IX]
 WRINT #-11[.IX] 
 WRCHAR #10 
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 6, null]
-L_FIN_FUN_1: NOP
+; Quadruple - [FIN_FUNCION L_FIN_decrementa, 6, null]
+L_FIN_decrementa: NOP
 SUB .IX, #6
 MOVE .A, .SP
 RET
@@ -94,8 +94,8 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Quadruple - [WRSTR L_6, null, null]
 WRSTR /L_6 
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_2, null, null]
-L_FIN_FUN_2: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA y (4) = \n, L_0, null]
 L_0: DATA "y (4) = \n"

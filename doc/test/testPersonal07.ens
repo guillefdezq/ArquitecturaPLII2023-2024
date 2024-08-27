@@ -27,12 +27,12 @@ MOVE .A , #-12[.IX]
 MOVE #-12[.IX], #-7[.IX]
 ; Quadruple - [MV T_3, suma, null]
 MOVE #-7[.IX], #-13[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_1, T_3, null]
+; Quadruple - [DEVUELTO L_FIN_funSuma, T_3, null]
 MOVE #-13[.IX], #-0[.IX]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+BR /L_FIN_funSuma    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 7, null]
-L_FIN_FUN_1: NOP
+; Quadruple - [FIN_FUNCION L_FIN_funSuma, 7, null]
+L_FIN_funSuma: NOP
 SUB .IX, #7
 MOVE .A, .SP
 RET
@@ -361,11 +361,11 @@ BR /L_25
 ; Quadruple - [INL L_26, null, null]
 L_26: NOP
 
-; Quadruple - [DEVUELTO L_FIN_FUN_2, null, null]
-BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [DEVUELTO L_FIN_principal, null, null]
+BR /L_FIN_principal    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_2, null, null]
-L_FIN_FUN_2: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA mayor\n, L_4, null]
 L_4: DATA "mayor\n"

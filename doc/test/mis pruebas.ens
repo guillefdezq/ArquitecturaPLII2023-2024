@@ -19,8 +19,8 @@ MOVE .A, .SP
 ; Quadruple - [WRSTR L_0, null, null]
 WRSTR /L_0 
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
-L_FIN_FUN_1: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA \n, L_0, null]
 L_0: DATA "\n"

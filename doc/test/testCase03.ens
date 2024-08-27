@@ -34,11 +34,11 @@ MOVE #0, #-5[.IX]
 WRINT #-5[.IX] 
 WRCHAR #10 
 
-; Quadruple - [DEVUELTO L_FIN_FUN_1, null, null]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [DEVUELTO L_FIN_principal, null, null]
+BR /L_FIN_principal    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
-L_FIN_FUN_1: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA verdadero\n, L_0, null]
 L_0: DATA "verdadero\n"

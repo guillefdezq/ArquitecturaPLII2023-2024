@@ -33,12 +33,12 @@ MOVE .A , #-13[.IX]
 MOVE #-13[.IX], #-7[.IX]
 ; Quadruple - [MV T_3, suma, null]
 MOVE #-7[.IX], #-14[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_1, T_3, null]
+; Quadruple - [DEVUELTO L_FIN_funSuma, T_3, null]
 MOVE #-14[.IX], #-0[.IX]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+BR /L_FIN_funSuma    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 7, null]
-L_FIN_FUN_1: NOP
+; Quadruple - [FIN_FUNCION L_FIN_funSuma, 7, null]
+L_FIN_funSuma: NOP
 SUB .IX, #7
 MOVE .A, .SP
 RET
@@ -115,8 +115,8 @@ MOVE .A , #-6[.IX]
 ; Quadruple - [INL L_4, null, null]
 L_4: NOP
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_2, 6, null]
-L_FIN_FUN_2: NOP
+; Quadruple - [FIN_FUNCION L_FIN_comprobarEdad, 6, null]
+L_FIN_comprobarEdad: NOP
 SUB .IX, #6
 MOVE .A, .SP
 RET
@@ -321,11 +321,11 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
 
-; Quadruple - [DEVUELTO L_FIN_FUN_7, null, null]
-BR /L_FIN_FUN_7    ;rescata de la pila el contenido del contador de programa
+; Quadruple - [DEVUELTO L_FIN_principal, null, null]
+BR /L_FIN_principal    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_7, null, null]
-L_FIN_FUN_7: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA mayor\n, L_15, null]
 L_15: DATA "mayor\n"

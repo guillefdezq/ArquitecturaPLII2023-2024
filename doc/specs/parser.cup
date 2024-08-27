@@ -35,7 +35,7 @@ action code {:
 	// Listado para las cadenas
 	List<QuadrupleIF> listaCadenas = new ArrayList<QuadrupleIF>();
 
-	boolean debugSout = false;	// Mostrar debug de las líneas System.out.println()
+	boolean debugSout = true;	// Mostrar debug de las líneas System.out.println()
 
 	String nombreFuncion = "unknown";
 
@@ -146,6 +146,7 @@ non terminal Expresion           			opcionesEscribeEnt;
 non terminal Sentencia			sentenciaDevuelve;
 non terminal						abrirAmbito;			// No hay código intermedio
 non terminal						cerrarAmbito;			// No hay código intermedio
+non terminal						marcadorPrincipal;			// No hay código intermedio
 
 // Declaracion de relaciones de precedencia
 precedence left     AND_LOGICA;
@@ -234,6 +235,11 @@ program ::=
 
 
 epsilon ::= ;
+
+marcadorPrincipal ::= {:
+	nombreFuncion = "principal";
+	if (debugSout) System.out.println("<<< nombreFuncion = " + nombreFuncion);
+:};
 
 abrirAmbito ::= {:
 		// abrir ámbito
@@ -768,14 +774,10 @@ parametro ::= ENTERO:entero IDENTIFICADOR:id {: if (debugSout) System.out.printl
 
 		:};
 
-funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias:listSent CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> funcionPrincipal"); 
+funcionPrincipal ::= VACIO principal abrirAmbito marcadorPrincipal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos listadoSentencias:listSent CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> funcionPrincipal"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
-
-		nombreFuncion = "principal";
-
-		if (debugSout) System.out.println("<<< nombreFuncion = " + nombreFuncion);
 
 		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), nombreFuncion, (TypeIF) scopeManager.searchType("VACIO"));
 
@@ -885,14 +887,10 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Principal devuelve valor.");
 
 		RESULT = fp; :}
-				  |  VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias:listsent CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> funcionPrincipal + seccion variables"); 
+				  |  VACIO principal abrirAmbito marcadorPrincipal OPEN_KEY CLOSE_KEY OPEN_PARENTHESIS seccionTipos seccionVariables listadoSentencias:listsent CLOSE_PARENTHESIS {: if (debugSout) System.out.println("READ> funcionPrincipal + seccion variables"); 
 		ScopeIF scope = scopeManager.getCurrentScope();
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
-
-		nombreFuncion = "principal";
-
-		if (debugSout) System.out.println("<<< nombreFuncion = " + nombreFuncion);
 
 		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), nombreFuncion, (TypeIF) scopeManager.searchType("VACIO"));
 
