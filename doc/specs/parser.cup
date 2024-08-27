@@ -690,15 +690,15 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}
 
-		if (devuelto == null) 
-			semanticErrorManager.semanticFatalError("Error en " + (simboloFuncion instanceof SymbolProcedure ? "el procedimiento" : " la función") + identificador + ". Falta asignar una instrucción devuelto");
+		if (devuelto == null && ((SymbolIF) func0) instanceof SymbolFunction) 
+			semanticErrorManager.semanticFatalError("Error en la función" + identificador + ". Falta asignar una instrucción devuelto.");
 
 		if (((SymbolIF) func0) instanceof SymbolFunction) {
 			if (devuelto.getFirstOperand() == null) {
 				semanticErrorManager.semanticFatalError("Error en la funcion " + identificador + ". Funcion " + identificador + " no devuelve valor.");
 			}
 		} else if (((SymbolIF) func0) instanceof SymbolProcedure) {
-			if (devuelto.getFirstOperand() != null) {
+			if (devuelto != null && devuelto.getFirstOperand() != null) {
 				semanticErrorManager.semanticFatalError("Error en el procedimiento " + identificador + ". Procedimiento " + identificador + " devuelve valor.");
 			}
 		} else {
@@ -866,11 +866,8 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 				break;
 			}
 		}
-
-		if (devuelto == null) 
-			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Falta asignar una instrucción devuelto.");
 		
-		if (devuelto.getFirstOperand() != null) 
+		if (devuelto != null && devuelto.getFirstOperand() != null) 
 			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Principal devuelve valor.");
 
 		RESULT = fp; :}
@@ -980,10 +977,7 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 			}
 		}
 
-		if (devuelto == null) 
-			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Falta asignar una instrucción devuelto.");
-		
-		if (devuelto.getFirstOperand() != null) 
+		if (devuelto != null && devuelto.getFirstOperand() != null) 
 			semanticErrorManager.semanticFatalError("Error en el procedimiento principal. Principal devuelve valor.");
 
 		RESULT = fp;  :};

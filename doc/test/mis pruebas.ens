@@ -1,0 +1,26 @@
+; Quadruple - [AXIOM null, null, null]
+AXIOM: BR /PRINCIPAL
+
+
+; Quadruple - [PRINCIPAL null, null, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+MOVE .IX, .IY  ;guarda el valor de IX en IY
+PUSH #-1       ;valor de retorno
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [PUNTERO_PRINCIPAL 4, null, null]
+SUB .IX, #4
+MOVE .A, .SP
+
+; Quadruple - [WRSTR L_0, null, null]
+WRSTR /L_0 
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
+L_FIN_FUN_1: HALT
+
+; Quadruple - [CADENA \n, L_0, null]
+L_0: DATA "\n"

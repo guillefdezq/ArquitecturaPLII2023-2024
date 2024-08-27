@@ -1,0 +1,423 @@
+; Quadruple - [AXIOM null, null, null]
+AXIOM: BR /PRINCIPAL
+
+
+; Quadruple - [PRINCIPAL null, null, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+MOVE .IX, .IY  ;guarda el valor de IX en IY
+PUSH #-1       ;valor de retorno
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [PUNTERO_PRINCIPAL 37, null, null]
+SUB .IX, #37
+MOVE .A, .SP
+
+; Quadruple - [VARLOCAL a, 1, null]
+MOVE #1, #-4[.IX]
+; Quadruple - [VARLOCAL b, 2, null]
+MOVE #2, #-5[.IX]
+; Quadruple - [MV T_0, 3, null]
+MOVE #3, #-6[.IX]
+; Quadruple - [BZ T_0, L_1, null]
+CMP #-6[.IX], #0
+BZ /L_1
+
+; Quadruple - [WRSTR L_0, null, null]
+WRSTR /L_0 
+
+; Quadruple - [INL L_1, null, null]
+L_1: NOP
+
+; Quadruple - [MV T_1, 2, null]
+MOVE #2, #-7[.IX]
+; Quadruple - [NEG T_2, T_1, null]
+CMP #-7[.IX], #0
+BZ /L_31
+BNZ /L_32
+L_31: MOVE #1, #-8[.IX]
+BR /L_33
+L_32: MOVE #0, #-8[.IX]
+L_33: NOP
+
+; Quadruple - [BZ T_2, L_5, null]
+CMP #-8[.IX], #0
+BZ /L_5
+
+; Quadruple - [WRSTR L_2, null, null]
+WRSTR /L_2 
+
+; Quadruple - [BR L_4, null, null]
+BR /L_4
+
+; Quadruple - [INL L_5, null, null]
+L_5: NOP
+
+; Quadruple - [WRSTR L_3, null, null]
+WRSTR /L_3 
+
+; Quadruple - [INL L_4, null, null]
+L_4: NOP
+
+; Quadruple - [MV T_3, 0, null]
+MOVE #0, #-9[.IX]
+; Quadruple - [MV T_4, 1, null]
+MOVE #1, #-10[.IX]
+; Quadruple - [NEG T_5, T_4, null]
+CMP #-10[.IX], #0
+BZ /L_34
+BNZ /L_35
+L_34: MOVE #1, #-11[.IX]
+BR /L_36
+L_35: MOVE #0, #-11[.IX]
+L_36: NOP
+
+; Quadruple - [LS T_6, T_3, T_5]
+CMP #-9[.IX], #-11[.IX]
+BZ /L_38
+BP /L_38
+L_37: MOVE #1, #-12[.IX]
+BR /L_39
+L_38: MOVE #0, #-12[.IX]
+L_39: NOP
+
+; Quadruple - [BZ T_6, L_9, null]
+CMP #-12[.IX], #0
+BZ /L_9
+
+; Quadruple - [WRSTR L_6, null, null]
+WRSTR /L_6 
+
+; Quadruple - [BR L_8, null, null]
+BR /L_8
+
+; Quadruple - [INL L_9, null, null]
+L_9: NOP
+
+; Quadruple - [WRSTR L_7, null, null]
+WRSTR /L_7 
+
+; Quadruple - [INL L_8, null, null]
+L_8: NOP
+
+; Quadruple - [MV T_7, 0, null]
+MOVE #0, #-13[.IX]
+; Quadruple - [NEG T_8, T_7, null]
+CMP #-13[.IX], #0
+BZ /L_40
+BNZ /L_41
+L_40: MOVE #1, #-14[.IX]
+BR /L_42
+L_41: MOVE #0, #-14[.IX]
+L_42: NOP
+
+; Quadruple - [MV T_9, 1, null]
+MOVE #1, #-15[.IX]
+; Quadruple - [LS T_10, T_8, T_9]
+CMP #-14[.IX], #-15[.IX]
+BZ /L_44
+BP /L_44
+L_43: MOVE #1, #-16[.IX]
+BR /L_45
+L_44: MOVE #0, #-16[.IX]
+L_45: NOP
+
+; Quadruple - [BZ T_10, L_13, null]
+CMP #-16[.IX], #0
+BZ /L_13
+
+; Quadruple - [WRSTR L_10, null, null]
+WRSTR /L_10 
+
+; Quadruple - [BR L_12, null, null]
+BR /L_12
+
+; Quadruple - [INL L_13, null, null]
+L_13: NOP
+
+; Quadruple - [WRSTR L_11, null, null]
+WRSTR /L_11 
+
+; Quadruple - [INL L_12, null, null]
+L_12: NOP
+
+; Quadruple - [MV T_11, 3, null]
+MOVE #3, #-17[.IX]
+; Quadruple - [MV T_12, 2, null]
+MOVE #2, #-18[.IX]
+; Quadruple - [AND T_13, T_11, T_12]
+CMP #-17[.IX], #0
+BZ /L_47
+BNZ /L_46
+L_46: MOVE #1, .R0
+BR /L_48
+L_47: MOVE #0, .R0
+L_48: NOP
+CMP #-18[.IX], #0
+BZ /L_50
+BNZ /L_49
+L_49: MOVE #1, .R1
+BR /L_51
+L_50: MOVE #0, .R1
+L_51: NOP
+AND .R0, .R1
+CMP .A, #1
+BZ /L_52
+BNZ /L_53
+L_52: MOVE #1, #-19[.IX]
+BR /L_54
+L_53: MOVE #0, #-19[.IX]
+L_54: NOP
+
+; Quadruple - [BZ T_13, L_15, null]
+CMP #-19[.IX], #0
+BZ /L_15
+
+; Quadruple - [WRSTR L_14, null, null]
+WRSTR /L_14 
+
+; Quadruple - [INL L_15, null, null]
+L_15: NOP
+
+; Quadruple - [MV T_14, 1, null]
+MOVE #1, #-20[.IX]
+; Quadruple - [MV T_15, 2, null]
+MOVE #2, #-21[.IX]
+; Quadruple - [AND T_16, T_14, T_15]
+CMP #-20[.IX], #0
+BZ /L_56
+BNZ /L_55
+L_55: MOVE #1, .R0
+BR /L_57
+L_56: MOVE #0, .R0
+L_57: NOP
+CMP #-21[.IX], #0
+BZ /L_59
+BNZ /L_58
+L_58: MOVE #1, .R1
+BR /L_60
+L_59: MOVE #0, .R1
+L_60: NOP
+AND .R0, .R1
+CMP .A, #1
+BZ /L_61
+BNZ /L_62
+L_61: MOVE #1, #-22[.IX]
+BR /L_63
+L_62: MOVE #0, #-22[.IX]
+L_63: NOP
+
+; Quadruple - [BZ T_16, L_17, null]
+CMP #-22[.IX], #0
+BZ /L_17
+
+; Quadruple - [WRSTR L_16, null, null]
+WRSTR /L_16 
+
+; Quadruple - [INL L_17, null, null]
+L_17: NOP
+
+; Quadruple - [MV T_17, a, null]
+MOVE #-4[.IX], #-23[.IX]
+; Quadruple - [MV T_18, b, null]
+MOVE #-5[.IX], #-24[.IX]
+; Quadruple - [AND T_19, T_17, T_18]
+CMP #-23[.IX], #0
+BZ /L_65
+BNZ /L_64
+L_64: MOVE #1, .R0
+BR /L_66
+L_65: MOVE #0, .R0
+L_66: NOP
+CMP #-24[.IX], #0
+BZ /L_68
+BNZ /L_67
+L_67: MOVE #1, .R1
+BR /L_69
+L_68: MOVE #0, .R1
+L_69: NOP
+AND .R0, .R1
+CMP .A, #1
+BZ /L_70
+BNZ /L_71
+L_70: MOVE #1, #-25[.IX]
+BR /L_72
+L_71: MOVE #0, #-25[.IX]
+L_72: NOP
+
+; Quadruple - [BZ T_19, L_19, null]
+CMP #-25[.IX], #0
+BZ /L_19
+
+; Quadruple - [WRSTR L_18, null, null]
+WRSTR /L_18 
+
+; Quadruple - [INL L_19, null, null]
+L_19: NOP
+
+; Quadruple - [MV T_20, 0, null]
+MOVE #0, #-26[.IX]
+; Quadruple - [MV a, T_20, null]
+MOVE #-26[.IX], #-4[.IX]
+; Quadruple - [MV T_21, a, null]
+MOVE #-4[.IX], #-27[.IX]
+; Quadruple - [MV T_22, b, null]
+MOVE #-5[.IX], #-28[.IX]
+; Quadruple - [AND T_23, T_21, T_22]
+CMP #-27[.IX], #0
+BZ /L_74
+BNZ /L_73
+L_73: MOVE #1, .R0
+BR /L_75
+L_74: MOVE #0, .R0
+L_75: NOP
+CMP #-28[.IX], #0
+BZ /L_77
+BNZ /L_76
+L_76: MOVE #1, .R1
+BR /L_78
+L_77: MOVE #0, .R1
+L_78: NOP
+AND .R0, .R1
+CMP .A, #1
+BZ /L_79
+BNZ /L_80
+L_79: MOVE #1, #-29[.IX]
+BR /L_81
+L_80: MOVE #0, #-29[.IX]
+L_81: NOP
+
+; Quadruple - [NEG T_24, T_23, null]
+CMP #-29[.IX], #0
+BZ /L_82
+BNZ /L_83
+L_82: MOVE #1, #-30[.IX]
+BR /L_84
+L_83: MOVE #0, #-30[.IX]
+L_84: NOP
+
+; Quadruple - [BZ T_24, L_23, null]
+CMP #-30[.IX], #0
+BZ /L_23
+
+; Quadruple - [WRSTR L_20, null, null]
+WRSTR /L_20 
+
+; Quadruple - [BR L_22, null, null]
+BR /L_22
+
+; Quadruple - [INL L_23, null, null]
+L_23: NOP
+
+; Quadruple - [WRSTR L_21, null, null]
+WRSTR /L_21 
+
+; Quadruple - [INL L_22, null, null]
+L_22: NOP
+
+; Quadruple - [MV T_25, 0, null]
+MOVE #0, #-31[.IX]
+; Quadruple - [MV T_26, 2, null]
+MOVE #2, #-32[.IX]
+; Quadruple - [AND T_27, T_25, T_26]
+CMP #-31[.IX], #0
+BZ /L_86
+BNZ /L_85
+L_85: MOVE #1, .R0
+BR /L_87
+L_86: MOVE #0, .R0
+L_87: NOP
+CMP #-32[.IX], #0
+BZ /L_89
+BNZ /L_88
+L_88: MOVE #1, .R1
+BR /L_90
+L_89: MOVE #0, .R1
+L_90: NOP
+AND .R0, .R1
+CMP .A, #1
+BZ /L_91
+BNZ /L_92
+L_91: MOVE #1, #-33[.IX]
+BR /L_93
+L_92: MOVE #0, #-33[.IX]
+L_93: NOP
+
+; Quadruple - [BZ T_27, L_27, null]
+CMP #-33[.IX], #0
+BZ /L_27
+
+; Quadruple - [WRSTR L_24, null, null]
+WRSTR /L_24 
+
+; Quadruple - [BR L_26, null, null]
+BR /L_26
+
+; Quadruple - [INL L_27, null, null]
+L_27: NOP
+
+; Quadruple - [WRSTR L_25, null, null]
+WRSTR /L_25 
+
+; Quadruple - [INL L_26, null, null]
+L_26: NOP
+
+; Quadruple - [MV T_28, 4, null]
+MOVE #4, #-34[.IX]
+; Quadruple - [MV T_29, 4, null]
+MOVE #4, #-35[.IX]
+; Quadruple - [EQ T_30, T_28, T_29]
+CMP #-34[.IX], #-35[.IX]
+BZ /L_94
+BNZ /L_95
+L_94: MOVE #1, #-36[.IX]
+BR /L_96
+L_95: MOVE #0, #-36[.IX]
+L_96: NOP
+
+; Quadruple - [BZ T_30, L_29, null]
+CMP #-36[.IX], #0
+BZ /L_29
+
+; Quadruple - [WRSTR L_28, null, null]
+WRSTR /L_28 
+
+; Quadruple - [INL L_29, null, null]
+L_29: NOP
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_1, null, null]
+L_FIN_FUN_1: HALT
+
+; Quadruple - [CADENA el 3\n, L_0, null]
+L_0: DATA "el 3\n"
+; Quadruple - [CADENA el 2\n, L_2, null]
+L_2: DATA "el 2\n"
+; Quadruple - [CADENA NO el 2\n, L_3, null]
+L_3: DATA "NO el 2\n"
+; Quadruple - [CADENA si 0<!1\n, L_6, null]
+L_6: DATA "si 0<!1\n"
+; Quadruple - [CADENA NO 0<!1\n, L_7, null]
+L_7: DATA "NO 0<!1\n"
+; Quadruple - [CADENA si !0<1\n, L_10, null]
+L_10: DATA "si !0<1\n"
+; Quadruple - [CADENA NO !0<1\n, L_11, null]
+L_11: DATA "NO !0<1\n"
+; Quadruple - [CADENA 3 y 2\n, L_14, null]
+L_14: DATA "3 y 2\n"
+; Quadruple - [CADENA 1 y 2\n, L_16, null]
+L_16: DATA "1 y 2\n"
+; Quadruple - [CADENA primer a y b\n, L_18, null]
+L_18: DATA "primer a y b\n"
+; Quadruple - [CADENA a y b\n, L_20, null]
+L_20: DATA "a y b\n"
+; Quadruple - [CADENA NO a y b\n, L_21, null]
+L_21: DATA "NO a y b\n"
+; Quadruple - [CADENA 0 y 2\n, L_24, null]
+L_24: DATA "0 y 2\n"
+; Quadruple - [CADENA NO 0 y 2\n, L_25, null]
+L_25: DATA "NO 0 y 2\n"
+; Quadruple - [CADENA igual 4\n, L_28, null]
+L_28: DATA "igual 4\n"
