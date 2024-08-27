@@ -32,9 +32,9 @@ BZ /L_1
 
 ; Quadruple - [MV T_3, hasta, null]
 MOVE #-7[.IX], #-12[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_1, T_3, null]
+; Quadruple - [DEVUELTO L_FIN_factorialInterno, T_3, null]
 MOVE #-12[.IX], #-0[.IX]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+BR /L_FIN_factorialInterno    ;rescata de la pila el contenido del contador de programa
 
 ; Quadruple - [INL L_1, null, null]
 L_1: NOP
@@ -80,12 +80,12 @@ MOVE .R9, #-18[.IX]
 MUL #-13[.IX], #-18[.IX]
 MOVE .A , #-19[.IX]
 
-; Quadruple - [DEVUELTO L_FIN_FUN_1, T_10, null]
+; Quadruple - [DEVUELTO L_FIN_factorialInterno, T_10, null]
 MOVE #-19[.IX], #-0[.IX]
-BR /L_FIN_FUN_1    ;rescata de la pila el contenido del contador de programa
+BR /L_FIN_factorialInterno    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_1, 7, null]
-L_FIN_FUN_1: NOP
+; Quadruple - [FIN_FUNCION L_FIN_factorialInterno, 7, null]
+L_FIN_factorialInterno: NOP
 SUB .IX, #7
 MOVE .A, .SP
 RET
@@ -134,9 +134,9 @@ BNZ /L_10
 
 ; Quadruple - [MV T_0, 1, null]
 MOVE #1, #-17[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_5, T_0, null]
+; Quadruple - [DEVUELTO L_FIN_factorial, T_0, null]
 MOVE #-17[.IX], #-0[.IX]
-BR /L_FIN_FUN_5    ;rescata de la pila el contenido del contador de programa
+BR /L_FIN_factorial    ;rescata de la pila el contenido del contador de programa
 
 ; Quadruple - [BR L_8, null, null]
 BR /L_8
@@ -152,9 +152,9 @@ BNZ /L_8
 
 ; Quadruple - [MV T_0, 0, null]
 MOVE #0, #-16[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_4, T_0, null]
+; Quadruple - [DEVUELTO L_FIN_factorial, T_0, null]
 MOVE #-16[.IX], #-0[.IX]
-BR /L_FIN_FUN_4    ;rescata de la pila el contenido del contador de programa
+BR /L_FIN_factorial    ;rescata de la pila el contenido del contador de programa
 
 ; Quadruple - [BR L_8, null, null]
 BR /L_8
@@ -198,12 +198,12 @@ MOVE .R9, #-13[.IX]
 MOVE #-13[.IX], #-6[.IX]
 ; Quadruple - [MV T_6, resultado, null]
 MOVE #-6[.IX], #-14[.IX]
-; Quadruple - [DEVUELTO L_FIN_FUN_2, T_6, null]
+; Quadruple - [DEVUELTO L_FIN_factorial, T_6, null]
 MOVE #-14[.IX], #-0[.IX]
-BR /L_FIN_FUN_2    ;rescata de la pila el contenido del contador de programa
+BR /L_FIN_factorial    ;rescata de la pila el contenido del contador de programa
 
-; Quadruple - [FIN_FUNCION L_FIN_FUN_2, 6, null]
-L_FIN_FUN_2: NOP
+; Quadruple - [FIN_FUNCION L_FIN_factorial, 6, null]
+L_FIN_factorial: NOP
 SUB .IX, #6
 MOVE .A, .SP
 RET
@@ -297,8 +297,8 @@ MOVE #-4[.IX], #-10[.IX]
 WRINT #-10[.IX] 
 WRCHAR #10 
 
-; Quadruple - [FIN_PRINCIPAL L_FIN_FUN_6, null, null]
-L_FIN_FUN_6: HALT
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
 
 ; Quadruple - [CADENA Factorial de 4\n, L_16, null]
 L_16: DATA "Factorial de 4\n"

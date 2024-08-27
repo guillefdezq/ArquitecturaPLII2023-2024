@@ -35,7 +35,9 @@ action code {:
 	// Listado para las cadenas
 	List<QuadrupleIF> listaCadenas = new ArrayList<QuadrupleIF>();
 
-	boolean debugSout = true;	// Mostrar debug de las líneas System.out.println()
+	boolean debugSout = false;	// Mostrar debug de las líneas System.out.println()
+
+	String nombreFuncion = "unknown";
 
 	int tamanodireccionprincipal = 4;
 
@@ -555,7 +557,11 @@ funcion0 ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParam
 			SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeParent, identificador.getLexema(), (TypeIF) scopeManager.searchType("VACIO"));
 			simboloProcedimiento.setParameters((ArrayList<SymbolIF>) params);
 
-			sTableParent.addSymbol(identificador.getLexema(), simboloProcedimiento);
+			nombreFuncion = identificador.getLexema();
+
+			if (debugSout) System.out.println("<<< nombreFuncion = " + nombreFuncion);
+
+			sTableParent.addSymbol(nombreFuncion, simboloProcedimiento);
 
 			RESULT = simboloProcedimiento;
 
@@ -571,7 +577,11 @@ funcion0 ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParam
 			SymbolFunction simboloFuncion = new SymbolFunction(scopeParent, identificador.getLexema(), (TypeIF) scopeManager.searchType("ENTERO"));
 			simboloFuncion.setParameters((ArrayList<SymbolIF>) params);
 
-			sTableParent.addSymbol(identificador.getLexema(), simboloFuncion);
+			nombreFuncion = identificador.getLexema();
+
+			if (debugSout) System.out.println("<<< nombreFuncion = " + nombreFuncion);
+
+			sTableParent.addSymbol(nombreFuncion, simboloFuncion);
 
 			RESULT = simboloFuncion;
 		:};	
@@ -580,8 +590,6 @@ funcion0 ::= VACIO IDENTIFICADOR:identificador abrirAmbito OPEN_KEY seccionParam
 funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {: 
 
 		SymbolIF simboloFuncion = (SymbolIF) func0;
-		String identificador = simboloFuncion.getName();
-		String identificadorFin = "FUN_" + String.valueOf(scopeManager.getCurrentScope().getId());
 		ArrayList<SymbolIF> params = ((SymbolProcedure)simboloFuncion).getParameters();
 
 		for (SymbolIF param : params) {
@@ -626,9 +634,11 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}		
 
+		if (debugSout) System.out.println(">>> nombrefuncion = " + nombreFuncion + " funcion");
+
 		LabelFactory labelFactory = new LabelFactory();
-		LabelIF labelInicio = labelFactory.create(identificador);
-		LabelIF labelFin = labelFactory.create("FIN_" + identificadorFin);
+		LabelIF labelInicio = labelFactory.create(nombreFuncion);
+		LabelIF labelFin = labelFactory.create("FIN_" + nombreFuncion);
 		
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scope);
 		intermediateCodeBuilder.addQuadruple("INL", labelInicio);
@@ -691,18 +701,18 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 		}
 
 		if (devuelto == null && ((SymbolIF) func0) instanceof SymbolFunction) 
-			semanticErrorManager.semanticFatalError("Error en la función" + identificador + ". Falta asignar una instrucción devuelto.");
+			semanticErrorManager.semanticFatalError("Error en la función" + nombreFuncion + ". Falta asignar una instrucción devuelto.");
 
 		if (((SymbolIF) func0) instanceof SymbolFunction) {
 			if (devuelto.getFirstOperand() == null) {
-				semanticErrorManager.semanticFatalError("Error en la funcion " + identificador + ". Funcion " + identificador + " no devuelve valor.");
+				semanticErrorManager.semanticFatalError("Error en la funcion " + nombreFuncion + ". Funcion " + nombreFuncion + " no devuelve valor.");
 			}
 		} else if (((SymbolIF) func0) instanceof SymbolProcedure) {
 			if (devuelto != null && devuelto.getFirstOperand() != null) {
-				semanticErrorManager.semanticFatalError("Error en el procedimiento " + identificador + ". Procedimiento " + identificador + " devuelve valor.");
+				semanticErrorManager.semanticFatalError("Error en el procedimiento " + nombreFuncion + ". Procedimiento " + nombreFuncion + " devuelve valor.");
 			}
 		} else {
-			semanticErrorManager.semanticFatalError("Error en la funcion/procedimiento " + identificador + ". ERROR INESPERADO EN LA LINEA 821. No se ha podido detectar el tipo de retorno.");
+			semanticErrorManager.semanticFatalError("Error en la funcion/procedimiento " + nombreFuncion + ". ERROR INESPERADO EN LA LINEA 821. No se ha podido detectar el tipo de retorno.");
 		}
 
 
@@ -763,11 +773,13 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
 
-		String identificador = "principal";
+		nombreFuncion = "principal";
 
-		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador, (TypeIF) scopeManager.searchType("VACIO"));
+		if (debugSout) System.out.println("<<< nombreFuncion = " + nombreFuncion);
 
-		sTable.addSymbol(identificador, simboloProcedimiento);
+		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), nombreFuncion, (TypeIF) scopeManager.searchType("VACIO"));
+
+		sTable.addSymbol(nombreFuncion, simboloProcedimiento);
 
 		int direccion = 4;
 		
@@ -842,8 +854,10 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
 
+		if (debugSout) System.out.println(">>> nombreFuncion = " + nombreFuncion + " funcion");
+
 		LabelFactory labelFactory = new LabelFactory();
-		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
+		LabelIF labelFin = labelFactory.create("FIN_" + nombreFuncion);
 
 		intermediateCodeBuilder.addQuadruple("FIN_PRINCIPAL", labelFin);
 
@@ -876,11 +890,13 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 		TypeTableIF typeTable = scope.getTypeTable ();
 		SymbolTableIF sTable = scope.getSymbolTable();
 
-		String identificador = "principal";
+		nombreFuncion = "principal";
 
-		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), identificador, (TypeIF) scopeManager.searchType("VACIO"));
+		if (debugSout) System.out.println("<<< nombreFuncion = " + nombreFuncion);
 
-		sTable.addSymbol(identificador, simboloProcedimiento);
+		SymbolProcedure simboloProcedimiento = new SymbolProcedure(scopeManager.getCurrentScope(), nombreFuncion, (TypeIF) scopeManager.searchType("VACIO"));
+
+		sTable.addSymbol(nombreFuncion, simboloProcedimiento);
 
 		int direccion = 4;
 
@@ -952,8 +968,10 @@ funcionPrincipal ::= VACIO principal abrirAmbito OPEN_KEY CLOSE_KEY OPEN_PARENTH
 
 		intermediateCodeBuilder.addQuadruples(lt.getIntermediateCode());
 
+		if (debugSout) System.out.println(">>> nombreFuncion = " + nombreFuncion + " funcion");
+
 		LabelFactory labelFactory = new LabelFactory();
-		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
+		LabelIF labelFin = labelFactory.create("FIN_" + nombreFuncion);
 
 		intermediateCodeBuilder.addQuadruple("FIN_PRINCIPAL", labelFin);
 
@@ -1476,8 +1494,11 @@ sentencia ::= sentenciaDevuelve:sen {: if (debugSout) System.out.println("READ> 
 
 sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: if (debugSout) System.out.println("READ> sentenciaDevuelve = vacío"); 
 		Sentencia sen = new Sentenciadevuelve();
+
+		if (debugSout) System.out.println(">>> nombreFuncion = " + nombreFuncion + " devuelve");
+
 		LabelFactory labelFactory = new LabelFactory();
-		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
+		LabelIF labelFin = labelFactory.create("FIN_" + nombreFuncion);
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		intermediateCodeBuilder.addQuadruple("DEVUELTO", labelFin);
 		sen.setIntermediateCode(intermediateCodeBuilder.create());
@@ -1485,8 +1506,11 @@ sentenciaDevuelve ::= DEVUELVE SEMI_COLON {: if (debugSout) System.out.println("
 	| DEVUELVE expresion:exp SEMI_COLON {: 
 		Expresion expr = (Expresion) exp;
 		Sentencia sen = new Sentenciadevuelve(expr.getValor());
+
+		if (debugSout) System.out.println(">>> nombreFuncion = " + nombreFuncion + " devuelve");
+
 		LabelFactory labelFactory = new LabelFactory();
-		LabelIF labelFin = labelFactory.create("FIN_"+"FUN_" + String.valueOf(scopeManager.getCurrentScope().getId()));
+		LabelIF labelFin = labelFactory.create("FIN_" + nombreFuncion);
 		IntermediateCodeBuilder intermediateCodeBuilder = new IntermediateCodeBuilder(scopeManager.getCurrentScope());
 		intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());
 		intermediateCodeBuilder.addQuadruple("DEVUELTO", labelFin, expr.getTemporal()); 
