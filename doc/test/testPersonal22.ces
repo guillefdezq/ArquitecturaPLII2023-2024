@@ -1,15 +1,18 @@
-entero aumenta(entero x) {
-    devuelve x++;
-}
+vacio principal() {
+    tipo entero vector [2];
 
-entero recursividad (entero x) {
-    escribeEnt(x);
-    si (x < 3) {
-        recursividad(aumenta(x));
-    }
-    devuelve x;
-}
+    vector a;
+    vector b;
+    entero c;
+    entero d;
 
-vacio principal () {
-    recursividad(0);
+    /* Incorrectas: fallan al asignar de distintos tipos - SUPERADO */
+    /*
+    a = b;
+    b = c;
+    c = b; 
+    */
+
+
+    c = d; /* Correcto */
 }

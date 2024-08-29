@@ -1573,7 +1573,7 @@ sentenciaAsignacion ::= ref:refe ASSIGN:id expresion:exp SEMI_COLON {: if (debug
 			}
 
 			if (sym.getType() != scopeManager.searchType("ENTERO")) {
-				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede incrementar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
+				semanticErrorManager.semanticFatalError("Error en la línea " + id.getLine() + ", caracter " + id.getColumn() + ". " + "No se puede asignar una variable de tipo " + sym.getType().getName() + ", únicamente enteros.");
 			}
 
 			SymbolVariable vari = (SymbolVariable) sym;

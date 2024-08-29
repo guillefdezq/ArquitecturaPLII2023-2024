@@ -16,7 +16,7 @@ vacio principal () {
 	escribeEnt (a[2]+1);
 	escribe( "Entro en Loop" );
 	mientras(indice<7){
-		si( indice < 7 && !indice < 4 ){
+		si( (indice < 7) && !(indice < 4) ){
 			escribe( "Entre 6 y 4" );
 		}sino{
 			escribe( "Otro loop" );

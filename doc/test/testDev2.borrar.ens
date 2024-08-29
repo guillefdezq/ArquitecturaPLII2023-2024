@@ -143,21 +143,21 @@ L_19: NOP
 
 ; Quadruple - [MV T_3, indice, null]
 MOVE #-12[.IX], #-36[.IX]
-; Quadruple - [NEG T_4, T_3, null]
-CMP #-36[.IX], #0
-BZ /L_20
-BNZ /L_21
-L_20: MOVE #1, #-37[.IX]
+; Quadruple - [MV T_4, 4, null]
+MOVE #4, #-37[.IX]
+; Quadruple - [LS T_5, T_3, T_4]
+CMP #-36[.IX], #-37[.IX]
+BZ /L_21
+BP /L_21
+L_20: MOVE #1, #-38[.IX]
 BR /L_22
-L_21: MOVE #0, #-37[.IX]
+L_21: MOVE #0, #-38[.IX]
 L_22: NOP
 
-; Quadruple - [MV T_5, 4, null]
-MOVE #4, #-38[.IX]
-; Quadruple - [LS T_6, T_4, T_5]
-CMP #-37[.IX], #-38[.IX]
-BZ /L_24
-BP /L_24
+; Quadruple - [NEG T_6, T_5, null]
+CMP #-38[.IX], #0
+BZ /L_23
+BNZ /L_24
 L_23: MOVE #1, #-39[.IX]
 BR /L_25
 L_24: MOVE #0, #-39[.IX]
