@@ -182,7 +182,7 @@ MOVE #8, #-17[.IX]
 ; Quadruple - [MV a, T_3, null]
 MOVE #-17[.IX], #-4[.IX]
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -216,7 +216,7 @@ MOVE #-20[.IX], /10000
 MOVE #3, #-21[.IX]
 ; Quadruple - [MV T_9, 4, null]
 MOVE #4, #-23[.IX]
-; Quadruple - [STP v, T_9, T_7]
+; Quadruple - [STV v, T_9, T_7]
 ADD #6, #-21[.IX]
 SUB .IX, .A
 MOVE #-23[.IX], [.A]
@@ -225,7 +225,7 @@ MOVE #-23[.IX], [.A]
 MOVE #1, #-24[.IX]
 ; Quadruple - [MV T_11, 3, null]
 MOVE #3, #-25[.IX]
-; Quadruple - [MVP T_12, v, T_11]
+; Quadruple - [MVV T_12, v, T_11]
 ADD #6, #-25[.IX]
 SUB .IX, .A
 MOVE [.A], #-26[.IX]
@@ -301,7 +301,7 @@ WRSTR /L_16
 L_17: NOP
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina

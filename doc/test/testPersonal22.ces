@@ -1,0 +1,15 @@
+entero aumenta(entero x) {
+    devuelve x++;
+}
+
+entero recursividad (entero x) {
+    escribeEnt(x);
+    si (x < 3) {
+        recursividad(aumenta(x));
+    }
+    devuelve x;
+}
+
+vacio principal () {
+    recursividad(0);
+}

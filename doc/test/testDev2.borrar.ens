@@ -29,7 +29,7 @@ MOVE #0, #-12[.IX]
 MOVE #1, #-13[.IX]
 ; Quadruple - [MV T_2, 5, null]
 MOVE #5, #-15[.IX]
-; Quadruple - [STP a, T_2, T_0]
+; Quadruple - [STV a, T_2, T_0]
 ADD #4, #-13[.IX]
 SUB .IX, .A
 MOVE #-15[.IX], [.A]
@@ -56,7 +56,7 @@ WRCHAR #10
 
 ; Quadruple - [MV T_5, 0, null]
 MOVE #0, #-18[.IX]
-; Quadruple - [MVP T_6, a, T_5]
+; Quadruple - [MVV T_6, a, T_5]
 ADD #4, #-18[.IX]
 SUB .IX, .A
 MOVE [.A], #-19[.IX]
@@ -73,7 +73,7 @@ WRCHAR #10
 
 ; Quadruple - [MV T_9, 1, null]
 MOVE #1, #-22[.IX]
-; Quadruple - [MVP T_10, a, T_9]
+; Quadruple - [MVV T_10, a, T_9]
 ADD #4, #-22[.IX]
 SUB .IX, .A
 MOVE [.A], #-23[.IX]
@@ -90,7 +90,7 @@ WRCHAR #10
 
 ; Quadruple - [MV T_13, 2, null]
 MOVE #2, #-26[.IX]
-; Quadruple - [MVP T_14, a, T_13]
+; Quadruple - [MVV T_14, a, T_13]
 ADD #4, #-26[.IX]
 SUB .IX, .A
 MOVE [.A], #-27[.IX]

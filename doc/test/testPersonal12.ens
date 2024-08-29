@@ -101,7 +101,7 @@ MOVE #5, #-4[.IX]
 ; Quadruple - [VARLOCAL resultadoFactorial, 0, null]
 MOVE #0, #-5[.IX]
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina

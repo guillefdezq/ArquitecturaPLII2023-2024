@@ -629,6 +629,8 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 				}
 			}
 		}
+
+		System.out.println("direccion = " + direccion);
 		
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
@@ -639,6 +641,8 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 				}
 			}
 		}		
+
+		System.out.println("direccion = " + direccion);
 
 		if (debugSout) System.out.println(">>> nombrefuncion = " + nombreFuncion + " funcion");
 
@@ -1269,7 +1273,7 @@ expresion ::= NUMERO:num {: if (debugSout) System.out.println("READ> expresion =
 			intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 			Variable variable = new Variable(expr.getNombreVector(), expr.getSymbolVariableIdentificador().getScope());
 
-			intermediateCodeBuilder.addQuadruple("MVP", temporal, variable, expr.getIndice());		
+			intermediateCodeBuilder.addQuadruple("MVV", temporal, variable, expr.getIndice());		
 			expr.setIntermediateCode(intermediateCodeBuilder.create());
 			if (debugSout) System.out.println("     QUAD>" + expr.getIntermediateCode());  
 
@@ -1600,7 +1604,7 @@ sentenciaAsignacion ::= ref:refe ASSIGN:id expresion:exp SEMI_COLON {: if (debug
 				Variable variable = new Variable(((SymbolVariable)vari).getName(), vari.getScope());
 				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
 				intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
-				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getIndice());
+				intermediateCodeBuilder.addQuadruple("STV", variable, expr.getTemporal(), refexpr.getIndice());
 
 				if (debugSout) System.out.println("ASIG> vector " + vari.getName() + "[" + indice + "] = " + valorAGuardar);
 			} else {
@@ -1670,7 +1674,7 @@ sentenciaAsignacionSuma ::= ref:refe ASSIGN_SUMA:id expresion:exp SEMI_COLON {: 
 				intermediateCodeBuilder.addQuadruples(refexpr.getIntermediateCode());
 				intermediateCodeBuilder.addQuadruples(expr.getIntermediateCode());	
 				intermediateCodeBuilder.addQuadruple("ADD", variable, variable, expr.getTemporal());
-				intermediateCodeBuilder.addQuadruple("STP", variable, expr.getTemporal(), refexpr.getTemporal());
+				intermediateCodeBuilder.addQuadruple("STV", variable, expr.getTemporal(), refexpr.getTemporal());
 
 
 				if (debugSout) System.out.println("ASIG> vector " + variable.getName() + "[" + indice + "] = " + valorAGuardar);

@@ -113,7 +113,7 @@ public class ExecutionEnvironmentEns2001
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("MOVE " + o1 + ", " + r);
-        } else if (quadruple.getOperation().equals("STP")) {
+        } else if (quadruple.getOperation().equals("STV")) {
             String o1 = operacion(quadruple.getFirstOperand());
             String o2 = operacion(quadruple.getSecondOperand());
             Variable var = (Variable) quadruple.getResult();
@@ -123,7 +123,7 @@ public class ExecutionEnvironmentEns2001
             b.append("SUB .IX, .A\n");
             b.append("MOVE " + o1 + ", [.A]\n"); 
             
-        } else if (quadruple.getOperation().equals("MVP")) {
+        } else if (quadruple.getOperation().equals("MVV")) {
             String r = operacion(quadruple.getResult());
             String o2 = operacion(quadruple.getSecondOperand());
             

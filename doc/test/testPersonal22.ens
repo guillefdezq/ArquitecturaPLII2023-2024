@@ -1,0 +1,169 @@
+; Quadruple - [AXIOM null, null, null]
+AXIOM: BR /PRINCIPAL
+
+
+; Quadruple - [INL L_aumenta, null, null]
+L_aumenta: NOP
+
+; Quadruple - [VARSUBPROGRAMA x, -4, null]
+MOVE #-4[.IX], #-6[.IX]
+; Quadruple - [PUNTERO_FUNCION 9, null, null]
+SUB .IX, #9
+MOVE .A, .SP
+
+; Quadruple - [MV T_0, x, null]
+MOVE #-6[.IX], #-7[.IX]
+; Quadruple - [ADD T_1, T_0, 1]
+ADD #-7[.IX], #1
+MOVE .A , #-8[.IX]
+
+; Quadruple - [DEVUELTO L_FIN_aumenta, T_1, null]
+MOVE #-8[.IX], #-0[.IX]
+BR /L_FIN_aumenta    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_FUNCION L_FIN_aumenta, 6, null]
+L_FIN_aumenta: NOP
+SUB .IX, #6
+MOVE .A, .SP
+RET
+
+
+
+
+; Quadruple - [INL L_recursividad, null, null]
+L_recursividad: NOP
+
+; Quadruple - [VARSUBPROGRAMA x, -4, null]
+MOVE #-4[.IX], #-6[.IX]
+; Quadruple - [PUNTERO_FUNCION 15, null, null]
+SUB .IX, #15
+MOVE .A, .SP
+
+; Quadruple - [MV T_0, x, null]
+MOVE #-6[.IX], #-7[.IX]
+; Quadruple - [WRINT T_0, null, null]
+WRINT #-7[.IX] 
+WRCHAR #10 
+
+; Quadruple - [MV T_1, x, null]
+MOVE #-6[.IX], #-8[.IX]
+; Quadruple - [MV T_2, 3, null]
+MOVE #3, #-9[.IX]
+; Quadruple - [LS T_3, T_1, T_2]
+CMP #-8[.IX], #-9[.IX]
+BZ /L_13
+BP /L_13
+L_12: MOVE #1, #-10[.IX]
+BR /L_14
+L_13: MOVE #0, #-10[.IX]
+L_14: NOP
+
+; Quadruple - [BZ T_3, L_6, null]
+CMP #-10[.IX], #0
+BZ /L_6
+
+; Quadruple - [INICIO_FUNCION null, null, null]
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+PUSH #-1       ;valor de retorno
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [INICIO_FUNCION null, null, null]
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+PUSH #-1       ;valor de retorno
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [MV T_0, x, null]
+MOVE #-6[.IX], #-12[.IX]
+; Quadruple - [PARAM T_0, null, null]
+PUSH #-12[.IX]
+
+; Quadruple - [CALL L_aumenta, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
+CALL /L_aumenta            ; Guarda PC y salta
+MOVE #0[.IX], .R9     ; Guarda retorno
+MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
+; Puede que algo este mal configurado...
+; Necesario: Recuperacion de la pila a su sitio original
+
+; Quadruple - [VALOR_RETORNO T_1, null, null]
+MOVE .R9, #-13[.IX]
+
+; Quadruple - [PARAM T_1, null, null]
+PUSH #-13[.IX]
+
+; Quadruple - [CALL L_recursividad, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
+CALL /L_recursividad            ; Guarda PC y salta
+MOVE #0[.IX], .R9     ; Guarda retorno
+MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
+; Puede que algo este mal configurado...
+; Necesario: Recuperacion de la pila a su sitio original
+
+; Quadruple - [VALOR_RETORNO T_2, null, null]
+MOVE .R9, #-14[.IX]
+
+; Quadruple - [INL L_6, null, null]
+L_6: NOP
+
+; Quadruple - [MV T_4, x, null]
+MOVE #-6[.IX], #-11[.IX]
+; Quadruple - [DEVUELTO L_FIN_recursividad, T_4, null]
+MOVE #-11[.IX], #-0[.IX]
+BR /L_FIN_recursividad    ;rescata de la pila el contenido del contador de programa
+
+; Quadruple - [FIN_FUNCION L_FIN_recursividad, 6, null]
+L_FIN_recursividad: NOP
+SUB .IX, #6
+MOVE .A, .SP
+RET
+
+
+
+
+; Quadruple - [PRINCIPAL null, null, null]
+PRINCIPAL: NOP
+; Por implementar correctamente, relacionado con subprogramas
+MOVE .SP, .IX  ;guarda el valor de SP en IX
+MOVE .IX, .IY  ;guarda el valor de IX en IY
+PUSH #-1       ;valor de retorno
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [PUNTERO_PRINCIPAL 6, null, null]
+SUB .IX, #6
+MOVE .A, .SP
+
+; Quadruple - [INICIO_FUNCION null, null, null]
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+PUSH #-1       ;valor de retorno
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [MV T_0, 0, null]
+MOVE #0, #-4[.IX]
+; Quadruple - [PARAM T_0, null, null]
+PUSH #-4[.IX]
+
+; Quadruple - [CALL L_recursividad, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
+CALL /L_recursividad            ; Guarda PC y salta
+MOVE #0[.IX], .R9     ; Guarda retorno
+MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
+; Puede que algo este mal configurado...
+; Necesario: Recuperacion de la pila a su sitio original
+
+; Quadruple - [VALOR_RETORNO T_1, null, null]
+MOVE .R9, #-5[.IX]
+
+; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
+L_FIN_principal: HALT
+

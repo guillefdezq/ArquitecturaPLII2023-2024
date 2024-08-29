@@ -41,7 +41,7 @@ CMP #-16[.IX], #0
 BZ /L_2
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -118,7 +118,7 @@ SUB .IX, #9
 MOVE .A, .SP
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina

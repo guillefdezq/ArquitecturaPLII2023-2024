@@ -3,22 +3,15 @@
 entero z;
 
 entero decrementa (entero x) {
-	entero y = 8;
-	y = x+1;
-	{
-		entero s = 2,h = 3;
-		s = h + 1;
-	}
-	devuelve y;
+	devuelve x++;
 }
 
 vacio principal () { /* Función principal */
 	/* variables locales*/
-	entero w = 9;
+	entero w;
 	escribe("*** INVOCACION DE SUBPROGRAMAS***");
-	z = 3;
-	w = decrementa( decrementa(z) ); /* expresión de invocación de un subprograma */
-	escribe("w (2) = ");
+	w = decrementa( decrementa(3) ); /* expresión de invocación de un subprograma */
+	escribe("w (2) = 5? ");
 	escribeEnt(w);
 	escribe("FIN");
 }
