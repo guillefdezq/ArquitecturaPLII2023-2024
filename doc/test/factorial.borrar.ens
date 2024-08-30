@@ -42,7 +42,7 @@ L_1: NOP
 ; Quadruple - [MV T_4, desde, null]
 MOVE #-8[.IX], #-13[.IX]
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aqui IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -170,7 +170,7 @@ L_8: NOP
 L_11: NOP
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aqui IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -239,7 +239,7 @@ MOVE #0, #-4[.IX]
 WRSTR /L_16 
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aqui IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -278,7 +278,7 @@ WRCHAR #10
 WRSTR /L_19 
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aqui IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -288,7 +288,7 @@ PUSH .IX       ;enlace de acceso
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aqui IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -347,5 +347,5 @@ L_FIN_principal: HALT
 
 ; Quadruple - [CADENA Factorial de 4\n, L_16, null]
 L_16: DATA "Factorial de 4\n"
-; Quadruple - [CADENA Factorial de 1\n, L_19, null]
-L_19: DATA "Factorial de 1\n"
+; Quadruple - [CADENA Factorial de factorial de 3 = 720\n, L_19, null]
+L_19: DATA "Factorial de factorial de 3 = 720\n"

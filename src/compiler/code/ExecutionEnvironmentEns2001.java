@@ -287,7 +287,7 @@ public class ExecutionEnvironmentEns2001
             b.append("MOVE .A, .SP\n");
 
         } else if (quadruple.getOperation().equals("INICIO_FUNCION")) {     
-            b.append("MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)\n");
+            b.append("MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aqui IX(nuevo EA)\n");
             b.append("PUSH #-1       ;valor de retorno\n");
             b.append("PUSH .IY       ;enlace de control\n");
             b.append("PUSH .SR       ;estado maquina\n");
