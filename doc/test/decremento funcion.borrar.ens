@@ -42,8 +42,8 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL 9, null, null]
-SUB .IX, #9
+; Quadruple - [PUNTERO_PRINCIPAL 10, null, null]
+SUB .IX, #10
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL w, 0, null]
@@ -52,29 +52,52 @@ MOVE #0, #-4[.IX]
 WRSTR /L_3 
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
+; Quadruple - [especial null, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
+
+; Quadruple - [especial null, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [especial null, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [INICIO_FUNCION null, null, null]
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
+PUSH #-1       ;valor de retorno
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [especial null, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [MV T_0, 3, null]
 MOVE #3, #-5[.IX]
 ; Quadruple - [PARAM T_0, null, null]
 PUSH #-5[.IX]
 
-; Quadruple - [CALL L_decrementa, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_decrementa, null, null]
 CALL /L_decrementa            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
@@ -86,10 +109,11 @@ MOVE .R9, #-6[.IX]
 PUSH #-6[.IX]
 
 ; Quadruple - [CALL L_decrementa, null, null]
-MOVE .IY, .IX         ; Guarda el valor de IY en IX
 CALL /L_decrementa            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
@@ -97,26 +121,42 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Quadruple - [VALOR_RETORNO T_2, null, null]
 MOVE .R9, #-7[.IX]
 
-; Quadruple - [MV w, T_2, null]
-MOVE #-7[.IX], #-4[.IX]
-; Quadruple - [WRSTR L_6, null, null]
-WRSTR /L_6 
+; Quadruple - [PARAM T_2, null, null]
+PUSH #-7[.IX]
 
-; Quadruple - [MV T_3, w, null]
-MOVE #-4[.IX], #-8[.IX]
-; Quadruple - [WRINT T_3, null, null]
-WRINT #-8[.IX] 
+; Quadruple - [CALL L_decrementa, null, null]
+CALL /L_decrementa            ; Guarda PC y salta
+MOVE #0[.IX], .R9     ; Guarda retorno
+MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
+MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
+; Puede que algo este mal configurado...
+; Necesario: Recuperacion de la pila a su sitio original
+
+; Quadruple - [VALOR_RETORNO T_3, null, null]
+MOVE .R9, #-8[.IX]
+
+; Quadruple - [MV w, T_3, null]
+MOVE #-8[.IX], #-4[.IX]
+; Quadruple - [WRSTR L_7, null, null]
+WRSTR /L_7 
+
+; Quadruple - [MV T_4, w, null]
+MOVE #-4[.IX], #-9[.IX]
+; Quadruple - [WRINT T_4, null, null]
+WRINT #-9[.IX] 
 WRCHAR #10 
 
-; Quadruple - [WRSTR L_8, null, null]
-WRSTR /L_8 
+; Quadruple - [WRSTR L_9, null, null]
+WRSTR /L_9 
 
 ; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]
 L_FIN_principal: HALT
 
 ; Quadruple - [CADENA *** INVOCACION DE SUBPROGRAMAS***\n, L_3, null]
 L_3: DATA "*** INVOCACION DE SUBPROGRAMAS***\n"
-; Quadruple - [CADENA w (2) = 5? \n, L_6, null]
-L_6: DATA "w (2) = 5? \n"
-; Quadruple - [CADENA FIN\n, L_8, null]
-L_8: DATA "FIN\n"
+; Quadruple - [CADENA w (2) = 5? \n, L_7, null]
+L_7: DATA "w (2) = 5? \n"
+; Quadruple - [CADENA FIN\n, L_9, null]
+L_9: DATA "FIN\n"

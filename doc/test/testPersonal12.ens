@@ -112,11 +112,15 @@ MOVE #-4[.IX], #-6[.IX]
 ; Quadruple - [PARAM T_0, null, null]
 PUSH #-6[.IX]
 
-; Quadruple - [CALL L_factorial, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_factorial, null, null]
 CALL /L_factorial            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original

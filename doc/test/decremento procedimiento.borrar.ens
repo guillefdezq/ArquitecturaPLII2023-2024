@@ -71,7 +71,7 @@ MOVE #3, #-6[.IX]
 ; Quadruple - [MV z, T_1, null]
 MOVE #-6[.IX], /10000
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -82,11 +82,15 @@ MOVE /10000, #-7[.IX]
 ; Quadruple - [PARAM T_2, null, null]
 PUSH #-7[.IX]
 
-; Quadruple - [CALL L_decrementa, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_decrementa, null, null]
 CALL /L_decrementa            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original

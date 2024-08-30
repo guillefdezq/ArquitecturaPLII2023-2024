@@ -28,8 +28,8 @@ vacio principal(){
 	resultado = factorial(4);
 	escribeEnt( resultado );
 
-	escribe("Factorial de 1");
-	resultado = factorial(1);
+	escribe("Factorial de factorial de 3 = 720");
+	resultado = factorial(factorial(3));
 	escribeEnt( resultado );
 
 }

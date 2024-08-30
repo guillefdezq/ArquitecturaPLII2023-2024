@@ -293,16 +293,20 @@ public class ExecutionEnvironmentEns2001
             b.append("PUSH .SR       ;estado maquina\n");
             b.append("PUSH .IX       ;enlace de acceso\n");
             
+        } else if (quadruple.getOperation().equals("especial")) {
+            b.append("MOVE .IY, .IX         ; Guarda el valor de IY en IX\n");
+            
         } else if (quadruple.getOperation().equals("PARAM")) {        
             String r = operacion(quadruple.getResult());
             String o1 = operacion(quadruple.getFirstOperand());
             b.append("PUSH " + r + "\n");
         } else if (quadruple.getOperation().equals("CALL")) {        
             String r = operacion(quadruple.getResult());
-            b.append("MOVE .IY, .IX         ; Guarda el valor de IY en IX\n");
             b.append("CALL /" + r + "            ; Guarda PC y salta\n");
             b.append("MOVE #0[.IX], .R9     ; Guarda retorno\n");
             b.append("MOVE #-1[.IX], .SP    ; Restaura enlace de control\n");
+            b.append("MOVE #-1[.IX], .IY    ; Restaura enlace de control\n");
+            b.append("MOVE #-2[.IX], .SR    ; Restaura estado maquina\n");
             b.append("MOVE #-3[.IX], .IX    ; Restaura enlace de acceso\n");
             b.append("; Puede que algo este mal configurado...\n");
             b.append("; Necesario: Recuperacion de la pila a su sitio original\n");

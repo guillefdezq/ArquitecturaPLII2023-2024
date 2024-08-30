@@ -19,12 +19,12 @@ MOVE #-8[.IX], #-9[.IX]
 MOVE #-7[.IX], #-10[.IX]
 ; Quadruple - [EQ T_2, T_0, T_1]
 CMP #-9[.IX], #-10[.IX]
-BZ /L_23
-BNZ /L_24
-L_23: MOVE #1, #-11[.IX]
-BR /L_25
-L_24: MOVE #0, #-11[.IX]
-L_25: NOP
+BZ /L_24
+BNZ /L_25
+L_24: MOVE #1, #-11[.IX]
+BR /L_26
+L_25: MOVE #0, #-11[.IX]
+L_26: NOP
 
 ; Quadruple - [BZ T_2, L_1, null]
 CMP #-11[.IX], #0
@@ -42,7 +42,7 @@ L_1: NOP
 ; Quadruple - [MV T_4, desde, null]
 MOVE #-8[.IX], #-13[.IX]
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -64,11 +64,15 @@ MOVE #-7[.IX], #-17[.IX]
 ; Quadruple - [PARAM T_8, null, null]
 PUSH #-17[.IX]
 
-; Quadruple - [CALL L_factorialInterno, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_factorialInterno, null, null]
 CALL /L_factorialInterno            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
@@ -110,12 +114,12 @@ MOVE #-7[.IX], #-8[.IX]
 MOVE #2, #-9[.IX]
 ; Quadruple - [LS T_2, T_0, T_1]
 CMP #-8[.IX], #-9[.IX]
-BZ /L_27
-BP /L_27
-L_26: MOVE #1, #-10[.IX]
-BR /L_28
-L_27: MOVE #0, #-10[.IX]
-L_28: NOP
+BZ /L_28
+BP /L_28
+L_27: MOVE #1, #-10[.IX]
+BR /L_29
+L_28: MOVE #0, #-10[.IX]
+L_29: NOP
 
 ; Quadruple - [BZ T_2, L_11, null]
 CMP #-10[.IX], #0
@@ -166,7 +170,7 @@ L_8: NOP
 L_11: NOP
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -182,11 +186,15 @@ MOVE #-7[.IX], #-12[.IX]
 ; Quadruple - [PARAM T_4, null, null]
 PUSH #-12[.IX]
 
-; Quadruple - [CALL L_factorialInterno, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_factorialInterno, null, null]
 CALL /L_factorialInterno            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
@@ -221,8 +229,8 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [PUNTERO_PRINCIPAL 11, null, null]
-SUB .IX, #11
+; Quadruple - [PUNTERO_PRINCIPAL 12, null, null]
+SUB .IX, #12
 MOVE .A, .SP
 
 ; Quadruple - [VARLOCAL resultado, 0, null]
@@ -231,7 +239,7 @@ MOVE #0, #-4[.IX]
 WRSTR /L_16 
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
@@ -242,11 +250,15 @@ MOVE #4, #-5[.IX]
 ; Quadruple - [PARAM T_0, null, null]
 PUSH #-5[.IX]
 
-; Quadruple - [CALL L_factorial, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_factorial, null, null]
 CALL /L_factorial            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
@@ -266,22 +278,39 @@ WRCHAR #10
 WRSTR /L_19 
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
-MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquÃ­ IX(nuevo EA)
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
 PUSH #-1       ;valor de retorno
 PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [MV T_3, 1, null]
-MOVE #1, #-8[.IX]
+; Quadruple - [especial null, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [INICIO_FUNCION null, null, null]
+MOVE .SP, .IY  ;guarda el valor de SP en IY para guardar EC y establecer aquí IX(nuevo EA)
+PUSH #-1       ;valor de retorno
+PUSH .IY       ;enlace de control
+PUSH .SR       ;estado maquina
+PUSH .IX       ;enlace de acceso
+
+; Quadruple - [especial null, null, null]
+MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [MV T_3, 3, null]
+MOVE #3, #-8[.IX]
 ; Quadruple - [PARAM T_3, null, null]
 PUSH #-8[.IX]
 
-; Quadruple - [CALL L_factorial, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_factorial, null, null]
 CALL /L_factorial            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
@@ -289,12 +318,28 @@ MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Quadruple - [VALOR_RETORNO T_4, null, null]
 MOVE .R9, #-9[.IX]
 
-; Quadruple - [MV resultado, T_4, null]
-MOVE #-9[.IX], #-4[.IX]
-; Quadruple - [MV T_5, resultado, null]
-MOVE #-4[.IX], #-10[.IX]
-; Quadruple - [WRINT T_5, null, null]
-WRINT #-10[.IX] 
+; Quadruple - [PARAM T_4, null, null]
+PUSH #-9[.IX]
+
+; Quadruple - [CALL L_factorial, null, null]
+CALL /L_factorial            ; Guarda PC y salta
+MOVE #0[.IX], .R9     ; Guarda retorno
+MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
+MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
+; Puede que algo este mal configurado...
+; Necesario: Recuperacion de la pila a su sitio original
+
+; Quadruple - [VALOR_RETORNO T_5, null, null]
+MOVE .R9, #-10[.IX]
+
+; Quadruple - [MV resultado, T_5, null]
+MOVE #-10[.IX], #-4[.IX]
+; Quadruple - [MV T_6, resultado, null]
+MOVE #-4[.IX], #-11[.IX]
+; Quadruple - [WRINT T_6, null, null]
+WRINT #-11[.IX] 
 WRCHAR #10 
 
 ; Quadruple - [FIN_PRINCIPAL L_FIN_principal, null, null]

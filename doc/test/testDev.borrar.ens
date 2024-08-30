@@ -198,11 +198,15 @@ MOVE #-5[.IX], #-19[.IX]
 ; Quadruple - [PARAM T_5, null, null]
 PUSH #-19[.IX]
 
-; Quadruple - [CALL L_funSuma, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_funSuma, null, null]
 CALL /L_funSuma            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
@@ -312,11 +316,15 @@ MOVE #3, #-36[.IX]
 ; Quadruple - [PARAM T_22, null, null]
 PUSH #-36[.IX]
 
-; Quadruple - [CALL L_comprobarEdad, null, null]
+; Quadruple - [especial null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
+
+; Quadruple - [CALL L_comprobarEdad, null, null]
 CALL /L_comprobarEdad            ; Guarda PC y salta
 MOVE #0[.IX], .R9     ; Guarda retorno
 MOVE #-1[.IX], .SP    ; Restaura enlace de control
+MOVE #-1[.IX], .IY    ; Restaura enlace de control
+MOVE #-2[.IX], .SR    ; Restaura estado maquina
 MOVE #-3[.IX], .IX    ; Restaura enlace de acceso
 ; Puede que algo este mal configurado...
 ; Necesario: Recuperacion de la pila a su sitio original
