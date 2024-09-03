@@ -1,0 +1,41 @@
+/* 
+
+   Uso correcto de expresiones aritméticas (+,*).
+
+*/
+
+  #constante CONST1 5;
+  #constante CONST2 10; 
+ 
+  vacio suma (entero a, entero b){
+     devuelve;    
+  }
+
+
+  vacio principal () {   
+   
+    entero a=1, b=2;
+    entero c;
+    c=CONST1;
+    a= b * c + a;
+    a = 1;
+    a= b * (c == a);
+    c = (a+b*4)*100;
+    c=0;
+    c+=20;
+    c+=CONST2;    
+    c+=CONST1;
+    c = 3 + 4;
+    c = 3 * 4;
+    c = (3 + 4) * 100;
+    c = (a+b+4)*100;
+    c = (a*b*4)+100;
+    c = 2 + a;
+    a=c+2;
+    c = 2 + CONST2;
+    c=a+b;
+    c = (a < b) * a;
+    c= (2 + 3) * 5;
+ 
+    devuelve;
+  }

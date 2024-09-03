@@ -1405,9 +1405,9 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY:check parametros:params CLOSE_KE
 				if (debugSout) System.out.println(cuadrupla.toString());
 				if (!encontradoEspecial && cuadrupla.getOperation().equals("INICIO_FUNCION")) {
 					System.out.println("SE HA DETECTADO UNA FUNCION EN LOS PARAMETROS");
-					intermediateCodeBuilder.addQuadruple("especial");
+					intermediateCodeBuilder.addQuadruple("control");
 					intermediateCodeBuilder.addQuadruple(cuadrupla);
-					intermediateCodeBuilder.addQuadruple("especial");
+					intermediateCodeBuilder.addQuadruple("control");
 					//break;
 					encontradoEspecial = true;
 				} else 
@@ -1420,7 +1420,7 @@ llamadaFuncion ::= IDENTIFICADOR:ident OPEN_KEY:check parametros:params CLOSE_KE
 		}
 
 		if (!encontradoEspecial) 
-			intermediateCodeBuilder.addQuadruple("especial");
+			intermediateCodeBuilder.addQuadruple("control");
 
 		intermediateCodeBuilder.addQuadruple("CALL", labelIdentificador);
 

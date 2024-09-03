@@ -293,7 +293,7 @@ public class ExecutionEnvironmentEns2001
             b.append("PUSH .SR       ;estado maquina\n");
             b.append("PUSH .IX       ;enlace de acceso\n");
             
-        } else if (quadruple.getOperation().equals("especial")) {
+        } else if (quadruple.getOperation().equals("CONTROL")) {
             b.append("MOVE .IY, .IX         ; Guarda el valor de IY en IX\n");
             
         } else if (quadruple.getOperation().equals("PARAM")) {        
