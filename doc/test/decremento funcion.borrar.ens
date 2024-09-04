@@ -58,7 +58,7 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
@@ -68,10 +68,10 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [INICIO_FUNCION null, null, null]
@@ -81,7 +81,7 @@ PUSH .IY       ;enlace de control
 PUSH .SR       ;estado maquina
 PUSH .IX       ;enlace de acceso
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [MV T_0, 3, null]
@@ -89,7 +89,7 @@ MOVE #3, #-5[.IX]
 ; Quadruple - [PARAM T_0, null, null]
 PUSH #-5[.IX]
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [CALL L_decrementa, null, null]
@@ -156,7 +156,7 @@ L_FIN_principal: HALT
 
 ; Quadruple - [CADENA *** INVOCACION DE SUBPROGRAMAS***\n, L_3, null]
 L_3: DATA "*** INVOCACION DE SUBPROGRAMAS***\n"
-; Quadruple - [CADENA w (2) = 5? \n, L_7, null]
-L_7: DATA "w (2) = 5? \n"
+; Quadruple - [CADENA w (w(3)) = 6? \n, L_7, null]
+L_7: DATA "w (w(3)) = 6? \n"
 ; Quadruple - [CADENA FIN\n, L_9, null]
 L_9: DATA "FIN\n"

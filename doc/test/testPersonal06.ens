@@ -67,7 +67,7 @@ MOVE #2, #-6[.IX]
 ; Quadruple - [PARAM T_1, null, null]
 PUSH #-6[.IX]
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [CALL L_suma, null, null]

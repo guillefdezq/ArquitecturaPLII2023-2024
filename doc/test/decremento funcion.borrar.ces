@@ -11,7 +11,7 @@ vacio principal () { /* Función principal */
 	entero w;
 	escribe("*** INVOCACION DE SUBPROGRAMAS***");
 	w = decrementa( decrementa(decrementa(3)) ); /* expresión de invocación de un subprograma */
-	escribe("w (2) = 5? ");
+	escribe("w (w(3)) = 6? ");
 	escribeEnt(w);
 	escribe("FIN");
 }

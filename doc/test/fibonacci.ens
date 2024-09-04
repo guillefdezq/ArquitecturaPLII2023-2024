@@ -79,7 +79,7 @@ MOVE .A , #-24[.IX]
 ; Quadruple - [PARAM T_11, null, null]
 PUSH #-24[.IX]
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [CALL L_printfibo, null, null]
@@ -148,7 +148,7 @@ MOVE #1, #-7[.IX]
 ; Quadruple - [PARAM T_3, null, null]
 PUSH #-7[.IX]
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [CALL L_printfibo, null, null]

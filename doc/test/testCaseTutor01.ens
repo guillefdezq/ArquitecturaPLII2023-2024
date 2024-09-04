@@ -82,7 +82,7 @@ MOVE #-4[.IX], #-9[.IX]
 ; Quadruple - [PARAM T_0, null, null]
 PUSH #-9[.IX]
 
-; Quadruple - [especial null, null, null]
+; Quadruple - [CONTROL null, null, null]
 MOVE .IY, .IX         ; Guarda el valor de IY en IX
 
 ; Quadruple - [CALL L_incrementa, null, null]
