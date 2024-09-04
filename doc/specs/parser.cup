@@ -630,7 +630,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}
 
-		System.out.println("direccion = " + direccion);
+		if (debugSout) System.out.println("direccion = " + direccion);
 		
 		for (ScopeIF tempScope: listScopeHijos) {
 			for (int i = 0; i < tempScope.getTemporalTable().getTemporals().size(); i++) {
@@ -642,7 +642,7 @@ funcion ::= funcion0:func0 seccionTipos:secTip funcion1:fun1 {:
 			}
 		}		
 
-		System.out.println("direccion = " + direccion);
+		if (debugSout) System.out.println("direccion = " + direccion);
 
 		if (debugSout) System.out.println(">>> nombrefuncion = " + nombreFuncion + " funcion");
 
